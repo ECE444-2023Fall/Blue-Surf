@@ -1,7 +1,7 @@
-# Flask Basic User Authentication 
+# Flask User Authentication With Email Verification
 
-User authentication is important for protecting sensitive information and resources from unauthorized access. In this tutorial, you will learn how to set up basic user authentication – that is password-based authentication – in your Flask application.
+Email verification is a crucial aspect of creating a new user account or signing up for a service. It helps confirm that the email address provided is valid and belongs to the intended user.
 
-Blog Tutorial: https://ashutoshkrris.hashnode.dev/how-to-set-up-basic-user-authentication-in-a-flask-app
+Blog Tutorial: https://blog.ashutoshkrris.in/how-to-set-up-email-verification-in-a-flask-app
 
-Project Demo: https://youtu.be/XxSESg89xEI
+YouTube Demo Video: https://youtu.be/7o-wY65gHD8
