@@ -36,4 +36,7 @@ class RegisterForm(FlaskForm):
         if self.password.data != self.confirm.data:
             self.password.errors.append("Passwords must match")
             return False
+        if "utoronto" not in self.email.data:
+            self.email.errors.append("Must be a University of Toronto email ")
+            return False 
         return True
