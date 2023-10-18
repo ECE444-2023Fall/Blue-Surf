@@ -1,7 +1,3 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11923874&assignment_repo_type=AssignmentRepo)
-
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
@@ -91,6 +87,9 @@ So, grab your virtual surfboard and get ready for an exciting ride with Blue Sur
 <!-- GETTING STARTED -->
 
 ## Getting Started
+
+[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11923874&assignment_repo_type=AssignmentRepo)
+
 These instructions will help you get your project up and running on your local machine!
 
 ### Prerequisites
