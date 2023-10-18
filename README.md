@@ -1,12 +1,12 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
-
+<!-- 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+[![MIT License][license-shield]][license-url] -->
 
 <!-- PROJECT LOGO -->
 <br />
@@ -25,6 +25,8 @@
     <a href="https://github.com/ECE444-2023Fall/Blue-Surf/issues">Report Bug</a>
     ·
     <a href="https://github.com/ECE444-2023Fall/Blue-Surf/issues">Request Feature</a>
+    .
+    <a href="https://github.com/orgs/ECE444-2023Fall/projects/17">Project Management</a>
   </p>
 </div>
 
@@ -59,20 +61,19 @@
 
 ![](images/demo.jpeg)
 
-Ride the Wave with Blue Surf!
+### Ride the Wave with Blue Surf!
 
 Welcome to Blue Surf, your ultimate campus companion for all things University of Toronto (UofT). Our mission? To transform your campus life into a thrilling journey of discovery, connection, and endless opportunities!
 
-🏄‍♂️ Seamless Event Discovery: With Blue Surf, effortlessly catch the wave of exciting campus events. Say goodbye to lost flyers and missed opportunities!
+🏄‍♂️ <b>Seamless Event Discovery:</b> With Blue Surf, effortlessly catch the wave of exciting campus events. Say goodbye to lost flyers and missed opportunities!
 
-🌊 One-Stop Campus Hub: Our user-friendly platform lets you post, explore, and engage with events - no need to surf the web, bulletin boards, or social media!
+🌊 <b>One-Stop Campus Hub:</b> Our user-friendly platform lets you post, explore, and engage with events - no need to surf the web, bulletin boards, or social media!
 
-📣 Amplify Your Voice: Whether you're a club leader, an individual with a message, or a student seeking the next big thing, Blue Surf is your megaphone. Share announcements, recruit for your club, or discover the coolest events with ease.
+📣 <b>Amplify Your Voice:</b> Whether you're a club leader, an individual with a message, or a student seeking the next big thing, Blue Surf is your megaphone. Share announcements, recruit for your club, or discover the coolest events with ease.
 
-🤙 Join the Blue Surf Community: Let's ride this wave together and create a vibrant, connected campus life. Blue Surf is all about making your university experience unforgettable!
+🤙 <b>Join the Blue Surf Community:</b> Let's ride this wave together and create a vibrant, connected campus life. Blue Surf is all about making your university experience unforgettable!
 
 So, grab your virtual surfboard and get ready for an exciting ride with Blue Surf. We're here to make waves and can't wait for you to dive in!
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
@@ -80,7 +81,7 @@ So, grab your virtual surfboard and get ready for an exciting ride with Blue Sur
 - [![Flask][Flask.com]][Flask-url]
 - [![React][React.js]][React-url]
 - [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-<!-- - [![Postgres][Postgres.com]][Postgres-url] -->
+- [![Postgres][Postgres.com]][Postgres-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -100,7 +101,7 @@ After creating and activating a virtual environment, run the following command t
   pip install -r requirements.txt
   ```
 
-Create a file named .env in the root directory and add the following content there: 
+Create a file named `.env` in the root directory and add the following content there: 
 
 - env
   ```sh
@@ -115,7 +116,7 @@ Create a file named .env in the root directory and add the following content the
   export EMAIL_PASSWORD=your-password 
   ```
 
-Run the following command to export all the environment variables from the .env file: 
+Run the following command to export all the environment variables from the `.env` file: 
 - source
   ```sh
   source .env 
@@ -154,7 +155,7 @@ Run the following command to run the Flask server:
 <!-- ROADMAP -->
 
 ## Roadmap
-List of features currently under development by categories 🛠: 
+List of features currently under development by categories 🛠 
 
 - [ ] Searching for Posts
     - [ ] Search by keywords
@@ -203,11 +204,18 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <!-- CONTACT -->
 
-## Contact
+## Contact Us
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Project Link: [https://github.com/ECE444-2023Fall/Blue-Surf](https://github.com/ECE444-2023Fall/Blue-Surf)
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+The Team
+- Meriam Fourati | [meriam.fourati@mail.utoronto.ca](mailto:meriam.fourati@mail.utoronto.ca)
+- Divya Kaur | [divya.kaur@mail.utoronto.ca](mailto:divya.kaur@mail.utoronto.ca)
+- Ji Oh Kim | [ jioh.kim@mail.utoronto.ca](mailto:jioh.kim@mail.utoronto.ca)
+- Tenzin Mahabir | [tenzin.mahabir@mail.utoronto.ca](mailto:tenzin.mahabir@mail.utoronto.ca)
+- Kirti Mehra | [kirti.mehra@mail.utoronto.ca](mailto:kirti.mehra@mail.utoronto.ca)
+- Paula Perdomo | [paula.perdomo@mail.utoronto.ca ](mailto:paula.perdomo@mail.utoronto.ca )
+- Karishma Shah | [karishma.shah@mail.utoronto.ca](mailto:karishma.shah@mail.utoronto.ca)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -216,6 +224,8 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 ## Acknowledgments
 
 - [ReadMe Template](https://github.com/othneildrew/Best-README-Template)
+- [Code of Conduct Template](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-code-of-conduct-to-your-project)
+- [Contributions Template](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62 )
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -253,5 +263,5 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com
-[Postgres.com]: https://www.postgresql.org/docs/
-[Postgres-url]: https://img.shields.io/badge/postgresql-35495E?style=for-the-badge&logo=postgresql&logoColor=white
+[Postgres-url]: https://www.postgresql.org/docs/
+[Postgres.com]: https://img.shields.io/badge/postgresql-35495E?style=for-the-badge&logo=postgresql&logoColor=white
