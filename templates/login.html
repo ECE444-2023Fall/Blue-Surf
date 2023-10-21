@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/login-styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="login-container">
+        <h1>Sign in to Blue Surf</h1>
+        <p class="login-subtext">Get back to discovering UofT activities and events.</p>
+        <form method="post" action="/">
+            <div class="form-group">
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" id="username" name="username" class="form-control input-boxes" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" class="form-control input-boxes" placeholder="Password">
+            </div>
+            <div class="form-group forgot-password-container">
+                <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary login-btn">Login</button>
+            </div>
+        </form>
+        <p class="login-subtext">New to Blue Surf? <a href="/register">Join Now</a></p>
+    </div>
+{% endblock %}
