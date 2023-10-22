@@ -1,0 +1,15 @@
+.split-container {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* 100% of the viewport height */
+}
+
+.left {
+    flex: 1; /* Takes up half of the available space */
+    background-color: #f0f0f0; /* Left div background color */
+}
+
+.right {
+    flex: 1; /* Takes up half of the available space */
+    background-color: #e0e0e0; /* Right div background color */
+}

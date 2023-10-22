@@ -12,38 +12,47 @@
     <!--<div class="login-container">
         <h1>Create a Blue Surf account!</h1>
         <p class="login-subtext">Create an account to discover UofT activities and accounts.</p>-->
-    <div class="post-input">
-        <form method="post" action="/">
-            <div class="form-group">
-                <label for="title" class="Title-Label">Title</label>
-                <input type="text" id="title" name="title" class="form-control input-boxes" placeholder="Post Title">
+    <div class="split-container">
+        <div class="left">
+
+        </div>
+        <div class="right">
+            <div class="post-input">
+                <form method="post" action="/">
+                    <div class="form-group">
+                        <label for="title" class="Title-Label">Title</label>
+                        <input type="text" id="title" name="title" class="form-control input-boxes" placeholder="Post Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="location" class="Location-Label">Location</label>
+                        <input type="text" id="location" name="location" class="form-control input-boxes" placeholder="Location">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-time" class="EventTime-Label">Event Time</label>
+                        <input type="datetime-local" id="event-time" name="event-time" class="event-time-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry-date" class="ExpiryDate-Label">Expiry Date</label>
+                        <input type="datetime-local" id="expiry-date" name="expiry-time" class="expiry-date-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="details" class="Details-Label">Details</label>
+                        <input type="details" id="details" name="details" class="form-control input-boxes" placeholder="Enter any other details. ">
+                    </div>
+                    <!--<div class="form-group forgot-password-container">
+                        <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary login-btn">Create Account</button>
+                    </div>-->
+                    <div class="image-upload">
+                        <label for="image-upload" class="image-upload">Image</label>
+                        <input type="file" class="form-control image-upload" id="customFile" />     
+                    </div>
+                </form>
+                <!--<p class="login-subtext">Already have an account? <a href="/login">Login</a></p>-->
             </div>
-            <div class="form-group">
-                <label for="location" class="Location-Label">Location</label>
-                <input type="text" id="location" name="location" class="form-control input-boxes" placeholder="Location">
-            </div>
-            <div class="form-group">
-                <label for="event-time" class="EventTime-Label">Event Time</label>
-                <input type="datetime-local" id="event-time" name="event-time" class="event-time-time">
-            </div>
-            <div class="form-group">
-                <label for="expiry-date" class="ExpiryDate-Label">Expiry Date</label>
-                <input type="datetime-local" id="expiry-date" name="expiry-time" class="expiry-date-time">
-            </div>
-            <div class="form-group">
-                <label for="details" class="Details-Label">Details</label>
-                <input type="details" id="details" name="details" class="form-control input-boxes" placeholder="Enter any other details. ">
-            </div>
-            <!--<div class="form-group forgot-password-container">
-                <a href="/forgot-password" class="forgot-password">Forgot password?</a>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary login-btn">Create Account</button>
-            </div>-->
-            <div class="image-upload">
-                <label for="image-upload" class="image-upload">Image</label>
-            </div>
-        </form>
-        <!--<p class="login-subtext">Already have an account? <a href="/login">Login</a></p>-->
+        </div>
     </div>
+ 
 {% endblock %}
