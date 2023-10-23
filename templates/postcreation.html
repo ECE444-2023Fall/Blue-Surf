@@ -6,6 +6,7 @@
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="../static/postcreation-styles.css">
     <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+    <script src="../animations/postcreation.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -46,8 +47,17 @@
                         <button type="submit" class="btn btn-primary login-btn">Create Account</button>
                     </div>-->
                     <div class="image-upload">
-                        <label for="image-upload" class="input-labels">image</label>
+                        <label for="upload" class="input-labels">image</label>
                         <input type="file" class="form-control image-upload" id="customFile" />     
+                    </div>
+                    <div class="dropdown">
+                        <select name="language" id="language">
+                            <option value="Tags" selected >Tags</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="c++" disabled>C++</option>
+                            <option value="java">Java</option>
+                          </select>
                     </div>
                 </form>
                 <!--<p class="login-subtext">Already have an account? <a href="/login">Login</a></p>-->
