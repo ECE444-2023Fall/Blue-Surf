@@ -2,6 +2,10 @@
     display: flex;
     width: 100%;
     height: 100vh; /* 100% of the viewport height */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars */
+    position: relative; /* Set the body to a relative position for absolute positioning within it */
 }
 
 .left {
@@ -16,7 +20,7 @@
 
 /* Label */
 .title-label{
-    padding-top: 15%;
+    padding-top: 5%;
     width: 81px;
     height: 28px;
     font-family: 'Karla';
@@ -56,20 +60,26 @@
     height: 50px;
 }
 
-/*.image-upload{
-    border-radius: 15.34px;
-    border: 1.534px solid rgba(0, 0, 0, 0.10);
+.image-upload-button{
+    /*border-radius: 15.34px;
+    border: 1.534px solid rgba(0, 0, 0, 0.10);*/
     background: #FFF;
-    width: 100%;
-    height: 50px;
-}*/
+    width: 70%;
+    border-radius: 15.34px;
+}
+
+.save-delete{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 20px; /* Add some margin for spacing */
+}
 
 
 /* Dropdown Button */
 .dropbtn {
     background-color: #3498DB;
     color: white;
-    padding: 16px;
     font-size: 16px;
     border: none;
     cursor: pointer;
@@ -84,6 +94,8 @@
   .dropdown {
     position: relative;
     display: inline-block;
+    padding-right: 100%;
+    padding-top: 28px;
   }
   
   /* Dropdown Content (Hidden by Default) */
