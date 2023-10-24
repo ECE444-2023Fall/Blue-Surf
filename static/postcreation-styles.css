@@ -97,9 +97,10 @@
 }
 
 .preview-button{
-    height: 40px;
+    height: 60px;
     font-family: 'Karla';
-    width: 100px;
+    font-size: 18px;
+    width: 200px;
     background-color: #CAD4DB;
     color: #000;
     border-radius: 15px;
@@ -109,8 +110,16 @@
 
 .preview-container{
     padding-left: 30%;
+    padding-top: 5%;
 }
 
+.uploaded-image{
+    position: relative;
+    align-items: center;
+    padding-top: 10%;
+    padding-left: 5%;
+    /*padding-left: 30%;*/
+}
 
 
 /* Dropdown Button */
