@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/register-styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="login-container">
+        <h1>Create a Blue Surf account!</h1>
+        <p class="login-subtext">Create an account to discover UofT activities and accounts.</p>
+        <form method="post" action="/">
+            <div class="form-group">
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" id="username" name="username" class="form-control input-boxes" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" class="form-control input-boxes" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" class="form-control input-boxes" placeholder="Re-enter Password">
+            </div>
+            <!--<div class="form-group forgot-password-container">
+                <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+            </div>-->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary login-btn">Create Account</button>
+            </div>
+        </form>
+        <p class="login-subtext">Already have an account? <a href="/login">Login</a></p>
+    </div>
+{% endblock %}
