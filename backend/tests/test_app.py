@@ -13,7 +13,7 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Sign in to Blue Surf', response.data)
 
-    def test_signup_route(self):
+    def test_signup_route(self): #Divya Kaur 
         response = self.app.get('/register')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Create a Blue Surf account!', response.data)
