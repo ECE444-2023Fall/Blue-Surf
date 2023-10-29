@@ -7,6 +7,7 @@ test('renders learn react link', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
+// Paula Perdomo
 test('displays "No search results available." message on initial load', () => {
   render(<App />);
   const messageElement = screen.getByText(/No search results available./i);

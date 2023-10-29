@@ -32,12 +32,14 @@ describe('SearchBar Component', () => {
     global.fetch.mockClear(); // Reset the mock function
   });
   
+  // Paula Perdomo
   test('renders SearchBar without crashing', () => {
     render(<SearchBar onDataReceived={jest.fn()}/>);
     const inputElement = screen.getByPlaceholderText('Search...');
     expect(inputElement).toBeInTheDocument();
   });
 
+  // Tenzin Mahabir
   test('fetches suggestions on user input change', async () => {
     render(<SearchBar  onDataReceived={jest.fn()}/>);
     const inputElement = screen.getByPlaceholderText('Search...');
@@ -53,6 +55,7 @@ describe('SearchBar Component', () => {
     });
   });
 
+  // Tenzin Mahabir
   test('triggers search on pressing Enter', async () => {
     render(<SearchBar onDataReceived={jest.fn()} />);
     const inputElement = screen.getByPlaceholderText('Search...');
