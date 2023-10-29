@@ -1,16 +1,14 @@
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import TIMESTAMP
-from datetime import datetime
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'NEED TO CHANGE'
 # SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bluesurf.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bluesurf.db'
 # PostgreSQL database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
 # Initialize DB
 db = SQLAlchemy(app)
 
@@ -19,14 +17,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
-    password = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    password_salt = db.Column(db.String(255), nullable=False)
     user_profile_created = db.Column(db.Boolean, nullable=False, default=False)
     
     # Define a one-to-many relationship with events authored by the user
     events_authored = db.relationship('Event', backref='author', lazy=True)
-
-    # Define a many-to-many relationship with events the user is attending
-    events_attending = db.relationship('Event', secondary='event_attendee', backref='attendees', lazy=True)
 
     # Define a many-to-many relationship with events the user is interested in
     events_interested = db.relationship('Event', secondary='user_interested_event', backref='interested_users', lazy=True)
@@ -42,21 +38,10 @@ class Event(db.Model):
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
 
-class EventAttendee(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 class UserInterestedEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
-
-class UserProfile(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    profile_data = db.Column(db.JSON)
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
