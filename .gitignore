@@ -1,8 +1,10 @@
 # Ignore virtual environment directory
-backend/venv/
+venv/
 
 # Ignore Python bytecode cache
 backend/__pycache__/
+backend/tests/__pycache__/
+backend/tests/db/
 
 # dependencies
 /node_modules
