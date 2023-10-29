@@ -8,7 +8,7 @@ const SearchBar = ({ onDataReceived }) => {
   const getSuggestions = async (value) => {
     try {
       const response = await fetch(`/autosuggest?query=${value}`);
-      if (!response.ok) {
+      if (!response ||!response.ok) {
         throw new Error('Network response was not ok.');
       }
       const data = await response.json();
@@ -34,7 +34,7 @@ const SearchBar = ({ onDataReceived }) => {
   const onSearch = async (query) => {
     try {
       const response = await fetch(`/search?query=${query}`);
-      if (!response.ok) {
+      if (!response || !response.ok) {
         throw new Error('Network response was not ok.');
       }
       const data = await response.json();
