@@ -10,6 +10,7 @@
     height: 60px;
     border-color: white;
     position: relative;
+    width: 200px;
 }
 
 .custom-select::after {
@@ -39,5 +40,5 @@
     position: absolute;
     width: 100%;
     left: 0;
-    top: 100%; /* Position it right below the select */
+    top: 100%;
   }
