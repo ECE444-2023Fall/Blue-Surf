@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 
-const SearchBar = () => {
-  const [value, setValue] = useState('');
-  const [suggestions, setSuggestions] = useState([]); 
-  
+const SearchBar = ({ onDataReceived }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+
   const getSuggestions = async (value) => {
-    const response = await fetch(`/autosuggest?query=${value}`);
-    const data = await response.json();
-    setSuggestions(data);
+    try {
+      const response = await fetch(`/autosuggest?query=${value}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
   };
-  
+
   const onSuggestionsFetchRequested = ({ value }) => {
     getSuggestions(value);
   };
@@ -20,25 +27,48 @@ const SearchBar = () => {
   };
 
   const onSuggestionSelected = (event, { suggestion }) => {
-    setValue(suggestion);
+    setSearchQuery(suggestion);
+    onSearch(suggestion);
+  };
+
+  const onSearch = async (query) => {
+    try {
+      const response = await fetch(`/search?query=${query}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      const data = await response.json();
+      onDataReceived(data);
+    } catch (error) {
+      console.error('Error performing search:', error);
+    }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      onSearch(searchQuery);
+    }
   };
 
   const inputProps = {
     placeholder: 'Search...',
-    value,
-    onChange: (e, { newValue }) => setValue(newValue),
+    value: searchQuery,
+    onChange: (e, { newValue }) => setSearchQuery(newValue),
+    onKeyPress: handleKeyPress
   };
 
   return (
-    <Autosuggest
-      suggestions={suggestions}
-      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-      onSuggestionsClearRequested={onSuggestionsClearRequested}
-      onSuggestionSelected={onSuggestionSelected}
-      getSuggestionValue={(suggestion) => suggestion}
-      renderSuggestion={(suggestion) => <div>{suggestion}</div>}
-      inputProps={inputProps}
-    />
+    <div>
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={onSuggestionsClearRequested}
+        onSuggestionSelected={onSuggestionSelected}
+        getSuggestionValue={(suggestion) => suggestion}
+        renderSuggestion={(suggestion) => <div>{suggestion}</div>}
+        inputProps={inputProps}
+      />
+    </div>
   );
 };
 
