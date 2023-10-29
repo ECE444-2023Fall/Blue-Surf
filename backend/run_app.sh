@@ -2,7 +2,7 @@
 
 # Define the Docker image name and app port
 IMAGE_NAME="backend_docker"
-APP_PORT=3000
+APP_PORT=4999
 
 # Check if the Docker image already exists
 if [[ "$(docker images -q $IMAGE_NAME 2> /dev/null)" == "" ]] || [ "$1" == "--rebuild" ]; then
