@@ -1,6 +1,7 @@
 import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCreation.css";
+import ImageUpload from './ImageUpload';
 
 interface TagOptions{
     title: string; 
@@ -22,9 +23,10 @@ const PostCreation: React.FC<TagOptions> = (TagOptions: any) =>  {
       {/* Content */}
       <div className="split-container">
         <div className="right">
-          <div className="uploaded-image">
-            <img src="https://unsplash.it/600/400" alt="Uploaded" />
-          </div>
+        {/*<ImageUpload /> */}
+        <div className="uploaded-image">
+                <img src="https://unsplash.it/600/400" alt="Uploaded" />
+        </div> 
           <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
           </div>
