@@ -14,7 +14,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
   return (
     <div className="col">
       <div className="card">
-        <img src="../../assets/post1.jpeg" className="card-img-top" alt="..." />
+        <img src="../assets/post1.jpeg" className="card-img-top" alt="..." />
         <div className="card-body">
           <div className="d-flex justify-content-center">
             <span className="h4 card-title text-center">
