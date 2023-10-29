@@ -1,0 +1,43 @@
+.select-container {
+    position: relative;
+}
+
+.custom-select {
+    padding: 8px;
+    background-color: #DCEEFB;
+    padding-right: 40px;
+    border-radius: 14px;
+    height: 60px;
+    border-color: white;
+    position: relative;
+}
+
+.custom-select::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    right: 8px;
+    border-left: 5px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 5px solid #000; 
+}
+
+.filter-title {
+    color: #000;
+    font-family: "Outfit-Regular", Helvetica;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 27.5px;
+}
+
+.custom-select select {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 100%; /* Position it right below the select */
+  }
