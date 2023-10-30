@@ -64,7 +64,9 @@ function App() {
         </div>
         <div className="col-md-9">
           <div className="row">
-          <SearchBar onDataReceived={handleSearchData} />
+            <div className="col-12">
+              <SearchBar onDataReceived={handleSearchData} />
+            </div>
           </div>
           <div className="row">
             <div className="col-12">

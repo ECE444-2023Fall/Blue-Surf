@@ -1,17 +1,16 @@
-/* SearchBar.css */
-
+/* General styles for the search input container */
 .search-input-container {
     position: relative;
     width: 100%;
 }
 
 .search-icon {
+    position: absolute;
     top: 50%;
+    left: 15px;
     color: #000;
     pointer-events: none;
     margin-right: 30px;
-    position: absolute;
-    left: 30px;
 }
 
 /* Style for the input field */
@@ -69,10 +68,7 @@
     background-color: #bfbbbb88;
 }
 
+/* Styles for input container for when suggestions window appears*/
 .react-autosuggest__input--suggestions {
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  
+    border-radius: 15px 15px 0 0;
+}
