@@ -75,7 +75,11 @@ def test_event_creation(test_client):
 
 
 def test_user_update_password(test_client):
-    # Create a user with an initial password
+    """
+    This is a unit test added by Meriam Fourati (for Lab 5).
+    This tests verifies that a value can be updated once an entry
+    is added in the database.
+    """
     user = User(
         username="testuser2",
         email="testuser2@example.com",
