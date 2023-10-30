@@ -19,6 +19,9 @@ backend/tests/db/
 # production
 /build
 
+# database instance
+backend/instance/
+
 # misc
 .DS_Store
 .env.local

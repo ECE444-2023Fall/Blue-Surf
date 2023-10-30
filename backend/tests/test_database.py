@@ -155,6 +155,3 @@ def test_user_interested_event_relationship(test_client):
         #!!! Additionally, we can use the relationships defined in our models to verify !!!
         assert user_from_db in event_from_db.interested_users
         assert event_from_db in user_from_db.events_interested
-
-       
-
