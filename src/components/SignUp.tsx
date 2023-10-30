@@ -1,5 +1,6 @@
 import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/SignUp.css";
 
 
 const SignUp: React.FC = () => {
