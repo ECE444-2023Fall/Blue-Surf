@@ -1,0 +1,13 @@
+
+  {
+    "compilerOptions": {
+      "target": "ES6", // or your desired target version
+      "module": "CommonJS",
+      "strict": true,
+      "jsx": "react",
+      "esModuleInterop": true
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["node_modules"]
+  }
+
