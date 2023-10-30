@@ -2,7 +2,8 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
-import SortBy from "./components/SortBy"; 
+import SortBy from "./components/SortBy";
+import CalanderDatePicker from "./components/CalanderDatePicker"
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -13,6 +14,10 @@ const postCardData = {
     "Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
   tags: ["Professional Development"],
 };
+
+function renderCalander() {
+  return <CalanderDatePicker/>
+}
 
 const filterOptions = [
   {
@@ -33,10 +38,6 @@ const filterOptions = [
     title: "Club",
     values: ["All", "YNCN", "Dance Club", "Design Club", "Sport Club"],
   },
-  {
-    title: "Date",
-    values: ["All", "Today", "Tomorrow", "Never"],
-  },
 ];
 
 const numberOfCards = 10;
@@ -53,6 +54,9 @@ function App() {
               values={option.values}
             />
           ))}
+          <div className="calander">
+            <CalanderDatePicker/>
+          </div>
         </div>
         <div className="col-md-9">
           <div className="row">
