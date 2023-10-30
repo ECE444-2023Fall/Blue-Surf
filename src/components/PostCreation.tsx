@@ -2,6 +2,8 @@ import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCreation.css";
 import ImageUpload from './ImageUpload';
+{/*import ImageUploadButton from './ImageUploadButton';
+import DisplayImageComponent from './DisplayImage';*/}
 
 {/*interface TagOptions{
     title: string; 
@@ -23,9 +25,15 @@ const PostCreation: React.FC = () => {
       <div className="split-container">
         <div className="right">
         {/*<ImageUpload /> */}
-        <div className="uploaded-image">
+        {/*<div className="uploaded-image">
                 <img src="https://unsplash.it/600/400" alt="Uploaded" />
-        </div> 
+        </div> */}
+        {/*<div className="uploaded-image">
+              <DisplayImageComponent uploadedImage={uploadedImage} />
+      </div>*/}
+          <div className="image-upload">
+            <ImageUpload />
+          </div>
           <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
           </div>
@@ -53,10 +61,13 @@ const PostCreation: React.FC = () => {
                 <label htmlFor="details" className="input-labels">Details</label>
                 <input type="text" id="details" name="details" className="form-control input-boxes" placeholder="Enter any other details." />
               </div>
-              <div className="image-upload">
+              {/*<div className="image-upload">
                 <label htmlFor="customFile" className="input-labels">Image</label>
                 <input type="file" className="form-control image-upload-button" id="customFile" />
-              </div>
+              </div>*/}
+              {/*<div>
+                <ImageUploadButton onImageUpload={handleImageUpload} />
+            </div>*/}
               <div className="dropdown">
                 <select name="language" id="language">
                   <option value="Tags" selected>Tags</option>

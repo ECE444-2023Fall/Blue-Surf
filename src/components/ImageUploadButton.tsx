@@ -1,6 +1,6 @@
-import React from 'react';
+{/*import React from 'react';
 
-const ImageUploadButtonComponent: React.FC = ({ onImageUpload }) => {
+const ImageUploadButton: React.FC = ({ onImageUpload = () => {} }) => {}
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
 
@@ -22,4 +22,4 @@ const ImageUploadButtonComponent: React.FC = ({ onImageUpload }) => {
   );
 };
 
-export default ImageUploadButtonComponent;
+export default ImageUploadButton;*/}
