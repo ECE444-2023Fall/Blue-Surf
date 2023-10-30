@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCard.css";
+const postImage = require("../assets/post1.jpeg");
 
 interface PostCardProps {
   title: string;
@@ -14,7 +15,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
   return (
     <div className="col">
       <div className="card">
-        <img src="../assets/post1.jpeg" className="card-img-top" alt="..." />
+        <img src={postImage} className="card-img-top rounded-top-34" alt="..." />
         <div className="card-body">
           <div className="d-flex justify-content-center">
             <span className="h4 card-title text-center">
@@ -27,7 +28,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
           <p className="card-text text-left">{PostCardProps.description}</p>
           <span className="pill">
             {PostCardProps.tags.map((tag: string, index: number) => (
-              <span key={index}>{tag}</span>
+              <span className="pill-tag" key={index}>{tag}</span>
             ))}
           </span>
         </div>
