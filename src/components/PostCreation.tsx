@@ -3,13 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCreation.css";
 import ImageUpload from './ImageUpload';
 
-interface TagOptions{
+{/*interface TagOptions{
     title: string; 
     value: string[]; 
+}*/}
 
-}
-
-const PostCreation: React.FC<TagOptions> = (TagOptions: any) =>  {
+const PostCreation: React.FC = () => {
   return (
     <div>
       {/* Head Content */}

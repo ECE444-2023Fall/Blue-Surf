@@ -70,7 +70,6 @@ function App() {
       </div>
     </div>*/
     <div>
-      {/* Your other components */}
       <PostCreation />
     </div>
   );
