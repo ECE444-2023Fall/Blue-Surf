@@ -15,10 +15,6 @@ const postCardData = {
   tags: ["Professional Development"],
 };
 
-function renderCalander() {
-  return <CalanderDatePicker/>
-}
-
 const filterOptions = [
   {
     title: "Tag",
