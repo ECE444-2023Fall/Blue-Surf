@@ -94,13 +94,13 @@ def get_matched_events(query, detailed=False):
         return titles
 
 
-@app.route("/autosuggest", methods=["GET"])
+@app.route("/api/autosuggest", methods=["GET"])
 def autosuggest():
     query = request.args.get("query")
     results = get_matched_events(query)
     return jsonify(results)
 
-@app.route("/search", methods=["GET"])
+@app.route("/api/search", methods=["GET"])
 def search():
     query = request.args.get("query")
     results = get_matched_events(query, detailed=True)

@@ -1,11 +1,12 @@
 .SortBy {
     padding-bottom: 20px;
     padding-right: 20px;
+    margin-top: 15px;
   }
 
 .sort-title {
     color: #000;
-    font-family: "Outfit-Regular", Helvetica;
+    font-family: "Outfit", Helvetica;
     font-size: 18px;
     font-style: normal;
     font-weight: 700;

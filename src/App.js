@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
 import SortBy from "./components/SortBy";
-import SearchBar from './components/SearchBar.js';
+import SearchBar from './components/SearchBar';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -52,7 +52,6 @@ function App() {
 
   return (
     <div className="custom-container">
-      <SearchBar onDataReceived={handleSearchData} />
       <div className="row">
         <div className="custom-col-md-3">
           {filterOptions.map((option, index) => (
@@ -64,6 +63,9 @@ function App() {
           ))}
         </div>
         <div className="col-md-9">
+          <div className="row">
+          <SearchBar onDataReceived={handleSearchData} />
+          </div>
           <div className="row">
             <div className="col-12">
               <SortBy options={["Sort Option 1", "Sort Option 2"]} />
