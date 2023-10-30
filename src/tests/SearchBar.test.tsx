@@ -36,13 +36,13 @@ describe('SearchBar Component', () => {
 
   test('renders SearchBar without crashing', () => {
     render(<SearchBar onDataReceived={jest.fn() as SearchBarProps['onDataReceived']} />);
-    const inputElement = screen.getByPlaceholderText('Search...');
+    const inputElement = screen.getByPlaceholderText('Search');
     expect(inputElement).toBeInTheDocument();
   });
 
   test('fetches suggestions on user input change', async () => {
     render(<SearchBar onDataReceived={jest.fn() as SearchBarProps['onDataReceived']} />);
-    const inputElement = screen.getByPlaceholderText('Search...');
+    const inputElement = screen.getByPlaceholderText('Search');
 
     userEvent.type(inputElement, mockSearchQuery);
 
@@ -57,7 +57,7 @@ describe('SearchBar Component', () => {
 
   test('triggers search on pressing Enter', async () => {
     render(<SearchBar onDataReceived={jest.fn() as SearchBarProps['onDataReceived']} />);
-    const inputElement = screen.getByPlaceholderText('Search...');
+    const inputElement = screen.getByPlaceholderText('Search');
 
     userEvent.type(inputElement, `${mockSearchQuery}{enter}`);
 
