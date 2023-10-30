@@ -28,12 +28,15 @@ const PostCreation: React.FC = () => {
         {/*<div className="uploaded-image">
                 <img src="https://unsplash.it/600/400" alt="Uploaded" />
         </div> */}
+        <div>
+        <img id="resizedImage" src="" alt="Resized Image" />
+        </div>
         {/*<div className="uploaded-image">
               <DisplayImageComponent uploadedImage={uploadedImage} />
       </div>*/}
-          <div className="image-upload">
+          {/*<div className="image-upload-button">
             <ImageUpload />
-          </div>
+    </div>*/}
           <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
           </div>
@@ -61,10 +64,10 @@ const PostCreation: React.FC = () => {
                 <label htmlFor="details" className="input-labels">Details</label>
                 <input type="text" id="details" name="details" className="form-control input-boxes" placeholder="Enter any other details." />
               </div>
-              {/*<div className="image-upload">
+              <div className="image-upload">
                 <label htmlFor="customFile" className="input-labels">Image</label>
-                <input type="file" className="form-control image-upload-button" id="customFile" />
-              </div>*/}
+                <input type="file" className="form-control image-upload-button" accept="image/*" id="imageUpload" />
+              </div>
               {/*<div>
                 <ImageUploadButton onImageUpload={handleImageUpload} />
             </div>*/}
