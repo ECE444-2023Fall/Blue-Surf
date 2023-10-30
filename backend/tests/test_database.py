@@ -102,3 +102,59 @@ def test_user_update_password(test_client):
     with app.app_context():
         updated_user = User.query.filter_by(username="testuser2").first()
         assert updated_user.password_hash == new_password
+        
+def test_user_interested_event_relationship(test_client):
+    """
+    This is a unit test added by Jioh Kim (For Lab 5).
+    This test checks if a user can express interest in an event and if that relationship
+    is stored correctly in the UserInterestedEvent table.
+    """
+    user = User(
+        username="testuser3",
+        email="testuser3@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+        user_profile_created=True,
+    )
+
+    start_time = datetime.strptime("2023-11-03 04:20:00", "%Y-%m-%d %H:%M:%S")
+    end_time = datetime.strptime("2023-11-03 12:00:00", "%Y-%m-%d %H:%M:%S")
+    event = Event(
+        title="Test Event 2",
+        description="Test Event Description 2",
+        start_time=start_time,
+        end_time=end_time,
+        author=None,
+        is_published=True,
+        like_count=0,
+    )
+
+    with app.app_context():
+        db.session.add(user)
+        db.session.add(event)
+        db.session.commit()
+
+        # Create a relationship between the user and the event
+        user_from_db = User.query.filter_by(username="testuser3").first()
+        event_from_db = Event.query.filter_by(title="Test Event 2").first()
+        
+        user_event_relationship = UserInterestedEvent(
+        user_id=user_from_db.id,
+        event_id=event_from_db.id
+        )
+        db.session.add(user_event_relationship)
+        db.session.commit()
+
+        # Verify the relationship was created
+        relationship = UserInterestedEvent.query.filter_by(
+            user_id=user_from_db.id, event_id=event_from_db.id
+        ).first()
+        
+        assert relationship is not None
+        
+        #!!! Additionally, we can use the relationships defined in our models to verify !!!
+        assert user_from_db in event_from_db.interested_users
+        assert event_from_db in user_from_db.events_interested
+
+       
+
