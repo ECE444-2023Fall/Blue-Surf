@@ -32,7 +32,6 @@ def test_user_creation(test_client):
         email="testuser@example.com",
         password_hash="testpassword",
         password_salt="testpassword",
-        user_profile_created=True,
     )
     with app.app_context():
         db.session.add(user)
@@ -40,7 +39,6 @@ def test_user_creation(test_client):
         retrieved_user = User.query.filter_by(username="testuser").first()
         assert retrieved_user.username == "testuser"
         assert retrieved_user.email == "testuser@example.com"
-        assert retrieved_user.user_profile_created == True
 
 
 def test_event_creation(test_client):
@@ -55,6 +53,7 @@ def test_event_creation(test_client):
     event = Event(
         title="Test Event",
         description="Test Event Description",
+        location="online",
         start_time=start_time,
         end_time=end_time,
         author=None,
@@ -85,7 +84,6 @@ def test_user_update_password(test_client):
         email="testuser2@example.com",
         password_hash="testpassword",
         password_salt="testpassword",
-        user_profile_created=True,
     )
     with app.app_context():
         db.session.add(user)
@@ -114,7 +112,6 @@ def test_user_interested_event_relationship(test_client):
         email="testuser3@example.com",
         password_hash="testpassword",
         password_salt="testpassword",
-        user_profile_created=True,
     )
 
     start_time = datetime.strptime("2023-11-03 04:20:00", "%Y-%m-%d %H:%M:%S")
@@ -122,6 +119,7 @@ def test_user_interested_event_relationship(test_client):
     event = Event(
         title="Test Event 2",
         description="Test Event Description 2",
+        location="online",
         start_time=start_time,
         end_time=end_time,
         author=None,

@@ -54,7 +54,7 @@ class UserDataLayer():
         user.email = email
 
         #TODO: Come back to this for the password hashing algorithm/authentication.
-        if password_hash is None:
+        if password_hash is None or len(password_hash) == 0:
             logging.info('Password_hash is empty')
             raise TypeError("Password_hash should not be empty")
         if len(password_hash) > 255:
@@ -63,7 +63,7 @@ class UserDataLayer():
         user.password_hash = password_hash
         
         #TODO: Come back to this for the password hashing algorithm/authentication.
-        if password_salt is None:
+        if password_salt is None or len(password_salt) == 0:
             logging.info('Password_salt is empty')
             raise TypeError("Password_salt should not be empty")
         if len(password_salt) > 255:

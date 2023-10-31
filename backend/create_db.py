@@ -11,21 +11,18 @@ def create_mock_users():
             email="testuser1@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
-            user_profile_created=True,
         ),
         User(
             username="testuser2",
             email="testuser2@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
-            user_profile_created=True,
         ),
         User(
             username="testuser3",
             email="testuser3@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
-            user_profile_created=True,
         ),
     ]
     return users
@@ -60,6 +57,7 @@ def create_mock_events():
         Event(
             title="Fall Career Week",
             description="Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
+            location="online",
             start_time=start_time,
             end_time=end_time,
             author_id=1, # Author of this event is user 1 (id = 1).
@@ -70,6 +68,7 @@ def create_mock_events():
         Event(
             title="Test Event2",
             description="Test Event Description2",
+            location="online",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
@@ -80,6 +79,7 @@ def create_mock_events():
         Event(
             title="Test Event3",
             description="Test Event Description3",
+            location="online",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
