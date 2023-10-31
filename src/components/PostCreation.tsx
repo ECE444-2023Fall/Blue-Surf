@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCreation.css";
-import "../App.css"
 import ImageUpload from './ImageUpload';
 //import ImageUploadButton from './ImageUploadButton';
 //import DisplayImage from './DisplayImage';

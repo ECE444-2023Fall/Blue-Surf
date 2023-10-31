@@ -4,7 +4,6 @@ import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
 import SortBy from "./components/SortBy"; 
 import PostCreation from "./components/PostCreation"; 
-import SignUp from "./components/SignUp";
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -72,9 +71,6 @@ function App() {
     </div>
     /*<div>
       <PostCreation />
-    </div>*/
-    /*<div>
-      <SignUp />
     </div>*/
   );
 }
