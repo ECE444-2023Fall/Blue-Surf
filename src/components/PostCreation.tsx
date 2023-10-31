@@ -36,9 +36,9 @@ const PostCreation: React.FC = () => {
             <img src={uploadedImageUrl} alt="Uploaded" style={{ width: '400px', height: '500px' }} />
           </div>
         )}
-          <div className="preview-container">
+         {/*} <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
-          </div>
+        </div> */}
         </div>
         <div className="right">
           <div className="post-input">

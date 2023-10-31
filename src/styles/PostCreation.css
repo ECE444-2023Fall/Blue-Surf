@@ -116,6 +116,7 @@
 .preview-container{
     padding-left: 32.5%;
     padding-top: 5%;
+    vertical-align: bottom;
 }
 
 .uploaded-image{
