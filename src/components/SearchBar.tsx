@@ -21,13 +21,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
       }
       const data = await response.json();
       setSuggestions(data);
+      setShowSuggestions(data.length > 0);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
     }
   };
 
   const onSuggestionsFetchRequested = ({ value }: { value: string }) => {
-    setShowSuggestions(true);
     getSuggestions(value);
   };
 
@@ -60,6 +60,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
   
   const handleInputKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
+      setShowSuggestions(false);
       onSearch(searchQuery);
     }
   };
