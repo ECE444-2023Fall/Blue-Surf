@@ -30,6 +30,23 @@ def create_mock_users():
     ]
     return users
 
+def create_mock_user_events():
+    user_events = [
+        UserInterestedEvent(
+            user_id = 1,
+            event_id = 1
+        ),
+        UserInterestedEvent(
+            user_id = 1,
+            event_id = 2
+        ),
+        UserInterestedEvent(
+            user_id = 3,
+            event_id = 3
+        ),
+    ]
+    return user_events
+
 def create_mock_events():
     start_time = datetime.strptime("2023-10-28 09:00:00", "%Y-%m-%d %H:%M:%S")
     end_time = datetime.strptime("2023-10-28 11:00:00", "%Y-%m-%d %H:%M:%S")
@@ -41,8 +58,8 @@ def create_mock_events():
         
     events = [
         Event(
-            title="Test Event1",
-            description="Test Event Description1",
+            title="Fall Career Week",
+            description="Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
             start_time=start_time,
             end_time=end_time,
             author_id=1, # Author of this event is user 1 (id = 1).
@@ -87,12 +104,9 @@ with app.app_context():
     for event in events:
         db.session.add(event)
 
-    # commit the changes
+    user_events = create_mock_user_events()
+    for user_event in user_events: 
+        db.session.add(user_event)
     
-    db.session.commit()
-    user_to_delete = User.query.filter_by(username='testuser1').first()
-    if user_to_delete:
-        # Delete the user
-        db.session.delete(user_to_delete)
-        
+    # commit the changes
     db.session.commit()
