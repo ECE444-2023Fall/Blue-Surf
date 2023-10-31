@@ -20,7 +20,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
   };
 
   return (
-    <div className="col">
+    <div className="col" data-testid="post-card">
       <div className="card">
         <img
           src={postImage}
@@ -29,17 +29,22 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
         />
         <div className="card-body">
           <div className="d-flex justify-content-center">
-            <span className="h4 card-title text-center">
+            <span
+              className="h4 card-title text-center"
+              data-testid="post-title"
+            >
               {PostCardProps.title}
             </span>
           </div>
-          <p className="p text-center">
+          <p className="p text-center" data-testid="post-date-location">
             {PostCardProps.date.toDateString()} | {PostCardProps.location}
           </p>
-          <p className="card-text text-left">{PostCardProps.description}</p>
+          <p className="card-text text-left" data-testid="post-description">
+            {PostCardProps.description}
+          </p>
           <div className="row">
             <div className="col">
-              <span className="pill">
+              <span className="pill" data-testid="post-tags">
                 {PostCardProps.tags.map((tag: string, index: number) => (
                   <span className="pill-tag" key={index}>
                     {tag}
@@ -51,6 +56,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
               <button
                 className={`like-button ${isLiked ? "liked" : ""}`}
                 onClick={toggleLike}
+                data-testid="like-button"
               >
                 <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
               </button>
