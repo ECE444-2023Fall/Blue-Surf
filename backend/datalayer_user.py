@@ -30,10 +30,11 @@ class UserDataLayer():
         if username is None:
             logging.info('Username is empty')
             raise TypeError("Username should not be empty")
-        user_exists = User.query.filter_by(username=username).first()
+        with app.app_context():
+            user_exists = User.query.filter_by(username=username).first()
         if user_exists is not None:
             logging.info(f"Username {username} exists")
-            raise TypeError(f"User {username } already exists")
+            raise ValueError(f"Username {username } already exists")
         if len(username) > 255:
             logging.info("Username too long")
             raise ValueError("Username should be under 255 characters")
@@ -42,10 +43,11 @@ class UserDataLayer():
         if email is None:
             logging.info("Email is empty")
             raise TypeError("Email should not be empty")
-        email_exists = User.query.filter_by(username=email).first()
+        with app.app_context():
+            email_exists = User.query.filter_by(email=email).first()
         if email_exists is not None:
             logging.info(f"Email {email} exists")
-            raise TypeError(f"Email {email} already exists")
+            raise ValueError(f"Email {email} already exists")
         if len(email) > 255:
             logging.info("Email too long") 
             raise ValueError("Email should be under 255 characters") 
