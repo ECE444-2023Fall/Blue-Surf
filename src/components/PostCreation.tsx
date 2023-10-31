@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/PostCreation.css";
 import "../App.css"
 import ImageUpload from './ImageUpload';
-{/*import ImageUploadButton from './ImageUploadButton';
-import DisplayImageComponent from './DisplayImage';*/}
+//import ImageUploadButton from './ImageUploadButton';
+//import DisplayImage from './DisplayImage';
 
 {/*interface TagOptions{
     title: string; 
@@ -12,6 +12,12 @@ import DisplayImageComponent from './DisplayImage';*/}
 }*/}
 
 const PostCreation: React.FC = () => {
+
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
+  const handleImageUpload = (imageUrl: string) => {
+    setUploadedImageUrl(imageUrl);
+  };
 
   return (
     <div>
@@ -70,6 +76,9 @@ const PostCreation: React.FC = () => {
                 <label htmlFor="customFile" className="input-labels">Image</label>
                 <input type="file"  id="imageUpload" className="form-control image-upload-button" accept="image/*" />
               </div>
+              {/*<div className="image-upload">
+                <ImageUploadButton onImageUpload={handleImageUpload} />
+</div>*/}
               {/*<div>
                 <ImageUploadButton onImageUpload={handleImageUpload} />
             </div>*/}

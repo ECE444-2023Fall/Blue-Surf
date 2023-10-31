@@ -1,9 +1,13 @@
-import React from 'react';
+// DisplayImage.tsx
+{/*import React from 'react';
 
-const DisplayImageComponent: React.FC<{ uploadedImage: string | null }> = ({ uploadedImage }) => {
+interface DisplayImageProps {
+  uploadedImage: string | null;
+}
+
+const DisplayImage: React.FC<DisplayImageProps> = ({ uploadedImage }) => {
   return (
-    <div>
-      {/* Display the uploaded image if available */}
+    <div className="display-image-container">
       {uploadedImage && (
         <div className="uploaded-image">
           <img src={uploadedImage} alt="Uploaded" style={{ maxWidth: '100%' }} />
@@ -13,4 +17,4 @@ const DisplayImageComponent: React.FC<{ uploadedImage: string | null }> = ({ upl
   );
 };
 
-export default DisplayImageComponent;
+export default DisplayImage;*/}
