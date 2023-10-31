@@ -14,8 +14,6 @@ test('PostCard component renders with provided props', async () => {
     <PostCard title={title} date={date} location={location} description={description} tags={tags} />
   );
 
-  console.log(document.body.innerHTML);
-
   // Check if the title, date, location, description, and tags are rendered
   expect(screen.getByTestId('post-title')).toBeInTheDocument();
   expect(screen.getByTestId('post-date-location')).toBeInTheDocument();
