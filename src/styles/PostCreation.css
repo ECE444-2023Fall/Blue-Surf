@@ -60,7 +60,7 @@
 
 .input-boxes{
     border-radius: 15.34px;
-    border: 1.534px solid rgb(68, 42, 155);
+    border: 1.534px;
     background: #FFF;
     height: 50px;
 }
@@ -72,6 +72,7 @@
     background: #FFF;
     width: 70%;
     border-radius: 15.34px;
+    border-color: #000;
 }
 
 .save-delete{
@@ -113,7 +114,7 @@
 }
 
 .preview-container{
-    padding-left: 30%;
+    padding-left: 32.5%;
     padding-top: 5%;
 }
 
@@ -121,7 +122,7 @@
     position: relative;
     align-items: center;
     padding-top: 10%;
-    padding-left: 25%;
+    padding-left: 20%;
     background-color: #A0D1F2;
     /*padding-left: 30%;*/
 

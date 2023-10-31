@@ -44,7 +44,7 @@ const numberOfCards = 10;
 
 function App() {
   return (
-    <div className="custom-container">
+    /*<div className="custom-container">
       <div className="row">
         <div className="custom-col-md-3">
           {filterOptions.map((option, index) => (
@@ -68,10 +68,10 @@ function App() {
           </div>
         </div>
       </div>
-    </div>
-    /*<div>
-      <PostCreation />
     </div>*/
+    <div>
+      <PostCreation />
+    </div>
   );
 }
 

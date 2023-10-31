@@ -30,25 +30,17 @@ const PostCreation: React.FC = () => {
 
       {/* Content */}
       <div className="split-container">
-        <div className="right">
-        {/*<ImageUpload /> */}
-        {/*<div className="uploaded-image">
-                <img src="https://unsplash.it/600/400" alt="Uploaded" />
-        </div> */}
-        {/*<div>
-        <img id="resizedImage" src="" alt="Resized Image" />
-      </div>*/}
-        {/*<div className="uploaded-image">
-              <DisplayImageComponent uploadedImage={uploadedImage} />
-      </div>*/}
-      <div className="image-upload-button">
-            <ImageUpload />
-      </div>
+        <div className="left">
+        {uploadedImageUrl && (
+          <div className="uploaded-image">
+            <img src={uploadedImageUrl} alt="Uploaded" style={{ width: '400px', height: '500px' }} />
+          </div>
+        )}
           <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
           </div>
         </div>
-        <div className="left">
+        <div className="right">
           <div className="post-input">
             <form method="post" action="/">
               <div className="form-group">
@@ -73,14 +65,10 @@ const PostCreation: React.FC = () => {
               </div>
               <div className="image-upload">
                 <label htmlFor="customFile" className="input-labels">Image</label>
-                <input type="file"  id="imageUpload" className="form-control image-upload-button" accept="image/*" />
+                <div>
+                  <ImageUpload onImageUpload={handleImageUpload} />
+                </div>
               </div>
-              {/*<div className="image-upload">
-                <ImageUploadButton onImageUpload={handleImageUpload} />
-</div>*/}
-              {/*<div>
-                <ImageUploadButton onImageUpload={handleImageUpload} />
-            </div>*/}
               <div className="dropdown">
                 <select name="language" id="language">
                   <option value="Tags" selected>Tags</option>
@@ -91,8 +79,8 @@ const PostCreation: React.FC = () => {
                 </select>
               </div>
               <div className="save-delete">
-                <button type="button" className="save-button">Save</button>
-                <button type="button" className="delete-button">Delete</button>
+                <button type="submit" className="save-button" id="saveButton">Save</button>
+                <button type="button" className="delete-button" id="deleteButton">Delete</button>
               </div>
             </form>
           </div>

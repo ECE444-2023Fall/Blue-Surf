@@ -1,9 +1,13 @@
+// ImageUploadComponent.js
 import React, { useState } from 'react';
 import "../styles/PostCreation.css";
 
-const ImageUploadComponent: React.FC = () => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+interface ImageUploadProps {
+  onImageUpload: (imageUrl: string) => void;
+}
 
+const ImageUploadComponent: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -15,6 +19,7 @@ const ImageUploadComponent: React.FC = () => {
       reader.onload = (e) => {
         const dataURL = e.target?.result as string;
         setUploadedImage(dataURL);
+        onImageUpload(dataURL); // Call the callback to update the parent component
       };
 
       reader.readAsDataURL(file);
@@ -24,14 +29,14 @@ const ImageUploadComponent: React.FC = () => {
   return (
     <div>
       {/* Input for image upload */}
-      <input className="image-upload-button right" type="file" accept="image/*" onChange={handleImageUpload} /> 
+      <input className="image-upload-button right" type="file" accept="image/*" onChange={handleImageUpload} />
 
       {/* Display the uploaded image if available */}
-      {uploadedImage && (
+      {/*{uploadedImage && (
         <div className="uploaded-image">
-          <img src={uploadedImage} alt="Uploaded" style={{width: '400px', height: '500px'}} />
+          <img src={uploadedImage} alt="Uploaded" style={{ width: '400px', height: '500px' }} />
         </div>
-      )}
+      )}*/}
     </div>
   );
 };
