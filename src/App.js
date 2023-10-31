@@ -70,12 +70,12 @@ function App() {
         </div>
       </div>
     </div>*/
-    /*<div>
-      <PostCreation />
-    </div>*/
     <div>
-      <SignUp />
+      <PostCreation />
     </div>
+    /*<div>
+      <SignUp />
+    </div>*/
   );
 }
 
