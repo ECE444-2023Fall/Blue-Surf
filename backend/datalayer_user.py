@@ -27,7 +27,7 @@ class UserDataLayer():
     def create_user(self, username, email, password_hash, password_salt):
         user = User()
 
-        if username is None:
+        if username is None or len(username) == 0:
             logging.info('Username is empty')
             raise TypeError("Username should not be empty")
         with app.app_context():
@@ -40,7 +40,7 @@ class UserDataLayer():
             raise ValueError("Username should be under 255 characters")
         user.username = username 
 
-        if email is None:
+        if email is None or len(email) == 0:
             logging.info("Email is empty")
             raise TypeError("Email should not be empty")
         with app.app_context():

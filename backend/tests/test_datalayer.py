@@ -99,3 +99,79 @@ def test_add_duplicate_email(test_client):
     with app.app_context():
         assert User.query.filter_by(username='testuser3').first() != None
         assert User.query.filter_by(username='testuser4').first() == None
+
+def test_null_username(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username=None,
+            email="testuser5@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert str(type_error) == "Username should not be empty"
+    
+    with app.app_context():
+        assert User.query.filter_by(username=None).first() == None
+
+def test_null_email(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="testuser6",
+            email=None,
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert str(type_error) == "Email should not be empty"
+    
+    with app.app_context():
+        assert User.query.filter_by(email=None).first() == None
+
+def test_empty_username(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="",
+            email="testuser7@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert str(type_error) == "Username should not be empty"
+    
+    with app.app_context():
+        assert User.query.filter_by(username="").first() == None
+
+def test_empty_email(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="testuser6",
+            email="",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert str(type_error) == "Email should not be empty"
+    
+    with app.app_context():
+        assert User.query.filter_by(email="").first() == None
