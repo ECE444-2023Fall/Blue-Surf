@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
 import SortBy from "./components/SortBy";
-import CalanderDatePicker from "./components/CalanderDatePicker"
+import 'react-datepicker/dist/react-datepicker.css';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -34,7 +34,12 @@ const filterOptions = [
     title: "Club",
     values: ["All", "YNCN", "Dance Club", "Design Club", "Sport Club"],
   },
+  {
+    title: "Date",
+    values: [],
+  },
 ];
+
 
 const numberOfCards = 10;
 
@@ -50,9 +55,6 @@ function App() {
               values={option.values}
             />
           ))}
-          <div className="calander">
-            <CalanderDatePicker/>
-          </div>
         </div>
         <div className="col-md-9">
           <div className="row">
