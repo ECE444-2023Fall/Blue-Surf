@@ -56,3 +56,23 @@ h1 {
   margin-right: 5px;
   margin-bottom: 5px;
 }
+
+.like-button {
+  bottom: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.like-button i {
+  font-size: 24px;
+  color: #FF0000;
+  transition: transform 0.3s;
+}
+
+.like-button.liked i {
+  transform: scale(1.2);
+  color: #FF0000;
+}
