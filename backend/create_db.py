@@ -110,3 +110,7 @@ with app.app_context():
     
     # commit the changes
     db.session.commit()
+
+    user = User.query.filter_by(username='testuser4').first()
+    # retrieved_event = Event.query.filter_by(title="Test Event").first()
+    print(user)
