@@ -19,57 +19,55 @@ import logging
 '''
 
 class EventDataLayer():
-    def create_event(self,id, title, description, location, start_time, end_time, author_name, is_published, image):
+    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, image):
         event = Event()
 
-        # Setting the event title
-        if title is not None:
-            if len(title) < 256:
-                event.title = title
-            else:
-                logging.info('Title is too long. Characters exceed 255.')
-        else:
-            logging.info('Title is empty')
+        if title is None or len(title) == 0:
+            logging.info("Title should not be emtpy")
+            raise TypeError("Title should not be emtpy")
+        if len(title) > 255:
+            logging.info("Title should be under 255 characters")
+            raise ValueError("Title should be under 255 characters")
+        event.title = title
 
-        # Setting the event description
+        #TODO: Implement some checks for description?
         event.description = description
 
         # Setting the event location
-        if len(location) < 256:
-                event.location = location
-        else:
-            logging.info('Location is too long. Characters exceed 255.')
+        if len(location) > 255:
+            logging.info("Location should be under 255 characters")
+            raise ValueError("Location should be under 255 characters")
+        event.location = location
 
-        # Setting the event start_time
-        if start_time is not None:
-            try: 
-                temp_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                logging.info('Start time is not given in correct format')
-            event.start_time = datetime.strptime(temp_datetime, "%Y-%m-%d %H:%M:%S")
-        else: 
-            logging.info('Start time is empty')
+        if start_time is None:
+            logging.info("Start time should not be emtpy")
+            raise TypeError("Start time should not be emtpy")
+        try: 
+            temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            logging.info('Start time is not given in correct format')
+        event.start_time = temp_start_datetime
 
-        # Setting the event end time
-        if end_time is not None:
-            try: 
-                temp_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                logging.info('End time is not given in correct format')
-            event.end_time = datetime.strptime(temp_datetime, "%Y-%m-%d %H:%M:%S")
-        else:
-            logging.info('End time is empty')
+        if end_time is None:
+            logging.info("End time should not be emtpy")
+            raise TypeError("End time should not be emtpy")
+        try: 
+            temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            logging.info('End time is not given in correct format')
+        event.start_time = temp_end_datetime
 
-        # Setting the event author_id
-        author = User.query.filter_by(username=author_name).first()
-        if author is not None:
-            event.author_id = author.id
+        with app.app_context():
+            author = User.query.filter_by(username=author_name).first()
+        if author is None:
+            logging.info(f"Username {author} unable to post")
+            raise ValueError(f"Username {author } unable to post")
+        event.author_id = author.id
         
-        # Setting the event published state
-        if is_published is not None:
-            event.is_published = is_published
-        else: 
-            logging.info('Event is not published')
+        if is_published is None:
+            logging.info("Event was not published")
+            raise TypeError("Event was not published")
+        event.is_published = is_published
 
         with app.app_context():
             db.session.add(event)
