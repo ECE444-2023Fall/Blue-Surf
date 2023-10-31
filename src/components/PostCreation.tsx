@@ -12,6 +12,7 @@ import DisplayImageComponent from './DisplayImage';*/}
 }*/}
 
 const PostCreation: React.FC = () => {
+
   return (
     <div>
       {/* Head Content */}
@@ -29,15 +30,15 @@ const PostCreation: React.FC = () => {
         {/*<div className="uploaded-image">
                 <img src="https://unsplash.it/600/400" alt="Uploaded" />
         </div> */}
-        <div>
+        {/*<div>
         <img id="resizedImage" src="" alt="Resized Image" />
-        </div>
+      </div>*/}
         {/*<div className="uploaded-image">
               <DisplayImageComponent uploadedImage={uploadedImage} />
       </div>*/}
-          {/*<div className="image-upload-button">
+      <div className="image-upload-button">
             <ImageUpload />
-    </div>*/}
+      </div>
           <div className="preview-container">
             <button type="button" className="preview-button">See Preview</button>
           </div>
@@ -67,7 +68,7 @@ const PostCreation: React.FC = () => {
               </div>
               <div className="image-upload">
                 <label htmlFor="customFile" className="input-labels">Image</label>
-                <input type="file" className="form-control image-upload-button" accept="image/*" id="imageUpload" />
+                <input type="file"  id="imageUpload" className="form-control image-upload-button" accept="image/*" />
               </div>
               {/*<div>
                 <ImageUploadButton onImageUpload={handleImageUpload} />

@@ -4,6 +4,7 @@ import "../styles/PostCreation.css";
 const ImageUploadComponent: React.FC = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
 
@@ -23,12 +24,12 @@ const ImageUploadComponent: React.FC = () => {
   return (
     <div>
       {/* Input for image upload */}
-      <input className="image-upload-button right" type="file" accept="image/*" onChange={handleImageUpload} />
+      <input className="image-upload-button right" type="file" accept="image/*" onChange={handleImageUpload} /> 
 
       {/* Display the uploaded image if available */}
       {uploadedImage && (
         <div className="uploaded-image">
-          <img src={uploadedImage} alt="Uploaded" style={{ maxWidth: '100%' }} />
+          <img src={uploadedImage} alt="Uploaded" style={{width: '400px', height: '500px'}} />
         </div>
       )}
     </div>
