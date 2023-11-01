@@ -1,15 +1,26 @@
+import os
+from pathlib import Path
 from flask import Flask, render_template, request, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-bootstrap = Bootstrap(app)
-app.config["SECRET_KEY"] = "NEED TO CHANGE"
+basedir = Path(__file__).resolve().parent
 
-# SQLite
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
-# PostgreSQL database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
+# configuration
+DATABASE = "bluesurf-postgres.db"
+SECRET_KEY = "NEED TO CHANGE"
+
+url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
+
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql://", 1)
+
+SQLALCHEMY_DATABASE_URI = url
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+app = Flask(__name__)
+app.config.from_object(__name__)
+bootstrap = Bootstrap(app)
 
 # Initialize DB
 db = SQLAlchemy(app)
