@@ -39,7 +39,7 @@ h1 {
 
 .p {
   color: #757f8b;
-  font-family: "Outfit-Regular", Helvetica;
+  font-family: "Outfit", Helvetica;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -55,4 +55,24 @@ h1 {
 .pill-tag {
   margin-right: 5px;
   margin-bottom: 5px;
+}
+
+.like-button {
+  bottom: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.like-button i {
+  font-size: 24px;
+  color: #FF0000;
+  transition: transform 0.3s;
+}
+
+.like-button.liked i {
+  transform: scale(1.2);
+  color: #FF0000;
 }
