@@ -1,7 +1,6 @@
 import os
 from app import app, db
-from models import User, Event, Tag, UserInterestedEvent, EventTag
-from datetime import datetime
+from models import User
 import logging
 
 '''
