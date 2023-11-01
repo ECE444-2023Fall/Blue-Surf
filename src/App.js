@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
 import SortBy from "./components/SortBy"; 
-//import PostCreation from "./components/PostCreation"; 
+import PostCreation from "./components/PostCreation"; 
 //import SignUp from "./components/SignUp";
 
 // this is mock data, to be replaced later once database is setup
@@ -45,7 +45,7 @@ const numberOfCards = 10;
 
 function App() {
   return (
-    <div className="custom-container">
+    /*<div className="custom-container">
       <div className="row">
         <div className="custom-col-md-3">
           {filterOptions.map((option, index) => (
@@ -69,11 +69,11 @@ function App() {
           </div>
         </div>
       </div>
-    </div>
-    /*<div>
+    </div>*/
+    <div>
       <PostCreation />
     </div>
-    <div>
+    /*<div>
       <SignUp />
     </div>*/
   );
