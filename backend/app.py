@@ -40,12 +40,6 @@ def search():
     results = get_matched_events(query, detailed=True)
     return jsonify(results)
 
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    return render_template("login.html")
-
-
 @app.route("/register", methods=["GET", "POST"])
 def signup():
     return render_template("register.html")
