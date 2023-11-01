@@ -5,7 +5,6 @@ backend/venv/
 # Ignore Python bytecode cache
 backend/__pycache__/
 backend/tests/__pycache__/
-backend/mock_data/__pycache__/
 backend/models/__pycache__
 backend/tests/db/
 
