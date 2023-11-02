@@ -40,10 +40,6 @@ def search():
     results = get_matched_events(query, detailed=True)
     return jsonify(results)
 
-@app.route("/register", methods=["GET", "POST"])
-def signup():
-    return render_template("register.html")
-
 # TODO: Remove once database is setup
 mockEvents = [
   {
