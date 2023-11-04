@@ -1,6 +1,7 @@
 .SortBy {
     padding-bottom: 10px;
     padding-right: 10px;
+    margin-top: 15px;
   }
 
 .sort-dropdown {
@@ -13,7 +14,7 @@
 
 .sort-title {
     color: #000;
-    font-family: "Outfit-Regular", Helvetica;
+    font-family: "Outfit", Helvetica;
     font-size: 18px;
     font-style: normal;
     font-weight: 700;
