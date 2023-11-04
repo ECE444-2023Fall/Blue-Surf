@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./components/PostCard";
 import FilterField from "./components/FilterField";
 import SortBy from "./components/SortBy";
 import SearchBar from './components/SearchBar';
+import LoginPage from './components/LoginPage';
+import SignupPage from './components/SignupPage';
+import LandingPage from './components/LandingPage';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -51,7 +55,7 @@ function App() {
   };
 
   return (
-    <div className="custom-container">
+    /*<div className="custom-container">
       <div className="row">
         <div className="custom-col-md-3">
           {filterOptions.map((option, index) => (
@@ -80,6 +84,15 @@ function App() {
           </div>
         </div>
       </div>
+    </div>*/
+    <div>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage/>} />
+        <Route path="/login" element={<LoginPage/>} />
+        <Route path="/signup" element={<SignupPage/>} />
+      </Routes>
+      </BrowserRouter>
     </div>
   );
 }
