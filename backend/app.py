@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, jsonify
+import os 
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-app.config["SECRET_KEY"] = "NEED TO CHANGE"
+#app.config["SECRET_KEY"] = "NEED TO CHANGE"
+app.config["SECRET KEY"] = os.getenv('SECRET_KEY', 'my_precious')
+
 
 # SQLite
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
