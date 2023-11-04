@@ -31,3 +31,7 @@
   .right-align {
     margin-left: auto;
   }
+
+  .collapsed-navbar-align{
+    text-align: right;
+  }

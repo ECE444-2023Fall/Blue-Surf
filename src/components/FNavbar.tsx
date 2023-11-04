@@ -31,9 +31,11 @@ function FNavbar() {
         <LinkContainer to="/dashboard">
           <Nav.Link className="navbar-link-text">Dashboard</Nav.Link>
         </LinkContainer>
-        <Nav.Link className="navbar-link-text" onClick={logOut}>
-          Sign Out
-        </Nav.Link>
+        <LinkContainer to="/">
+          <Nav.Link className="navbar-link-text" onClick={logOut}>
+            Sign Out
+          </Nav.Link>
+        </LinkContainer>
         <p className="navbar-link-text my-2">
           {" "}
           <strong>{user.displayName}</strong>{" "}
@@ -42,7 +44,7 @@ function FNavbar() {
     );
   } else {
     renderNav = (
-      <div className="right-align">
+      <div className="right-align ml-auto">
         <LinkContainer to="/signin">
           <Nav.Link className="navbar-link-text bold" onClick={logIn}>
             Login / Sign Up
@@ -70,7 +72,12 @@ function FNavbar() {
         aria-controls="responsive-navbar-nav"
         className="mynavbar-toggle"
       />
-      <Navbar.Collapse id="responsive-navbar-nav">{renderNav}</Navbar.Collapse>
+      <Navbar.Collapse
+        id="responsive-navbar-nav"
+        className="collapsed-navbar-align"
+      >
+        {renderNav}
+      </Navbar.Collapse>
     </Navbar>
   );
 }
