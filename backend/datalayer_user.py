@@ -1,10 +1,10 @@
-import os
 from app import app, db
-from models import User, Event, Tag, UserInterestedEvent, EventTag
-from datetime import datetime
+from models import User
+from datalayer_abstract import DataLayer
 import logging
 
 '''
+class User:
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
@@ -23,52 +23,52 @@ import logging
     )
 '''
 
-class UserDataLayer():
+class UserDataLayer(DataLayer):
     def create_user(self, username, email, password_hash, password_salt):
         user = User()
 
         if username is None or len(username) == 0:
-            logging.info('Username is empty')
-            raise TypeError("Username should not be empty")
+            logging.info(f"Username {self.SHOULD_NOT_BE_EMPTY}")
+            raise TypeError(f"Username {self.SHOULD_NOT_BE_EMPTY}")
         with app.app_context():
             user_exists = User.query.filter_by(username=username).first()
         if user_exists is not None:
             logging.info(f"Username {username} exists")
-            raise ValueError(f"Username {username } already exists")
+            raise ValueError(f"Username {username} {self.ALREADY_EXISTS}")
         if len(username) > 255:
-            logging.info("Username too long")
-            raise ValueError("Username should be under 255 characters")
+            logging.info(f"Username {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
+            raise ValueError(f"Username {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
         user.username = username 
 
         if email is None or len(email) == 0:
-            logging.info("Email is empty")
-            raise TypeError("Email should not be empty")
+            logging.info(f"Email {self.SHOULD_NOT_BE_EMPTY}")
+            raise TypeError(f"Email {self.SHOULD_NOT_BE_EMPTY}")
         with app.app_context():
             email_exists = User.query.filter_by(email=email).first()
         if email_exists is not None:
-            logging.info(f"Email {email} exists")
-            raise ValueError(f"Email {email} already exists")
+            logging.info(f"Email {email} {self.ALREADY_EXISTS}")
+            raise ValueError(f"Email {email} {self.ALREADY_EXISTS}")
         if len(email) > 255:
-            logging.info("Email too long") 
-            raise ValueError("Email should be under 255 characters") 
+            logging.info(f"Email {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}") 
+            raise ValueError(f"Email {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}") 
         user.email = email
 
         #TODO: Come back to this for the password hashing algorithm/authentication.
         if password_hash is None or len(password_hash) == 0:
-            logging.info('Password_hash is empty')
-            raise TypeError("Password_hash should not be empty")
+            logging.info(f"Password_hash {self.SHOULD_NOT_BE_EMPTY}")
+            raise TypeError(f"Password_hash {self.SHOULD_NOT_BE_EMPTY}")
         if len(password_hash) > 255:
-            logging.info('Password_hash too long')  
-            raise ValueError("Password_hash should be under 255 characters") 
+            logging.info(f"Password_hash {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")  
+            raise ValueError(f"Password_hash {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}") 
         user.password_hash = password_hash
         
         #TODO: Come back to this for the password hashing algorithm/authentication.
         if password_salt is None or len(password_salt) == 0:
-            logging.info('Password_salt is empty')
-            raise TypeError("Password_salt should not be empty")
+            logging.info(f"Password_salt {self.SHOULD_NOT_BE_EMPTY}")
+            raise TypeError(f"Password_salt {self.SHOULD_NOT_BE_EMPTY}")
         if len(password_salt) > 255:
-            logging.info('Password_salt too long')  
-            raise ValueError("Password_salt should be under 255 characters") 
+            logging.info(f"Password_salt {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")  
+            raise ValueError(f"Password_salt {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}") 
         user.password_salt = password_salt
         
         with app.app_context():
