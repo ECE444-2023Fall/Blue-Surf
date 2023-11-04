@@ -1,0 +1,37 @@
+.mynavbar {
+    width: 100vw;
+    overflow-x: hidden !important;
+  }
+  
+  .navbar-toggler {
+    border: none !important;
+  }
+  
+  .navbar-brand-container {
+    font-weight: 600;
+  }
+  
+  .navbar-link-text {
+    font-size: 16px;
+    margin-left: 2rem;
+    opacity: 1 !important;
+    transition: opacity 0.3s ease;
+  }
+  
+  .sign-in-status {
+    padding: 8px !important;
+  }
+  
+  @media (max-width: 576px) {
+    .navbar-link-text {
+      margin-left: 0rem !important;
+    }
+  }
+
+  .right-align {
+    margin-left: auto;
+  }
+
+  .collapsed-navbar-align{
+    text-align: right;
+  }
