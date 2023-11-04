@@ -3,11 +3,11 @@ import '../styles/LoginPage.css'; // Import the corresponding CSS file
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
-interface LoginProps {
+/*interface LoginProps {
     setToken: (token: string | undefined) => void;
-  }
+  }*/
 
-const LoginPage: React.FC<LoginProps> = ({ setToken}) => {
+  const LoginPage: React.FC = () => {
   return (
     <div className="row">
         <div className="col-md-4">

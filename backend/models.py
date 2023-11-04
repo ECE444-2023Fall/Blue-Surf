@@ -1,4 +1,4 @@
-from app import db
+from app import app, db, bcrypt
 
 class User(db.Model):
     """
@@ -29,6 +29,14 @@ class User(db.Model):
         backref="interested_users",
         lazy=True,
     )
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = bcrypt.generate_password_hash(
+            password, app.config.get('BCRYPT_LOG_ROUNDS')
+        ).decode()
+
 
 
 class Event(db.Model):
