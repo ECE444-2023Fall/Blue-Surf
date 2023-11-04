@@ -14,8 +14,10 @@
     "font-awesome": "^4.7.0",
     "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.9.1",
     "react-autosuggest": "^10.1.0",
     "react-dom": "^18.2.0",
+    "react-router-bootstrap": "^0.26.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -43,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-router-bootstrap": "^0.26.5"
   }
 }
