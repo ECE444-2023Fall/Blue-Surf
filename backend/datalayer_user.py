@@ -1,8 +1,12 @@
 import os
+from flask_bcrypt import Bcrypt
+import jwt
 from app import app, db
 from models import User, Event, Tag, UserInterestedEvent, EventTag
 from datetime import datetime
 import logging
+
+bcrypt = Bcrypt()
 
 '''
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +28,43 @@ import logging
 '''
 
 class UserDataLayer():
+
+    # def __init__(self, username, email, password_hash):
+    #     self.username = username
+    #     self.email = email
+    #     self.password_hash = bcrypt.generate_password_hash(
+    #         password_hash, app.config.get('BCRYPT_LOG_ROUNDS')
+    #     ).decode()
+
+    
+    def encode_auth_token(self, user_id):
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+#Decode with API request to verify the user's authenticity" 
+    @staticmethod
+    def decode_auth_token(auth_token):
+    #Decodes the auth token :param auth_token::return: integer|string#
+        try:
+            payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
+
+
     def create_user(self, username, email, password_hash, password_salt):
         user = User()
 
@@ -60,7 +101,8 @@ class UserDataLayer():
         if len(password_hash) > 255:
             logging.info('Password_hash too long')  
             raise ValueError("Password_hash should be under 255 characters") 
-        user.password_hash = password_hash
+        #user.password_hash = password_hash
+        user.password_hash = bcrypt.generate_password_hash(password_hash, app.config.get('BCRYPT_LOG_ROUNDS')).decode()
         
         #TODO: Come back to this for the password hashing algorithm/authentication.
         if password_salt is None or len(password_salt) == 0:
