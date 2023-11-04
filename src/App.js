@@ -8,14 +8,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
   return (
     <Router>
-      <div className="custom-container">
-        <FNavbar />
-        <div className="content-container">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            {/* Define other routes here*/}
-          </Routes>
-        </div>
+      <FNavbar />
+      <div className="content-container">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          {/* Define other routes here*/}
+        </Routes>
       </div>
     </Router>
   );
