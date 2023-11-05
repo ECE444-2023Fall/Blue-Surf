@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+import json
+#from models import User
+from datetime import datetime, timedelta, timezone
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
+                               unset_jwt_cookies, jwt_required, JWTManager
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -8,6 +13,8 @@ app.config["SECRET_KEY"] = "NEED TO CHANGE"
 
 # SQLite
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
+#configure flask application instance 
+jwt = JWTManager(app)
 # PostgreSQL database
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
 
@@ -39,6 +46,35 @@ def search():
     query = request.args.get("query")
     results = get_matched_events(query, detailed=True)
     return jsonify(results)
+
+# @app.route('/token', methods=["POST"])
+# def create_token():
+#     data = request.get_json()
+#     email = data.get("email")
+#     password = data.get("password")
+
+#     if not email or not password:
+#         return jsonify({"msg": "Email and password are required"}), 400
+
+#     user = User.query.filter_by(email=email).first()
+
+#     if user and user.check_password(password):  # Assuming you have a method to check the password in your User model
+#         access_token = create_access_token(identity=email)
+#         response = {"access_token": access_token}
+#         return jsonify(response), 200
+
+#     return jsonify({"msg": "Wrong email or password"}), 401
+
+@app.route('/token', methods=["POST"])
+def create_token():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    if email != "test" or password != "test":
+        return {"msg": "Wrong email or password"}, 401
+
+    access_token = create_access_token(identity=email)
+    response = {"access_token":access_token}
+    return response
 
 # TODO: Remove once database is setup
 mockEvents = [
