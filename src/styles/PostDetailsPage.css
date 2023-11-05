@@ -64,6 +64,15 @@
     height: 42px;
 }
 
+.cancel-button {
+    margin-right: 5px;
+    border-radius: 8px;
+    border: 2px solid #C71818;
+    background: #FBDCDC;
+    width: 98px;
+    height: 42px;
+}
+
 .favourite-button {
     width: 183px;
     height: 45px;

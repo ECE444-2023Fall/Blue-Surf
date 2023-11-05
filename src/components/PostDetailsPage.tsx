@@ -9,7 +9,7 @@ const postImage = require("../assets/post1.jpeg");
 const PostDetailsPage: React.FC = () => {
   const { postId } = useParams();
   const postIdNumber = postId ? parseInt(postId) : 0;
-  
+
   const [post, setPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
@@ -50,6 +50,16 @@ const PostDetailsPage: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
+  const handleSave = () => {
+    // Perform the save action (e.g., send data to the server via POST)
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    // Revert any changes made in editing mode
+    setIsEditing(false);
+  };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -78,19 +88,22 @@ const PostDetailsPage: React.FC = () => {
           <span className="back-text">Back</span>
         </a>
         <div className="row m-2 justify-content-end">
-          <button className="edit-button" onClick={toggleEdit}>
-            {isEditing ? (
-              <>
+          {isEditing ? (
+            <>
+              <button className="cancel-button" onClick={handleCancel}>
+                Cancel
+              </button>
+              <button className="edit-button" onClick={handleSave}>
                 Save
                 <i className="fa fa-floppy-disk"></i>
-              </>
-            ) : (
-              <>
-                Edit
-                <i className="fa fa-pen-to-square"></i>
-              </>
-            )}
-          </button>
+              </button>
+            </>
+          ) : (
+            <button className="edit-button" onClick={toggleEdit}>
+              Edit
+              <i className="fa fa-pen-to-square"></i>
+            </button>
+          )}
         </div>
       </div>
 
@@ -98,16 +111,20 @@ const PostDetailsPage: React.FC = () => {
         <div className="col-md-6">
           <img src={imageSrc} className="card-img-top rounded-edge" alt="..." />
           <div className="row g-5 m-2 d-flex justify-content-center">
-            <input
-              type="file"
-              id="fileInput"
-              className="hidden-input"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="fileInput" className="custom-file-input">
-              Choose a File
-            </label>
+            {isEditing && (
+              <>
+                <input
+                  type="file"
+                  id="fileInput"
+                  className="hidden-input"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="fileInput" className="custom-file-input">
+                  Choose a File
+                </label>
+              </>
+            )}
           </div>
         </div>
 
