@@ -2,6 +2,7 @@ import os
 from app import app, db
 from models import User, Event, Tag, UserInterestedEvent, EventTag
 from datetime import datetime
+from flask import jsonify
 import logging
 
 '''
@@ -146,6 +147,11 @@ class EventDataLayer():
         #     logging.info("Event was not published")
         #     raise TypeError("Event was not published")
         # event.is_published = is_published
+
+    def get_all_events(self):
+        with app.app_context():
+            events = Event.query.all()
+            return events
 
 
             

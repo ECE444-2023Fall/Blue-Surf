@@ -42,7 +42,36 @@ def setup_routes(app):
       except Exception as e:
           error_message = str(e)
           return jsonify({"error": "Failed to update post", "error message":error_message}), 500
+    
+  @app.route("/api/", methods=["GET"])
+  def index():
+    try:
+        from datalayer_event import EventDataLayer
+        event_data = EventDataLayer()
+        events = event_data.get_all_events()
 
+        json_events = []
+
+        for event in events:
+            json_event = {
+                "id": event.id,
+                "title": event.title,
+                "description": event.description,
+                "location": event.location,
+                "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
+                "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
+                "author_id": event.author_id,
+                "is_published": event.is_published,
+                "like_count": event.like_count,
+                # Add other fields here as needed
+            }
+
+            json_events.append(json_event)
+
+        return jsonify(json_events)
+    except Exception as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to get all events", "error message": error_message}), 500
 
 # TODO: Remove once database is setup
 # TODO: add extendedDescription field, image url, 

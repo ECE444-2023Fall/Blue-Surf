@@ -67,9 +67,9 @@ def create_mock_events():
             image=image_data
         ),
         Event(
-            title="Test Event2",
-            description="Test Event Description2",
-            location="online",
+            title="Salsa Dance",
+            description="Come join us for a fun evening of salsa!",
+            location="Myhal 5th Floor",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
@@ -78,9 +78,31 @@ def create_mock_events():
             image=image_data
         ),
         Event(
-            title="Test Event3",
-            description="Test Event Description3",
-            location="online",
+            title="Origami",
+            description="Wouldn't you like to make some cranes?",
+            location="Bahen 8th Floor",
+            start_time=start_time,
+            end_time=end_time,
+            author_id=None,
+            is_published=True,
+            like_count=10,
+            image=image_data
+        ),
+        Event(
+            title="Soccer Practice",
+            description="Come join us for a friendly soccer match",
+            location="Varsity Stadium",
+            start_time=start_time,
+            end_time=end_time,
+            author_id=None,
+            is_published=True,
+            like_count=10,
+            image=image_data
+        ),
+        Event(
+            title="Skateboard contest",
+            description="May the best skateboarder win!",
+            location="Galbraith",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
