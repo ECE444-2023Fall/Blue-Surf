@@ -24,7 +24,15 @@ class User:
 '''
 
 class UserDataLayer(DataLayer):
+    '''
+    The UserDataLayer should be accessed by the rest of the code when trying to access the User table in the database.
+    '''
     def create_user(self, username, email, password_hash, password_salt):
+        '''
+        Create user validates the input before adding a new user to the database.
+        It checks for null fields, duplicate entries, and fields that exceed their character limit.
+        Expect TypeError or ValueError to be raised when calling this function, so use it in a try/except block.
+        '''
         user = User()
 
         if username is None or len(username) == 0:

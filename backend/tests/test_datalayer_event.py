@@ -5,10 +5,10 @@ import logging
 from .test_datalayer import test_client
 
 sys.path.append("../")
-from app import app, db
+from app import app
 from datalayer_user import UserDataLayer
 from datalayer_event import EventDataLayer
-from models import User, Event, UserInterestedEvent
+from models import User, Event
 
 def test_event_creation(test_client):
     user = UserDataLayer()
@@ -297,4 +297,3 @@ def test_null_published(test_client):
     with app.app_context():
         assert User.query.filter_by(username="testuser1").first() != None
         assert Event.query.filter_by(title="Event 1").first() == None
-

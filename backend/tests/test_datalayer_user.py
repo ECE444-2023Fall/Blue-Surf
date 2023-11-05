@@ -24,7 +24,7 @@ def test_user_creation(test_client):
     except TypeError as type_error:
         logging.debug(f'Error: {type_error}')
         assert type_error == None
-    
+     
     with app.app_context():
         assert User.query.filter_by(username="testuser1").first() != None
 

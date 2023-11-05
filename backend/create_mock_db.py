@@ -90,7 +90,31 @@ def create_mock_events():
     ]
     return events
     
-    
+def create_mock_tags():
+    tags = [
+        Tag(name="Academic"),
+        Tag(name="Career Development"),
+        Tag(name="Clubs & Organizations"),
+        Tag(name="Arts & Culture"),
+        Tag(name="Sports & Fitness"),
+        Tag(name="Volunteering"),
+        Tag(name="Social Events"),
+        Tag(name="Science & Technology"),
+        Tag(name="Health & Wellness"),
+        Tag(name="Community Awareness"),
+        Tag(name="Workshops & Seminars"),
+        Tag(name="Conferences"),
+        Tag(name="Food & Dining"),
+        Tag(name="Entertainment"),
+        Tag(name="Travel & Exploration"),
+        Tag(name="Environmental Initiatives"),
+        Tag(name="Music & Concerts"),
+        Tag(name="Fashion & Style"),
+        Tag(name="Tech Hackathons"),
+        Tag(name="LGBTQ+ & Inclusivity")
+    ]
+    return tags
+
 with app.app_context():
     # create the database and the db table
     db.drop_all()
@@ -108,9 +132,8 @@ with app.app_context():
     for user_event in user_events: 
         db.session.add(user_event)
     
+    tags = create_mock_tags()
+    for tag in tags:
+        db.session.add(tag)
     # commit the changes
     db.session.commit()
-
-    user = User.query.filter_by(username='testuser4').first()
-    # retrieved_event = Event.query.filter_by(title="Test Event").first()
-    print(user)

@@ -1,3 +1,4 @@
+import os
 import sys
 import pytest
 import logging
@@ -9,7 +10,14 @@ from app import app, db
 def test_client():
     app.config["TESTING"] = True
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tests/db/test_datalayer.db"
-    logging.basicConfig(level=logging.DEBUG)
+
+    # Get the directory of the current script
+    current_dir = os.getcwd() 
+
+    # Define the log file path
+    log_file = os.path.join(current_dir, "test_logs.txt")
+    logging.basicConfig(level=logging.DEBUG, filename=log_file)
+
     with app.app_context():
         if not hasattr(app, "extensions"):
             app.extensions = {}
@@ -24,3 +32,4 @@ def test_client():
         for table in reversed(db.metadata.sorted_tables):
             db.session.execute(table.delete())
         db.session.commit()
+        
