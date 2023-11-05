@@ -48,24 +48,6 @@ def search():
     results = get_matched_events(query, detailed=True)
     return jsonify(results)
 
-# @app.route('/token', methods=["POST"])
-# def create_token():
-#     data = request.get_json()
-#     email = data.get("email")
-#     password = data.get("password")
-
-#     if not email or not password:
-#         return jsonify({"msg": "Email and password are required"}), 400
-
-#     user = User.query.filter_by(email=email).first()
-
-#     if user and user.check_password(password):  # Assuming you have a method to check the password in your User model
-#         access_token = create_access_token(identity=email)
-#         response = {"access_token": access_token}
-#         return jsonify(response), 200
-
-#     return jsonify({"msg": "Wrong email or password"}), 401
-
 @app.after_request
 def refresh_expiring_jwts(response):
     try:
