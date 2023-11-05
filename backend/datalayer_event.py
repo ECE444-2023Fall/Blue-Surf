@@ -1,7 +1,8 @@
 from app import app, db
-from models import User, Event, Tag, UserInterestedEvent, EventTag
+from models import User, Event, Tag
 from datetime import datetime
 from datalayer_abstract import DataLayer
+from datalayer_tag import TagDataLayer
 import logging
 
 '''
@@ -19,7 +20,7 @@ class Event(db.Model):
 '''
 
 class EventDataLayer(DataLayer):
-    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, image):
+    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, image=None, tags=None):
         event = Event()
 
         if title is None or len(title) == 0:
@@ -67,18 +68,28 @@ class EventDataLayer(DataLayer):
 
         with app.app_context():
             author = User.query.filter_by(username=author_name).first()
-        if author is None:
-            logging.info(f"Username {author_name} {self.UNABLE_TO_POST}")
-            raise TypeError(f"Username {author_name} {self.UNABLE_TO_POST}")
-        event.author_id = author.id
-        
-        if is_published is None:
-            logging.info(f"Event {self.WAS_NOT_PUBLISHED}")
-            raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
-        event.is_published = is_published
+            if author is None:
+                logging.info(f"Username {author_name} {self.UNABLE_TO_POST}")
+                raise TypeError(f"Username {author_name} {self.UNABLE_TO_POST}")
+            event.author_id = author.id
 
-        with app.app_context():
+            if is_published is None:
+                logging.info(f"Event {self.WAS_NOT_PUBLISHED}")
+                raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
+            event.is_published = is_published
+
+            # Add the event to the database
             db.session.add(event)
             db.session.commit()
 
+            # Associate tags with the event
+            logging.warning(f"Tags is {tags}")
+            if tags:
+                for tag_name in tags:
+                    tag = Tag.query.filter_by(name=tag_name).first()
+                    if tag is not None:
+                        event.tags.append(tag) 
+
+            # Commit the changes to the session after adding tags
+            db.session.commit()
 

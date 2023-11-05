@@ -8,7 +8,8 @@ sys.path.append("../")
 from app import app
 from datalayer_user import UserDataLayer
 from datalayer_event import EventDataLayer
-from models import User, Event
+from datalayer_tag import TagDataLayer
+from models import User, Event, Tag
 
 def test_event_creation(test_client):
     user = UserDataLayer()
@@ -18,6 +19,9 @@ def test_event_creation(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
 
     event = EventDataLayer()
     try: 
@@ -30,6 +34,7 @@ def test_event_creation(test_client):
             author_name='testuser1',
             is_published=True,
             image=None,
+            tags=["Tag 1"]
         )
     except ValueError as value_error: 
         logging.debug(f'Error: {value_error}')
@@ -39,8 +44,13 @@ def test_event_creation(test_client):
         assert type_error == None
     
     with app.app_context():
-        assert User.query.filter_by(username="testuser1").first() != None
-        assert Event.query.filter_by(title="Event 1").first() != None
+        user = User.query.filter_by(username="testuser1").first()
+        assert user != None
+        event = Event.query.filter_by(title="Event 1").first()
+        assert event != None
+        tag = Tag.query.filter_by(name="Tag 1").first()
+        assert tag != None
+        assert tag in event.tags
 
 def test_null_location(test_client):
     user = UserDataLayer()

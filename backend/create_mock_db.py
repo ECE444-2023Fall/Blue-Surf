@@ -1,7 +1,7 @@
 # create_db.py
 import os
 from app import app, db
-from models import User, Event, Tag, UserInterestedEvent, EventTag
+from models import User, Event, Tag, UserInterestedEvent
 from datetime import datetime
 
 def create_mock_users():
@@ -54,7 +54,7 @@ def create_mock_events():
         image_data = image_file.read()
         
     events = [
-        Event(
+        (Event(
             title="Fall Career Week",
             description="Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
             location="online",
@@ -65,7 +65,8 @@ def create_mock_events():
             like_count=0,
             image=image_data
         ),
-        Event(
+        ["Career Developmment"]),
+        (Event(
             title="Test Event2",
             description="Test Event Description2",
             location="online",
@@ -76,7 +77,8 @@ def create_mock_events():
             like_count=5,
             image=image_data
         ),
-        Event(
+        ["Academic"]),
+        (Event(
             title="Test Event3",
             description="Test Event Description3",
             location="online",
@@ -87,6 +89,7 @@ def create_mock_events():
             like_count=10,
             image=image_data
         ),
+        ["Clubs & Organizations", "Arts & Culture"]),
     ]
     return events
     
@@ -123,17 +126,23 @@ with app.app_context():
     users = create_mock_users()
     for user in users: 
         db.session.add(user)
-        
-    events = create_mock_events()
-    for event in events:
-        db.session.add(event)
 
-    user_events = create_mock_user_events()
-    for user_event in user_events: 
-        db.session.add(user_event)
-    
     tags = create_mock_tags()
     for tag in tags:
         db.session.add(tag)
+        
+    events = create_mock_events()
+    for (event, tags) in events:
+        db.session.add(event)
+        for tag_name in tags:
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if tag is not None:
+                event.tags.append(tag)
+        
+    user_events = create_mock_user_events()
+    for user_event in user_events: 
+        db.session.add(user_event)
+
+    
     # commit the changes
     db.session.commit()
