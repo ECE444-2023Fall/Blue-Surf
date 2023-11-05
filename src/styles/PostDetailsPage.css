@@ -3,6 +3,11 @@
     font-family: Outfit;
     font-style: normal;
 }
+
+.background-colour {
+    background: rgba(255, 255, 255, 0.80);
+}
+
 .title {
     text-align: center;
     font-size: 64px;

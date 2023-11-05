@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, ChangeEvent } from "react";
-
+import "../styles/AutoSizeTextArea.css";
 interface AutoSizeTextAreaProps {
   content: string;
   onChange: (value: string) => void;

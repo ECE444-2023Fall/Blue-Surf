@@ -3,20 +3,19 @@ import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
+import AutoSizeTextArea from "./AutoSizeTextArea";
 const postImage = require("../assets/post1.jpeg");
 
 const PostDetailsPage: React.FC = () => {
   const { postId } = useParams();
   const postIdNumber = postId ? parseInt(postId) : 0;
-
-  // Define a state to store post data
+  
   const [post, setPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
 
   useEffect(() => {
     // Fetch the post data for the specified postId
-    // You can fetch data from an API or your data source here
 
     // For now, use mock data based on postId
     const mockData = {
@@ -31,19 +30,18 @@ const PostDetailsPage: React.FC = () => {
         club: "You’re Next Career Network - YNCN",
         tags: ["Professional Development"],
       },
-      // Define mock data for other postIds
     };
 
     // Check if the postId is valid and exists in your data
     if (!isNaN(postIdNumber) && postIdNumber in mockData) {
       setPost(mockData[0] as any);
     } else {
-      // Handle the case where the postId is invalid (e.g., show an error message)
+      // PostId is invalid
       console.error("Invalid postId:", postId);
     }
   }, [postId]);
 
-  // If the post data is not yet available, you can display a loading message
+  // Post data is not yet available
   if (!post) {
     return <div>Loading...</div>;
   }
@@ -67,7 +65,7 @@ const PostDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="container bg-white rounded-5 p-5 mt-2 mb-2">
+    <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
       <div className="row m-2">
         <a className="navbar-brand back-nav" href="javascript:history.back()">
           <img
@@ -117,10 +115,9 @@ const PostDetailsPage: React.FC = () => {
           <div className="container-styling">
             <div className="title">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.title}
-                  onChange={(e) => setPost({ ...post, title: e.target.value })}
+                <AutoSizeTextArea
+                  content={post.title}
+                  onChange={(value) => setPost({ ...post, title: value })}
                 />
               ) : (
                 post.title
@@ -128,12 +125,9 @@ const PostDetailsPage: React.FC = () => {
             </div>
             <div className="summary">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.description}
-                  onChange={(e) =>
-                    setPost({ ...post, description: e.target.value })
-                  }
+                <AutoSizeTextArea
+                  content={post.description}
+                  onChange={(value) => setPost({ ...post, description: value })}
                 />
               ) : (
                 post.description
@@ -149,11 +143,10 @@ const PostDetailsPage: React.FC = () => {
             <div className="subtitle">About</div>
             <div className="details">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.extendedDescription}
-                  onChange={(e) =>
-                    setPost({ ...post, extendedDescription: e.target.value })
+                <AutoSizeTextArea
+                  content={post.extendedDescription}
+                  onChange={(value) =>
+                    setPost({ ...post, extendedDescription: value })
                   }
                 />
               ) : (
@@ -163,10 +156,11 @@ const PostDetailsPage: React.FC = () => {
             <div className="subtitle">Date</div>
             <div className="details">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.date.toDateString()}
-                  onChange={(e) => setPost({ ...post, date: e.target.value })}
+                <AutoSizeTextArea
+                  content={post.date.toDateString()}
+                  onChange={(value) =>
+                    setPost({ ...post, date: new Date(value) })
+                  }
                 />
               ) : (
                 post.date.toDateString()
@@ -175,12 +169,9 @@ const PostDetailsPage: React.FC = () => {
             <div className="subtitle">Location</div>
             <div className="details">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.location}
-                  onChange={(e) =>
-                    setPost({ ...post, location: e.target.value })
-                  }
+                <AutoSizeTextArea
+                  content={post.location}
+                  onChange={(value) => setPost({ ...post, location: value })}
                 />
               ) : (
                 post.location
@@ -189,19 +180,16 @@ const PostDetailsPage: React.FC = () => {
             <div className="subtitle">Club</div>
             <div className="details">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={post.club}
-                  onChange={(e) => setPost({ ...post, club: e.target.value })}
+                <AutoSizeTextArea
+                  content={post.club}
+                  onChange={(value) => setPost({ ...post, club: value })}
                 />
               ) : (
                 post.club
               )}
             </div>
-            <div className="row g-5 m-2">
-              <button className="favourite-button d-flex justify-content-center">
-                Favourite?
-              </button>
+            <div className="row g-5 m-2 d-flex justify-content-center">
+              <button className="favourite-button ">Favourite?</button>
             </div>
           </div>
         </div>
