@@ -4,7 +4,7 @@ from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 from flask_bcrypt import bcrypt
 from app import app, db
-from models import User
+from models import User, BlacklistToken
 
 
 

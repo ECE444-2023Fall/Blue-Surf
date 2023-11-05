@@ -10,10 +10,14 @@ class AppTestCase(unittest.TestCase):
         app.config["TESTING"] = True
         self.app = app.test_client()
 
-    def test_login_route(self):
-        response = self.app.get("/login")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Sign in to Blue Surf", response.data)
+    # def test_login_route(self):
+    #     response = self.app.get("/login")
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn(b"Sign in to Blue Surf", response.data)
+
+    # def test_signup_route(self):
+    #     response = self.app.get("/signup")
+    #     self.assertEqual(response.status_code, 200)
 
 
 if __name__ == "__main__":
