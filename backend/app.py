@@ -76,6 +76,12 @@ def create_token():
     response = {"access_token":access_token}
     return response
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response
+
 # TODO: Remove once database is setup
 mockEvents = [
   {
