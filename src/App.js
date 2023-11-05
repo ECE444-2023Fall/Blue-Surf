@@ -4,7 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import FNavbar from "./components/FNavbar";
 import LandingPage from "./components/LandingPage";
 import useToken from "./components/useToken";
-import LoginPage from "./components/LoginPage";
+import LoginPage from './components/LoginPage'
+import Profile from './components/Profile'
+import Header from './components/Header'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {

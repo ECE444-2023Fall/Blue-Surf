@@ -2,26 +2,73 @@ import React, { useState } from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import axios from "axios";
 
 interface User {
   displayName: string;
 }
 
 function FNavbar() {
+
+  const [loginForm, setloginForm] = useState({
+    username: "",
+    password: ""
+  });
   // Test user placeholder until Auth is set up
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  const logIn = () => {
+ /* const logIn = () => {
     // TODO: Implement sign-in logic, e.g., using an authentication service.
     setUser({
       displayName: "Test User",
     });
-  };
+  };*/
 
-  const logOut = () => {
+  const logMeIn = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    axios({
+      method: "POST",
+      url: "/token",
+      data: {
+        username: loginForm.username,
+        password: loginForm.password,
+      },
+    })
+      .then((response) => {
+        setToken(response.data.access_token);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
+  }
+
+ const logOut = () => {
     // TODO: Implement sign-out logic.
     setUser(null);
   };
+
+  {/*const logOut = () => {
+    axios({
+      method: "POST",
+      url: "/logout",
+    })
+      .then((response) => {
+        props.token();
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
+  };*/}
 
   let renderNav: JSX.Element;
 
@@ -45,8 +92,8 @@ function FNavbar() {
   } else {
     renderNav = (
       <div className="right-align ml-auto">
-        <LinkContainer to="/signin">
-          <Nav.Link className="navbar-link-text bold" onClick={logIn}>
+        <LinkContainer to="/login">
+          <Nav.Link className="navbar-link-text bold" onClick={logMeIn}>
             Login / Sign Up
           </Nav.Link>
         </LinkContainer>

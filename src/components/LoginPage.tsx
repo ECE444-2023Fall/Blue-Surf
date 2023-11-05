@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import '../styles/LoginPage.css'; // Import the corresponding CSS file
+import axios from 'axios';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
-import axios from 'axios';
 
 const LoginPage: React.FC = () => {
     const [loginForm, setloginForm] = useState({
@@ -31,8 +31,11 @@ const LoginPage: React.FC = () => {
             password: loginForm.password,
           },
         })
+
           .then((response) => {
             setToken(response.data.access_token);
+            let toeken = setToken(response.data.access_token)
+            console.log(toeken)
           })
           .catch((error) => {
             if (error.response) {
