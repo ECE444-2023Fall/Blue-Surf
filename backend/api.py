@@ -1,6 +1,5 @@
-from app import app
 from flask import jsonify, request
-from datalayer_event import EventDataLayer
+# from datalayer_event import EventDataLayer
 
 def get_matched_events(query, detailed=False):
     if not query:
@@ -15,45 +14,34 @@ def get_matched_events(query, detailed=False):
         titles = [event['title'] for event in matched_events]
         return titles
 
+def setup_routes(app):
+  @app.route("/api/autosuggest", methods=["GET"])
+  def autosuggest():
+      query = request.args.get("query")
+      results = get_matched_events(query)
+      return jsonify(results)
 
-@app.route("/api/autosuggest", methods=["GET"])
-def autosuggest():
-    query = request.args.get("query")
-    results = get_matched_events(query)
-    return jsonify(results)
+  @app.route("/api/search", methods=["GET"])
+  def search():
+      query = request.args.get("query")
+      results = get_matched_events(query, detailed=True)
+      return jsonify(results)
 
-@app.route("/api/search", methods=["GET"])
-def search():
-    query = request.args.get("query")
-    results = get_matched_events(query, detailed=True)
-    return jsonify(results)
+  @app.route("/api/update-post/<int:post_id>", methods=["POST"])
+  def update_post(post_id):
+      try:
+          # Retrieve the updated post data from the request
+          updated_post = request.get_json()
+          print(updated_post)
 
-@app.route("/api/update-post/<int:post_id>", methods=["POST"])
-def update_post(post_id):
-    try:
-        # Retrieve the updated post data from the request
-        updated_post = request.get_json()
-        print(updated_post)
+          from datalayer_event import EventDataLayer
+          event_data = EventDataLayer()
+          event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], location=updated_post["location"])
 
-        # Update the post in your database (or mock data in your case)
-        # You'll need to replace this with actual database update code.
-        # For example, if you were using SQLAlchemy, you would do something like:
-        # existing_post = db.query(Post).filter_by(id=post_id).first()
-        # existing_post.title = updated_post["title"]
-        # ... (update other fields)
-        # db.commit()
-
-        # For now, we'll just update the mockEvents in your case
-        # for event in mockEvents:
-        #     if event["event_id"] == post_id:
-        #         event.update(updated_post)
-
-        event_data = EventDataLayer()
-        event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], location=updated_post["location"])
-
-        return jsonify({"message": "Post updated successfully"})
-    except Exception as e:
-        return jsonify({"error": "Failed to update post"}), 500
+          return jsonify({"message": "Post updated successfully"})
+      except Exception as e:
+          error_message = str(e)
+          return jsonify({"error": "Failed to update post", "error message":error_message}), 500
 
 
 # TODO: Remove once database is setup
