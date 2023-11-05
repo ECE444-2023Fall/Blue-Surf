@@ -55,6 +55,7 @@ def create_mock_events():
         
     events = [
         Event(
+            id=0,
             title="Fall Career Week",
             description="Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
             location="online",
