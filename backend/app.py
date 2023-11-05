@@ -1,7 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response, Blueprint
 import os 
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask.views import MethodView
+from flask_bcrypt import Bcrypt
+
+
+
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -16,6 +21,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
 
 # Initialize DB
 db = SQLAlchemy(app)
+# from views import auth_blueprint
+# app.register_blueprint(auth_blueprint)
 
 def get_matched_events(query, detailed=False):
     if not query:
