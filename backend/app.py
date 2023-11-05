@@ -9,7 +9,7 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-app.config["SECRET_KEY"] = "NEED TO CHANGE"
+app.config["JWT_SECRET_KEY"] = "NEED TO CHANGE"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 # SQLite
