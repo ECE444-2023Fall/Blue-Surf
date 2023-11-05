@@ -50,9 +50,31 @@ const PostDetailsPage: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Perform the save action (e.g., send data to the server via POST)
-    setIsEditing(false);
+    try {
+      // Send a POST request to the backend to update the post
+      const response = await fetch(`/api/update-post/${postId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post), // Send the updated post data
+      });
+
+      if (response.ok) {
+        // Handle success, e.g., show a success message
+        console.log("Post updated successfully!");
+        setIsEditing(false);
+      } else {
+        // Handle errors, e.g., show an error message
+        console.error("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    // setIsEditing(false);
   };
 
   const handleCancel = () => {
