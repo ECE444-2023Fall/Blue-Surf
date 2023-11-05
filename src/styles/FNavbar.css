@@ -1,7 +1,10 @@
 .mynavbar {
-    width: 100vw;
-    overflow-x: hidden !important;
-  }
+  width: 100vw;
+  overflow-x: hidden !important;
+  z-index: 100;
+  position: fixed;
+  background-color: #A0D1F2;
+}
   
   .navbar-toggler {
     border: none !important;
