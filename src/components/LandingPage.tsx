@@ -73,7 +73,7 @@ const LandingPage: React.FC = () => {
         </div>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
           {Array.from({ length: numberOfCards }).map((_, index) => (
-            <PostCard key={index} {...postCardData} />
+            <PostCard key={index} {...postCardData} postId={index} />
           ))}
         </div>
       </div>
