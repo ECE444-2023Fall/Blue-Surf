@@ -5,20 +5,28 @@ import PostCard from "../components/PostCard";
 
 test("PostCard component renders with provided props", async () => {
   const title = "Post Title";
-  const date = new Date();
+  const start_time = new Date();
   const location = "Location";
   const description = "Description";
   const tags = ["Tag1", "Tag2"];
-  const postId = 123;
+  const id = 123;
+  const author_id = 123;
+  const is_published = true;
+  const end_time = new Date();
+  const like_count = 0;
 
   render(
     <PostCard
-      postId={postId}
+      id={id}
       title={title}
-      date={date}
+      start_time={start_time}
       location={location}
       description={description}
       tags={tags}
+      author_id={author_id}
+      is_published={is_published}
+      end_time={end_time}
+      like_count={like_count}
     />
   );
 
@@ -36,20 +44,28 @@ test("PostCard component renders with provided props", async () => {
 
 test('Like button toggles "liked" class when clicked', async () => {
   const title = "Post Title";
-  const date = new Date();
+  const start_time = new Date();
   const location = "Location";
   const description = "Description";
   const tags = ["Tag1", "Tag2"];
-  const postId = 123;
+  const id = 123;
+  const author_id = 123;
+  const is_published = true;
+  const end_time = new Date();
+  const like_count = 0;
 
   render(
     <PostCard
-      postId={postId}
+      id={id}
       title={title}
-      date={date}
+      start_time={start_time}
       location={location}
       description={description}
       tags={tags}
+      author_id={author_id}
+      is_published={is_published}
+      end_time={end_time}
+      like_count={like_count}
     />
   );
 
