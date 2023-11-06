@@ -33,6 +33,24 @@ class UserInterestedLayer(DataLayer):
             db.session.add(user_interested)
             event_exists.like_count += 1 
             db.session.commit() 
+            
+    def delete_user_interested_by_id(self, user_id, event_id):
+        with app.app_context():
+            event_exists = Event.query.filter_by(id=event_id).first()
+            if event_exists is None:  
+                logging.info(f"Event {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event {self.DOES_NOT_EXIST}")      
+            user_interested_exists = UserInterestedEvent.query.filter_by(user_id=user_id, event_id=event_id).first()  
+            if user_interested_exists is None:
+                logging.info(f"User-event pair {self.DOES_NOT_EXIST}")
+            else:
+                db.session.delete(user_interested_exists)
+                event_exists.like_count -= 1
+                db.session.commit()
+                
+            
+            
+        
       
 
 
