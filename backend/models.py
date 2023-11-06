@@ -30,6 +30,13 @@ class User(db.Model):
         lazy=True,
     )
 
+# Create a many-to-many relationship between events and tags using a secondary table
+
+event_tags = db.Table(
+    "event_tags",
+    db.Column("event_id", db.Integer, db.ForeignKey("event.id"), primary_key=True),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
+)
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +49,9 @@ class Event(db.Model):
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
+    
+     # Define a many-to-many relationship with tags through the event_tags table
+    tags = db.relationship("Tag", secondary=event_tags)
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -50,9 +60,4 @@ class Tag(db.Model):
 class UserInterestedEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"))
-
-class EventTag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey("tag.id"))
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"))

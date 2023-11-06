@@ -21,7 +21,7 @@ backend/bluesurf-postgres.db
 /build
 
 # database instance
-backend/instance/
+backend/instance/bluesurf.db
 
 # misc
 .DS_Store
