@@ -6,45 +6,50 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 const postImage = require("../assets/post1.jpeg");
 
+const EXTENTDED_DESCRIPTION =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+interface Post {
+  title: string;
+  start_time: Date;
+  location: string;
+  description: string;
+  tags: string[];
+  id: number;
+  author_id: number;
+  is_published: boolean;
+  end_time: Date;
+  like_count: number;
+  club?: string;
+}
+
 const PostDetailsPage: React.FC = () => {
   const { postId } = useParams();
-  const postIdNumber = postId ? parseInt(postId) : 0;
 
-  const [post, setPost] = useState<any>(null);
-  const [editedPost, setEditedPost] = useState<any>(null);
+  const [post, setPost] = useState<Post>();
+  const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
 
   useEffect(() => {
-    // Fetch the post data for the specified postId
-
-    // For now, use mock data based on postId
-    const mockData = {
-      0: {
-        title: "Fall Career Week",
-        date: new Date(),
-        location: "Myhal 5th Floor",
-        description:
-          "Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
-        extendedDescription:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. RSVP HERE.",
-        club: "You’re Next Career Network - YNCN",
-        tags: ["Professional Development"],
-      },
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/${postId}`);
+        if (!response || !response.ok) {
+          throw new Error("Cannot fetch post.");
+        }
+        const data = await response.json();
+        setPost(data);
+        setEditedPost(data);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
     };
 
-    // Check if the postId is valid and exists in your data
-    if (!isNaN(postIdNumber) && postIdNumber in mockData) {
-      setPost(mockData[0] as any);
-      setEditedPost(mockData[0] as any);
-    } else {
-      // PostId is invalid
-      console.error("Invalid postId:", postId);
-    }
+    fetchData();
   }, [postId]);
 
   // Post data is not yet available
-  if (!post) {
+  if (!post || !editedPost) {
     return <div>Loading...</div>;
   }
 
@@ -176,37 +181,39 @@ const PostDetailsPage: React.FC = () => {
                 editedPost.description
               )}
             </div>
-            <span className="pill">
-              {editedPost.tags.map((tag: string, index: number) => (
+            {/* <span className="pill">
+              {post.tags.map((tag: string, index: number) => (
                 <span className="pill-tag" key={index}>
                   {tag}
                 </span>
               ))}
-            </span>
+            </span> */}
             <div className="subtitle">About</div>
             <div className="details">
               {isEditing ? (
+                // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
-                  content={editedPost.extendedDescription}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, extendedDescription: value })
-                  }
+                  content={EXTENTDED_DESCRIPTION}
+                  onChange={(value) => setEditedPost({ ...editedPost })}
                 />
               ) : (
-                editedPost.extendedDescription
+                EXTENTDED_DESCRIPTION
               )}
             </div>
             <div className="subtitle">Date</div>
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={editedPost.date.toDateString()}
+                  content={editedPost.start_time.toLocaleString()}
                   onChange={(value) =>
-                    setEditedPost({ ...editedPost, date: new Date(value) })
+                    setEditedPost({
+                      ...editedPost,
+                      start_time: new Date(value),
+                    })
                   }
                 />
               ) : (
-                editedPost.date.toDateString()
+                editedPost.start_time.toLocaleString()
               )}
             </div>
             <div className="subtitle">Location</div>
@@ -222,19 +229,23 @@ const PostDetailsPage: React.FC = () => {
                 editedPost.location
               )}
             </div>
-            <div className="subtitle">Club</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.club}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, club: value })
-                  }
-                />
-              ) : (
-                editedPost.club
-              )}
-            </div>
+            {editedPost.club && (
+              <div>
+                <div className="subtitle">Club</div>
+                <div className="details">
+                  {isEditing ? (
+                    <AutoSizeTextArea
+                      content={editedPost.club}
+                      onChange={(value) =>
+                        setEditedPost({ ...editedPost, club: value })
+                      }
+                    />
+                  ) : (
+                    editedPost.club
+                  )}
+                </div>
+              </div>
+            )}
             <div className="row g-5 m-2 d-flex justify-content-center">
               <button className="favourite-button">Favourite?</button>
             </div>
