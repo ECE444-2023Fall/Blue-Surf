@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginPage.css";
-import axios from "axios";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -24,28 +23,39 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     }));
   };
 
-  const logMeIn = (event: React.FormEvent) => {
+  const logMeIn = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    axios({
-      method: "POST",
-      url: "/api/token",
-      data: {
-        username: loginForm.username,
-        password: loginForm.password,
-      },
-    })
-      .then((response) => {
-        setToken(response.data.access_token);
-        navigate("/");
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
+    try {
+      const response = await fetch("/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: loginForm.username,
+          password: loginForm.password,
+        }),
       });
+
+      if (!response) {
+        throw new Error("Network response was not received successfully.");
+      }
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error(data.msg);
+        } else {
+          throw new Error("Network response was not ok.");
+        }
+      }
+
+      setToken(data.access_token);
+      navigate("/");
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
 
     setloginForm({
       username: "",

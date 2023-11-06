@@ -2,8 +2,6 @@ import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 interface FNavbarProps {
   token: string | null;
@@ -11,24 +9,31 @@ interface FNavbarProps {
 }
 
 const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
-  const navigate = useNavigate();
-
-  const logOut = () => {
-    axios({
-      method: "POST",
-      url: "/api/logout",
-    })
-      .then((response) => {
-        removeToken();
-        navigate("/login");
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
+  const logOut = async () => {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
+      if (!response) {
+        throw new Error("Network response was not received successfully.");
+      }
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const data = await response.json();
+      if (data && data.msg === "logout successful") {
+        removeToken();
+      } else {
+        throw new Error("Unexpected response message after logout");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
   let renderNav: JSX.Element;
