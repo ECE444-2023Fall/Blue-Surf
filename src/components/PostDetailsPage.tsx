@@ -11,6 +11,7 @@ const PostDetailsPage: React.FC = () => {
   const postIdNumber = postId ? parseInt(postId) : 0;
 
   const [post, setPost] = useState<any>(null);
+  const [editedPost, setEditedPost] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
 
@@ -35,6 +36,7 @@ const PostDetailsPage: React.FC = () => {
     // Check if the postId is valid and exists in your data
     if (!isNaN(postIdNumber) && postIdNumber in mockData) {
       setPost(mockData[0] as any);
+      setEditedPost(mockData[0] as any);
     } else {
       // PostId is invalid
       console.error("Invalid postId:", postId);
@@ -47,11 +49,14 @@ const PostDetailsPage: React.FC = () => {
   }
 
   const toggleEdit = () => {
+    if (isEditing) {
+      // If you're exiting edit mode, revert changes
+      setEditedPost({ ...post });
+    }
     setIsEditing(!isEditing);
   };
 
   const handleSave = async () => {
-    // Perform the save action (e.g., send data to the server via POST)
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`/api/update-post/${postId}`, {
@@ -59,26 +64,23 @@ const PostDetailsPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(post), // Send the updated post data
+        body: JSON.stringify(editedPost),
       });
 
       if (response.ok) {
-        // Handle success, e.g., show a success message
         console.log("Post updated successfully!");
         setIsEditing(false);
+        setPost({ ...editedPost });
       } else {
-        // Handle errors, e.g., show an error message
         console.error("Failed to update post.");
       }
     } catch (error) {
       console.error("Error:", error);
     }
-
-    // setIsEditing(false);
   };
 
   const handleCancel = () => {
-    // Revert any changes made in editing mode
+    setEditedPost({ ...post });
     setIsEditing(false);
   };
 
@@ -117,13 +119,11 @@ const PostDetailsPage: React.FC = () => {
               </button>
               <button className="edit-button" onClick={handleSave}>
                 Save
-                <i className="fa fa-floppy-disk"></i>
               </button>
             </>
           ) : (
             <button className="edit-button" onClick={toggleEdit}>
               Edit
-              <i className="fa fa-pen-to-square"></i>
             </button>
           )}
         </div>
@@ -155,25 +155,29 @@ const PostDetailsPage: React.FC = () => {
             <div className="title">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.title}
-                  onChange={(value) => setPost({ ...post, title: value })}
+                  content={editedPost.title}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, title: value })
+                  }
                 />
               ) : (
-                post.title
+                editedPost.title
               )}
             </div>
             <div className="summary">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.description}
-                  onChange={(value) => setPost({ ...post, description: value })}
+                  content={editedPost.description}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, description: value })
+                  }
                 />
               ) : (
-                post.description
+                editedPost.description
               )}
             </div>
             <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
+              {editedPost.tags.map((tag: string, index: number) => (
                 <span className="pill-tag" key={index}>
                   {tag}
                 </span>
@@ -183,52 +187,56 @@ const PostDetailsPage: React.FC = () => {
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.extendedDescription}
+                  content={editedPost.extendedDescription}
                   onChange={(value) =>
-                    setPost({ ...post, extendedDescription: value })
+                    setEditedPost({ ...editedPost, extendedDescription: value })
                   }
                 />
               ) : (
-                post.extendedDescription
+                editedPost.extendedDescription
               )}
             </div>
             <div className="subtitle">Date</div>
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.date.toDateString()}
+                  content={editedPost.date.toDateString()}
                   onChange={(value) =>
-                    setPost({ ...post, date: new Date(value) })
+                    setEditedPost({ ...editedPost, date: new Date(value) })
                   }
                 />
               ) : (
-                post.date.toDateString()
+                editedPost.date.toDateString()
               )}
             </div>
             <div className="subtitle">Location</div>
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.location}
-                  onChange={(value) => setPost({ ...post, location: value })}
+                  content={editedPost.location}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, location: value })
+                  }
                 />
               ) : (
-                post.location
+                editedPost.location
               )}
             </div>
             <div className="subtitle">Club</div>
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={post.club}
-                  onChange={(value) => setPost({ ...post, club: value })}
+                  content={editedPost.club}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, club: value })
+                  }
                 />
               ) : (
-                post.club
+                editedPost.club
               )}
             </div>
             <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button ">Favourite?</button>
+              <button className="favourite-button">Favourite?</button>
             </div>
           </div>
         </div>
