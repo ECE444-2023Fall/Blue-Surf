@@ -30,11 +30,11 @@ function App() {
 
           {token && token !== "" && token !== undefined ? (
             <Route
-              path="/profile"
+              path="/dashboard"
               element={<Profile token={token} setToken={setToken} />}
             />
           ) : (
-            <Route path="/profile" element={<Navigate to="/login" />} />
+            <Route path="/dashboard" element={<Navigate to="/login" />} />
           )}
 
           {/* Define other routes here */}
