@@ -3,6 +3,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FNavbar from "./components/FNavbar";
 import LandingPage from "./components/LandingPage";
+import PostDetailsPage from "./components/PostDetailsPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <div className="content-container">
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/post/:postId" element={<PostDetailsPage />} />
           {/* Define other routes here*/}
         </Routes>
       </div>
