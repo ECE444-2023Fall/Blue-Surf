@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 interface User {
@@ -15,6 +16,8 @@ interface FNavbarProps {
 
 const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
 
+  const navigate = useNavigate();
+
   const logOut = () => {
     axios({
       method: "POST",
@@ -22,6 +25,7 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
     })
       .then((response) => {
         removeToken()
+        navigate('/login');
       })
       .catch((error) => {
         if (error.response) {
