@@ -65,26 +65,35 @@ def refresh_expiring_jwts(response):
         # Case where there is not a valid JWT. Just return the original respone
         return response
 
-@app.route('/token', methods=["POST"])
+@app.route('/api/token', methods=["POST"])
 def create_token():
-    email = request.json.get("email", None)
+    email = request.json.get("username", None)
     password = request.json.get("password", None)
+
+    # Replace this with db query to see if there is a match with email and password (using hash and salt)
     if email != "test" or password != "test":
         return {"msg": "Wrong email or password"}, 401
+    
+    #Set this to what the userid is of the logged-in user (which can be found from query above with email and password)
+    id = 10
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=id)
     response = {"access_token":access_token}
     return response
 
-@app.route("/logout", methods=["POST"])
+@app.route("/api/logout", methods=["POST"])
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
 
-@app.route('/profile')
+@app.route('/api/profile')
 @jwt_required() #new line
 def my_profile():
+    
+    #Call get_jwt_identity() to fetch userid for the logged-in user
+    
+    #Replace with db query that will fetch data based on the userid 
     response_body = {
         "name": "Nagato",
         "about" :"Hello! I'm a full stack developer that loves python and javascript"

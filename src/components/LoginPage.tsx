@@ -1,55 +1,58 @@
 import React, { useState } from 'react';
-import '../styles/LoginPage.css'; // Import the corresponding CSS file
+import { useNavigate } from 'react-router-dom';
+import '../styles/LoginPage.css';
 import axios from 'axios';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+    setToken: (token: string | null) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({setToken}) => {
     const [loginForm, setloginForm] = useState({
         username: "",
         password: ""
       });
+      const navigate = useNavigate();
     
-      const [token, setToken] = useState<string | null>(null);
-    
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
         setloginForm((prevForm) => ({
-          ...prevForm,
-          [name]: value,
+            ...prevForm,
+            [name]: value,
         }));
-      };
+    };
     
-      const logMeIn = (event: React.FormEvent) => {
+    const logMeIn = (event: React.FormEvent) => {
         event.preventDefault();
-    
+
         axios({
-          method: "POST",
-          url: "/token",
-          data: {
+            method: "POST",
+            url: "/api/token",
+            data: {
             username: loginForm.username,
             password: loginForm.password,
-          },
+            },
         })
 
-          .then((response) => {
+        .then((response) => {
             setToken(response.data.access_token);
-            let toeken = setToken(response.data.access_token)
-            console.log(toeken)
-          })
-          .catch((error) => {
+            navigate('/');
+        })
+        .catch((error) => {
             if (error.response) {
-              console.log(error.response);
-              console.log(error.response.status);
-              console.log(error.response.headers);
+                console.log(error.response);
+                console.log(error.response.status);
+                console.log(error.response.headers);
             }
-          });
-    
-        setloginForm({
-          username: "",
-          password: "",
         });
-      };
+
+        setloginForm({
+            username: "",
+            password: "",
+        });
+    };
 
     
   return (
@@ -93,15 +96,7 @@ const LoginPage: React.FC = () => {
                         </button>
                     </div>
                 </form>
-                {token ? (
-                    <p className="login-subtext bottom-subtext">
-                    Logged in as: {token}
-                    </p>
-                ) : (
-                    <p className="login-subtext bottom-subtext">
-                    New to BlueSurf? <a href="/register">Join Now</a>
-                    </p>
-          )}
+                <p className="login-subtext bottom-subtext"> New to BlueSurf? <a href="/register">Join Now</a></p>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
@@ -8,36 +8,20 @@ interface User {
   displayName: string;
 }
 
-function FNavbar() {
+interface FNavbarProps {
+  token: string | null;
+  removeToken: () => void;
+}
 
-  const [loginForm, setloginForm] = useState({
-    username: "",
-    password: ""
-  });
-  // Test user placeholder until Auth is set up
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
 
- /* const logIn = () => {
-    // TODO: Implement sign-in logic, e.g., using an authentication service.
-    setUser({
-      displayName: "Test User",
-    });
-  };*/
-
-  const logMeIn = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const logOut = () => {
     axios({
       method: "POST",
-      url: "/token",
-      data: {
-        username: loginForm.username,
-        password: loginForm.password,
-      },
+      url: "/api/logout",
     })
       .then((response) => {
-        setToken(response.data.access_token);
+        removeToken()
       })
       .catch((error) => {
         if (error.response) {
@@ -46,33 +30,11 @@ function FNavbar() {
           console.log(error.response.headers);
         }
       });
-  }
-
- const logOut = () => {
-    // TODO: Implement sign-out logic.
-    setUser(null);
   };
-
-  {/*const logOut = () => {
-    axios({
-      method: "POST",
-      url: "/logout",
-    })
-      .then((response) => {
-        props.token();
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
-      });
-  };*/}
 
   let renderNav: JSX.Element;
 
-  if (user) {
+  if (token && token!=="" &&token!== undefined) {
     renderNav = (
       <Nav className="right-align">
         <LinkContainer to="/dashboard">
@@ -85,7 +47,7 @@ function FNavbar() {
         </LinkContainer>
         <p className="navbar-link-text my-2">
           {" "}
-          <strong>{user.displayName}</strong>{" "}
+          <strong>Test</strong>{" "}
         </p>
       </Nav>
     );
@@ -93,7 +55,7 @@ function FNavbar() {
     renderNav = (
       <div className="right-align ml-auto">
         <LinkContainer to="/login">
-          <Nav.Link className="navbar-link-text bold" onClick={logMeIn}>
+          <Nav.Link className="navbar-link-text bold">
             Login / Sign Up
           </Nav.Link>
         </LinkContainer>
