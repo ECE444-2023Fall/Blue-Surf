@@ -2,9 +2,8 @@ import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 
 interface FNavbarProps {
   token: string | null;
@@ -12,7 +11,6 @@ interface FNavbarProps {
 }
 
 const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
-
   const navigate = useNavigate();
 
   const logOut = () => {
@@ -21,8 +19,8 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
       url: "/api/logout",
     })
       .then((response) => {
-        removeToken()
-        navigate('/login');
+        removeToken();
+        navigate("/login");
       })
       .catch((error) => {
         if (error.response) {
@@ -35,7 +33,7 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
 
   let renderNav: JSX.Element;
 
-  if (token && token!=="" &&token!== undefined) {
+  if (token && token !== "" && token !== undefined) {
     renderNav = (
       <Nav className="right-align">
         <LinkContainer to="/dashboard">
@@ -46,11 +44,11 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
             Sign Out
           </Nav.Link>
         </LinkContainer>
-        <LinkContainer to="/profile" >
-        <p className="navbar-link-text my-2">
-          {" "}
-          <strong>Test</strong>{" "}
-        </p>
+        <LinkContainer to="/profile">
+          <p className="navbar-link-text my-2">
+            {" "}
+            <strong>Test</strong>{" "}
+          </p>
         </LinkContainer>
       </Nav>
     );
@@ -58,9 +56,7 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
     renderNav = (
       <div className="right-align ml-auto">
         <LinkContainer to="/login">
-          <Nav.Link className="navbar-link-text bold">
-            Login / Sign Up
-          </Nav.Link>
+          <Nav.Link className="navbar-link-text bold">Login / Sign Up</Nav.Link>
         </LinkContainer>
       </div>
     );
@@ -92,6 +88,6 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
       </Navbar.Collapse>
     </Navbar>
   );
-}
+};
 
 export default FNavbar;
