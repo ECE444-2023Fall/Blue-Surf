@@ -17,7 +17,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
 #configure flask application instance 
 jwt = JWTManager(app)
 # PostgreSQL database
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
 
 # Initialize DB
 db = SQLAlchemy(app)
@@ -103,8 +103,46 @@ def my_profile():
 
 
 
+@app.route("/api/update-post/<int:post_id>", methods=["POST"])
+def update_post(post_id):
+    try:
+        # Retrieve the updated post data from the request
+        updated_post = request.get_json()
+        print(updated_post)
+
+        # Update the post in your database (or mock data in your case)
+        # You'll need to replace this with actual database update code.
+        # For example, if you were using SQLAlchemy, you would do something like:
+        # existing_post = db.query(Post).filter_by(id=post_id).first()
+        # existing_post.title = updated_post["title"]
+        # ... (update other fields)
+        # db.commit()
+
+        # For now, we'll just update the mockEvents in your case
+        for event in mockEvents:
+            if event["event_id"] == post_id:
+                event.update(updated_post)
+
+        return jsonify({"message": "Post updated successfully"})
+    except Exception as e:
+        return jsonify({"error": "Failed to update post"}), 500
+
+
 # TODO: Remove once database is setup
+# TODO: add extendedDescription field, image url, 
 mockEvents = [
+    {
+    "event_id": 0,
+    "title": "Sample Event 0",
+    "description": "This is the first sample event.",
+    "location": "Sample Location 1",
+    "start_time": "2023-11-01T08:00:00",
+    "end_time": "2023-11-01T17:00:00",
+    "user_id": 1,
+    "is_published": True,
+    "is_public": True,
+    "like_count": 25
+  },
   {
     "event_id": 1,
     "title": "Sample Event 1",

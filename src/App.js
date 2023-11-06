@@ -7,6 +7,7 @@ import useToken from "./components/useToken";
 import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import Profile from './components/Profile'
+import PostDetailsPage from "./components/PostDetailsPage";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <div className="content-container">
         <Routes>
             <Route path="/" element={<LandingPage />} />
+          <Route path="/post/:postId" element={<PostDetailsPage />} />
             <Route path="/login" element={<LoginPage setToken={setToken} />} />
             <Route path="/register" element={<SignupPage />} />
 
