@@ -20,7 +20,7 @@ backend/tests/db/
 /build
 
 # database instance
-backend/instance/
+backend/instance/bluesurf.db
 
 # misc
 .DS_Store
