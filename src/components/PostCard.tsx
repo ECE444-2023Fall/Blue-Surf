@@ -56,13 +56,13 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
             </p>
             <div className="row">
               <div className="col">
-                <span className="pill" data-testid="post-tags">
-                  {/* {PostCardProps.tags.map((tag: string, index: number) => (
+                {/* <span className="pill" data-testid="post-tags">
+                  {PostCardProps.tags.map((tag: string, index: number) => (
                     <span className="pill-tag" key={index}>
                       {tag}
                     </span>
-                  ))} */}
-                </span>
+                  ))}
+                </span> */}
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>

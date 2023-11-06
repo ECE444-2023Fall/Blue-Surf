@@ -6,6 +6,8 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 const postImage = require("../assets/post1.jpeg");
 
+const EXTENTDED_DESCRIPTION =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 interface Post {
   title: string;
   start_time: Date;
@@ -23,8 +25,8 @@ interface Post {
 const PostDetailsPage: React.FC = () => {
   const { postId } = useParams();
 
-  const [post, setPost] = useState<any>(null);
-  const [editedPost, setEditedPost] = useState<any>(null);
+  const [post, setPost] = useState<Post>();
+  const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
 
@@ -37,6 +39,7 @@ const PostDetailsPage: React.FC = () => {
         }
         const data = await response.json();
         setPost(data);
+        setEditedPost(data);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
       }
@@ -46,7 +49,7 @@ const PostDetailsPage: React.FC = () => {
   }, [postId]);
 
   // Post data is not yet available
-  if (!post) {
+  if (!post || !editedPost) {
     return <div>Loading...</div>;
   }
 
@@ -190,26 +193,27 @@ const PostDetailsPage: React.FC = () => {
               {isEditing ? (
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
-                  content={editedPost.extendedDescription}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, extendedDescription: value })
-                  }
+                  content={EXTENTDED_DESCRIPTION}
+                  onChange={(value) => setEditedPost({ ...editedPost })}
                 />
               ) : (
-                editedPost.extendedDescription
+                EXTENTDED_DESCRIPTION
               )}
             </div>
             <div className="subtitle">Date</div>
             <div className="details">
               {isEditing ? (
                 <AutoSizeTextArea
-                  content={editedPost.date.toDateString()}
+                  content={editedPost.start_time.toLocaleString()}
                   onChange={(value) =>
-                    setEditedPost({ ...editedPost, date: new Date(value) })
+                    setEditedPost({
+                      ...editedPost,
+                      start_time: new Date(value),
+                    })
                   }
                 />
               ) : (
-                editedPost.date.toDateString()
+                editedPost.start_time.toLocaleString()
               )}
             </div>
             <div className="subtitle">Location</div>
@@ -225,14 +229,16 @@ const PostDetailsPage: React.FC = () => {
                 editedPost.location
               )}
             </div>
-            {post.club && (
+            {editedPost.club && (
               <div>
                 <div className="subtitle">Club</div>
                 <div className="details">
                   {isEditing ? (
                     <AutoSizeTextArea
                       content={editedPost.club}
-                      onChange={(value) => setEditedPost({ ...editedPost, club: value })}
+                      onChange={(value) =>
+                        setEditedPost({ ...editedPost, club: value })
+                      }
                     />
                   ) : (
                     editedPost.club
