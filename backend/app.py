@@ -51,18 +51,46 @@ def search():
     results = get_matched_events(query, detailed=True)
     return jsonify(results)
 
+@app.route("/api/update-post/<int:post_id>", methods=["POST"])
+def update_post(post_id):
+    try:
+        # Retrieve the updated post data from the request
+        updated_post = request.get_json()
+        print(updated_post)
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    return render_template("login.html")
+        # Update the post in your database (or mock data in your case)
+        # You'll need to replace this with actual database update code.
+        # For example, if you were using SQLAlchemy, you would do something like:
+        # existing_post = db.query(Post).filter_by(id=post_id).first()
+        # existing_post.title = updated_post["title"]
+        # ... (update other fields)
+        # db.commit()
 
+        # For now, we'll just update the mockEvents in your case
+        for event in mockEvents:
+            if event["event_id"] == post_id:
+                event.update(updated_post)
 
-@app.route("/register", methods=["GET", "POST"])
-def signup():
-    return render_template("register.html")
+        return jsonify({"message": "Post updated successfully"})
+    except Exception as e:
+        return jsonify({"error": "Failed to update post"}), 500
+
 
 # TODO: Remove once database is setup
+# TODO: add extendedDescription field, image url, 
 mockEvents = [
+    {
+    "event_id": 0,
+    "title": "Sample Event 0",
+    "description": "This is the first sample event.",
+    "location": "Sample Location 1",
+    "start_time": "2023-11-01T08:00:00",
+    "end_time": "2023-11-01T17:00:00",
+    "user_id": 1,
+    "is_published": True,
+    "is_public": True,
+    "like_count": 25
+  },
   {
     "event_id": 1,
     "title": "Sample Event 1",

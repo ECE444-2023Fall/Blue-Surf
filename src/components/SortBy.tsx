@@ -9,7 +9,7 @@ const SortBy: React.FC<SortByOptions> = (SortByOptions: any) => {
   return (
     <div className="d-flex justify-content-end align-items-center SortBy">
       <label className="sort-title">Sort by</label>
-      <select className="custom-select" id="sort-by">
+      <select className="sort-dropdown" id="sort-by">
         {SortByOptions.options.map((tag: string, index: number) => (
           <option key={index} value={tag}>
             {tag}

@@ -1,0 +1,106 @@
+.container-styling{
+    color: #000;
+    font-family: Outfit;
+    font-style: normal;
+}
+
+.background-colour {
+    background: rgba(255, 255, 255, 0.80);
+}
+
+.title {
+    text-align: center;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 66px;
+}
+
+.summary {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 27.5px; /* 85.938% */
+    margin-top: 35px;
+    margin-bottom: 10px;
+}
+
+.details {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.pill {
+    font-size: 11px;
+    border: 2px solid #072F5F;
+    background-color: #DCEEFB;
+    border-radius: 16px; 
+    padding: 4px 8px;
+    text-decoration: none;
+    padding-bottom: 5px;
+}
+
+.pill-tag {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.back-text {
+    padding-left: 5px;
+}
+
+.edit-button {
+    border-radius: 8px;
+    border: 2px solid #116D31;
+    background: #D1E8D9;
+    width: 98px;
+    height: 42px;
+}
+
+.cancel-button {
+    margin-right: 5px;
+    border-radius: 8px;
+    border: 2px solid #C71818;
+    background: #FBDCDC;
+    width: 98px;
+    height: 42px;
+}
+
+.favourite-button {
+    width: 183px;
+    height: 45px;
+    border-radius: 8px;
+    border: 3px solid #C71818;
+    background: #FBDCDC;
+    margin-top: 35px;
+    align-items: center;
+}
+
+.rounded-edge {
+    border-radius: 25px;
+}
+
+.hidden-input {
+    visibility: hidden;
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  
+.custom-file-input {
+    width: auto;
+    background-color: #DCEEFB;
+    border: 3px solid #072F5F;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 20px;
+}

@@ -1,0 +1,133 @@
+body {
+    background-color: #A0D1F2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.signup-container {
+    background-color: #DCEEFB;
+    padding: 20px;
+    border-radius: 49.09px;
+    text-align: center;
+    width: 100%;
+    min-width: 600px;
+    max-width: 600px;
+}
+
+.signup-btn {
+    background-color: #072F5F;
+    color: #FFFFFF;
+    font-family: 'Karla', sans-serif;
+    height: 50px;
+    width: 60%;
+    border: none;
+    border-radius: 15.341px;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 700;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.signup-btn:hover {
+    background-color: rgb(40, 96, 144);
+    color: #FFFFFF;
+}
+
+h1 {
+    color: #212B27;
+    text-align: center;
+    font-family: Karla, sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.signup-subtext, a {
+    color: #32403B;
+    text-align: center;
+    font-family: Karla, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.bottom-subtext {
+    margin-top: 10px;
+}
+
+.userinput {
+    margin-bottom: 23px;
+}
+
+#confirmPassword {
+    position: relative;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-top: 2px;
+    margin-bottom: 12px;
+}
+
+a {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: rgb(40, 96, 144);
+}
+
+.input-boxes {
+    border-radius: 15.34px;
+    border: 1.534px solid rgba(0, 0, 0, 0.10);
+    background: #FFF;
+    width: 100%;
+    height: 50px;
+}
+
+@media screen and (max-width: 768px){
+    .col-md-4 img{
+      display: none;
+    }
+    .col-md-4 {
+        display: none;
+    }
+    .image-container {
+        display: none;
+    }
+    .signup-container {
+        min-width: 393px;
+    }
+}
+
+.col-md-8 {
+    z-index: 1;
+}
+.col-md-4 {
+    position: relative;
+    pointer-events: none;
+    right: 200px;
+}
+
+.image-container {
+    position: relative;
+  }
+  
+.surf-image,
+.wave-image {
+    position: absolute;
+}
+  
+.surf-image {
+    z-index: 2;
+    left: 115px;
+}
+  
+.wave-image {
+    z-index: 0;
+    left: 7px;
+}
