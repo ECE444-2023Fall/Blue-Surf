@@ -46,28 +46,33 @@
 .custom-button {
     padding: 8px;
     background-color: #DCEEFB;
-    padding-right: 40px;
+    padding-right: 90px;
     border-radius: 14px;
     height: 60px;
     border-color: white;
     position: relative;
     width: 200px;
-  }
-  
-  .custom-button::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    right: 8px;
-    border-left: 5px solid transparent;
-    border-right: 9px solid transparent;
-    border-top: 5px solid #000; 
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-top: 1px solid white; 
+    border-bottom: 1px  solid white; 
   }
 
+  .custom-button::after {
+    padding: 8px;
+    background-color: #DCEEFB;
+    padding-right: 90px;
+    border-radius: 14px;
+    height: 60px;
+    border-color: black;
+    position: absolute;
+    width: 200px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black; 
+    border-bottom: 1px  solid black;  
+  }
+  
   .select-date-text {
     margin-right: 10px; 
   }
