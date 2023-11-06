@@ -87,7 +87,7 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
-@app.route('/api/profile')
+@app.route('/api/dashboard')
 @jwt_required() #new line
 def my_profile():
     

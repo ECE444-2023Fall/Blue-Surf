@@ -44,12 +44,10 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
             Sign Out
           </Nav.Link>
         </LinkContainer>
-        <LinkContainer to="/profile">
           <p className="navbar-link-text my-2">
             {" "}
             <strong>Test</strong>{" "}
           </p>
-        </LinkContainer>
       </Nav>
     );
   } else {
