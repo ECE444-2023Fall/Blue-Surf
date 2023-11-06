@@ -88,7 +88,7 @@ const LoginPage: React.FC<LoginPageProps> = ({setToken}) => {
                         onChange={handleChange}/>
                     </div>
                     <div className="form-group forgot-password-container">
-                        <a href="/forgot-password" className="forgot-password">Forgot password?</a>
+                        <a href="/register" className="forgot-password">Forgot password?</a>
                     </div>
                     <div className="form-group">
                         <button type="submit" className="login-btn" onClick={logMeIn}>
