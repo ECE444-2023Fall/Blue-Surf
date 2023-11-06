@@ -73,6 +73,30 @@ def setup_routes(app):
         error_message = str(e)
         return jsonify({"error": "Failed to get all events", "error message": error_message}), 500
 
+  @app.route("/api/<int:event_id>", methods=["GET"])
+  def get_event(event_id):
+    try:
+        from datalayer_event import EventDataLayer
+        event_data = EventDataLayer()
+        event = event_data.get_event_by_id(event_id)
+
+        json_event = {
+            "id": event.id,
+            "title": event.title,
+            "description": event.description,
+            "location": event.location,
+            "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "author_id": event.author_id,
+            "is_published": event.is_published,
+            "like_count": event.like_count,
+        }
+
+        return jsonify(json_event)
+    except Exception as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to get event", "error message": error_message}), 500
+        
 # TODO: Remove once database is setup
 # TODO: add extendedDescription field, image url, 
 mockEvents = [

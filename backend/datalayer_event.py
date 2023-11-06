@@ -152,6 +152,14 @@ class EventDataLayer():
         with app.app_context():
             events = Event.query.all()
             return events
+        
+    def get_event_by_id(self, id):
+        with app.app_context():
+            event = Event.query.filter_by(id=id).first()
+            if event is None:
+                logging.info(f"Event with id {id} does not exist")
+                raise ValueError(f"Event with id {id} does not exist")
+            return event
 
 
             
