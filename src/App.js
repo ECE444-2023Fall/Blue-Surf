@@ -10,8 +10,6 @@ import Profile from './components/Profile'
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
-  const { token, removeToken, setToken } = useToken();
-
   return (
     <Router>
       <FNavbar token={token} removeToken={removeToken}/>
