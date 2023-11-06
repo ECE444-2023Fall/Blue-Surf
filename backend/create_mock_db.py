@@ -142,7 +142,6 @@ with app.app_context():
     user_events = create_mock_user_events()
     for user_event in user_events: 
         db.session.add(user_event)
-
     
     # commit the changes
     db.session.commit()

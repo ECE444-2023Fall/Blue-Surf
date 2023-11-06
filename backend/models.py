@@ -61,8 +61,3 @@ class UserInterestedEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"))
-
-# class EventTag(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     tag_id = db.Column(db.Integer, db.ForeignKey("tag.id"))
-#     event_id = db.Column(db.Integer, db.ForeignKey("event.id"))

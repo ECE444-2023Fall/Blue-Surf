@@ -1,4 +1,5 @@
 class DataLayer():
+    DOES_NOT_EXIST = "does not exist"
     ALREADY_EXISTS = "already exists"
     SHOULD_NOT_BE_EMPTY = "should not be empty"
     SHOULD_BE_LESS_THAN_255_CHARACTERS = "should be less than 255 characters"
