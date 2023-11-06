@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-interface User {
-  displayName: string;
-}
 
 interface FNavbarProps {
   token: string | null;
