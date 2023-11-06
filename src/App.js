@@ -7,6 +7,7 @@ import SortBy from "./components/SortBy";
 import FNavbar from "./components/FNavbar";
 import { BrowserRouter as Router } from "react-router-dom";
 import SearchBar from "./components/SearchBar";
+import PersonalDashboard from "./components/PersonalDashboard"
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
