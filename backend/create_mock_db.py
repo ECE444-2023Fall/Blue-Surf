@@ -65,7 +65,7 @@ def create_mock_events():
             like_count=0,
             image=image_data
         ),
-        ["Career Developmment"]),
+        ["Career Development"]),
         (Event(
             title="Test Event2",
             description="Test Event Description2",
