@@ -3,6 +3,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 basedir = Path(__file__).resolve().parent
 
@@ -24,6 +25,7 @@ bootstrap = Bootstrap(app)
 
 # Initialize DB
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 def get_matched_events(query, detailed=False):
     if not query:
