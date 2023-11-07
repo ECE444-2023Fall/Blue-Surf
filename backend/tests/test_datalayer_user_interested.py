@@ -28,6 +28,7 @@ def test_user_interested_event(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -118,6 +119,7 @@ def test_user_not_exist(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -170,6 +172,7 @@ def test_user_interested_event_delete(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",

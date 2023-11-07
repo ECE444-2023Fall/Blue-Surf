@@ -28,6 +28,7 @@ def test_event_creation(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -67,6 +68,7 @@ def test_null_location(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location=None,
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -100,6 +102,7 @@ def test_null_start_time(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time=None,
             end_time="2023-10-03 4:00:00",
@@ -133,6 +136,7 @@ def test_incorrect_start_time_format(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03",
             end_time="2023-10-03 4:00:00",
@@ -166,6 +170,7 @@ def test_null_end_time(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 4:00:00",
             end_time=None,
@@ -199,6 +204,7 @@ def test_incorrect_end_time_format(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03",
@@ -232,6 +238,7 @@ def test_event_time(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 3:00:00",
@@ -265,6 +272,7 @@ def test_author_id(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -298,6 +306,7 @@ def test_null_published(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 4:00:00",
             end_time="2023-10-03 4:00:00",
@@ -330,6 +339,7 @@ def test_event_update(test_client):
     event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -373,6 +383,7 @@ def test_get_all_events(test_client):
     event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -384,6 +395,7 @@ def test_get_all_events(test_client):
     event.create_event(
             title="Event 2",
             description="Kickoff event 2 for club 2",
+            extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
             location="Vancouver",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -421,6 +433,7 @@ def test_event_by_id(test_client):
     event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
@@ -461,6 +474,7 @@ def test_null_club(test_client):
         event.create_event(
             title="Event 1",
             description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",

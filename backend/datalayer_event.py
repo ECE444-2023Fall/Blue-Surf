@@ -22,7 +22,7 @@ class Event(db.Model):
 '''
 
 class EventDataLayer(DataLayer):
-    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
+    def create_event(self, title, description, extended_description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
         event = Event()
 
         if title is None or len(title) == 0:
@@ -35,6 +35,9 @@ class EventDataLayer(DataLayer):
 
         #TODO: Implement some checks for description?
         event.description = description
+        
+        #TODO: Implement some checks for extended description?
+        event.extended_description = extended_description
 
         if location is None or len(location) == 0:
             logging.info(f"Location {self.SHOULD_NOT_BE_EMPTY}")
