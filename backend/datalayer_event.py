@@ -17,10 +17,11 @@ class Event(db.Model):
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
+    club = db.Column(db.String(255))
 '''
 
 class EventDataLayer(DataLayer):
-    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, image=None, tags=None):
+    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
         event = Event()
 
         if title is None or len(title) == 0:
@@ -65,6 +66,9 @@ class EventDataLayer(DataLayer):
             raise ValueError("Start time should be after end time")
         event.start_time = temp_start_datetime
         event.end_time = temp_end_datetime
+        
+        #TODO: Implement some checks for club?
+        event.club = club
 
         with app.app_context():
             author = User.query.filter_by(username=author_name).first()

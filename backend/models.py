@@ -49,6 +49,7 @@ class Event(db.Model):
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
+    club = db.Column(db.String(255))
     
      # Define a many-to-many relationship with tags through the event_tags table
     tags = db.relationship("Tag", secondary=event_tags)

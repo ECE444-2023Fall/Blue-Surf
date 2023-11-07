@@ -32,6 +32,7 @@ def test_user_interested_event(test_client):
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
             author_name='testuser1',
+            club="Club 1",
             is_published=True,
             image=None,
             tags=["Tag 1"]
@@ -121,6 +122,7 @@ def test_user_not_exist(test_client):
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
             author_name="testuser1",
+            club="Club 1",
             is_published=True,
             image=None,
             tags=["Tag 1"]
@@ -172,6 +174,7 @@ def test_user_interested_event_delete(test_client):
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
             author_name='testuser1',
+            club="Club 1",
             is_published=True,
             image=None,
             tags=["Tag 1"]
