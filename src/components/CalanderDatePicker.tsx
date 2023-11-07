@@ -5,8 +5,8 @@ import "../styles/FilterField.css";
 
 
 const CalanderDatePicker: React.FC = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -21,7 +21,12 @@ const CalanderDatePicker: React.FC = () => {
   return (
     <div>
     <button onClick={toggleDropdown} className="custom-button">
-      <span className="select-date-text">Select Date</span>
+      <span className="select-date-text">
+        {startDate && endDate && startDate !== endDate ?
+          `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`
+          : (startDate ? startDate.toLocaleDateString() : "Select Date")
+        }
+      </span>
       {dropdownOpen && (
         <div className="calendar-container">
           <DatePicker
