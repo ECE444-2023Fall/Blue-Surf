@@ -38,5 +38,12 @@ class TagDataLayer(DataLayer):
                 db.session.commit()
         else:
             logging.warning(f"Tag {tag_name} {self.ALREADY_EXISTS}")
+            
+    def get_tag_names_by_ids(self, tag_ids):
+        '''
+        Fetch the tag names for the collected tag IDs
+        '''
+        tags = db.session.query(Tag).filter(Tag.id.in_(tag_ids)).all()
+        return [tag.name for tag in tags]
 
 

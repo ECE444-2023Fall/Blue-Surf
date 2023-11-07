@@ -180,3 +180,7 @@ class EventDataLayer(DataLayer):
                 logging.info(f"Event with id {id} does not exist")
                 raise ValueError(f"Event with id {id} does not exist")
             return event
+        
+    def get_tag_ids_for_event(self, event_id):
+        event_tags = db.session.query(event_tags).filter_by(event_id=event_id).all()
+        return [event_tag.tag_id for event_tag in event_tags]

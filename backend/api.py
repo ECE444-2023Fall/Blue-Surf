@@ -47,12 +47,17 @@ def setup_routes(app):
   def index():
     try:
         from datalayer_event import EventDataLayer
+        from datalayer_tag import TagDataLayer
         event_data = EventDataLayer()
+        tag_data = TagDataLayer()
         events = event_data.get_all_events()
 
         json_events = []
 
         for event in events:
+            event_tag_ids = event_data.get_tag_ids_for_event(event.id)
+            tag_names = tag_data.get_tag_names_by_ids(event_tag_ids)
+          
             json_event = {
                 "id": event.id,
                 "title": event.title,
@@ -65,6 +70,7 @@ def setup_routes(app):
                 "club": event.club,
                 "is_published": event.is_published,
                 "like_count": event.like_count,
+                "tags": tag_names,
                 # Add other fields here as needed
             }
 
@@ -79,8 +85,12 @@ def setup_routes(app):
   def get_event(event_id):
     try:
         from datalayer_event import EventDataLayer
+        from datalayer_tag import TagDataLayer
         event_data = EventDataLayer()
         event = event_data.get_event_by_id(event_id)
+        event_tag_ids = event_data.get_tag_ids_for_event(event_id)
+        tag_data = TagDataLayer()
+        tag_names = tag_data.get_tag_names_by_ids(event_tag_ids)
 
         json_event = {
             "id": event.id,
@@ -94,6 +104,7 @@ def setup_routes(app):
             "club": event.club,
             "is_published": event.is_published,
             "like_count": event.like_count,
+            "tags": tag_names,
         }
 
         return jsonify(json_event)
