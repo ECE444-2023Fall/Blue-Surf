@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 import json
+import bcrypt
 # from datalayer_event import EventDataLayer
 
 def get_matched_events(query, detailed=False):
@@ -143,15 +144,18 @@ def setup_routes(app):
   @app.route("/api/register", methods=["POST"])
   def signup():
       try:
-          # Retrieve the updated post data from the request
-          # updated_post = request.get_json()
-          # print(updated_post)
+        username = request.json.get("username", None)
+        email = request.json.get("email", None)
+        password = request.json.get("password", None)
 
-          from datalayer_user import UserDataLayer
-          user_data = UserDataLayer()
-          user_data.create_user()
+        salt = bcrypt.gensalt()
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
-          return jsonify({"message": "User created successfully"})
+        from datalayer_user import UserDataLayer
+        user_data = UserDataLayer()
+        user_data.create_user(username=username, email=email, password_hash=password_hash, password_salt=salt.decode('utf-8'))
+
+        return jsonify({"message": "User created successfully"})
       except Exception as e:
           error_message = str(e)
           return jsonify({"error": "Failed to create user", "error message":error_message}), 500

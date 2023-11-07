@@ -117,17 +117,18 @@ a:hover {
     position: relative;
   }
   
-.surf-image,
-.wave-image {
+.surf-image-signup,
+.wave-image-signup {
     position: absolute;
+    top: 100px;
 }
   
-.surf-image {
+.surf-image-signup {
     z-index: 2;
     left: 115px;
 }
   
-.wave-image {
+.wave-image-signup {
     z-index: 0;
     left: 7px;
 }
