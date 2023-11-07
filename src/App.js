@@ -21,7 +21,6 @@ function App() {
   return (
     <Router>
       <FNavbar token={token} removeToken={removeToken} />
-      <div className="content-container">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/post/:postId" element={<PostDetailsPage />} />
@@ -40,7 +39,6 @@ function App() {
           {/* Define other routes here */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </div>
     </Router>
   );
 }
