@@ -11,6 +11,14 @@ const SignupPage: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const [errorMessages, setErrorMessages] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,10 +31,29 @@ const SignupPage: React.FC = () => {
 
   const signMeUp = async (event: React.FormEvent) => {
     event.preventDefault();
+    const errorMessages = validate()
+    setErrorMessages(errorMessages);
+
 
     // TODO: Should add a proper way to notify the user that their passwords do not match
     if (registerForm.password !== registerForm.confirmPassword) {
       console.error("Passwords do not match");
+      return;
+    }
+
+    if (registerForm.password.length < 8) {
+      console.error("Password is too short");
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(registerForm.email)) {
+      console.error("Invalid email format");
+      return;
+    }
+
+
+    if ((!registerForm.email) || (!registerForm.username) || (!registerForm.password) || (!registerForm.confirmPassword)) {
+      console.error("Missing fields");
       return;
     }
 
@@ -65,6 +92,57 @@ const SignupPage: React.FC = () => {
       confirmPassword: "",
     });
   };
+
+  const validate = () => {
+    const error = {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",   
+    };
+
+    if(!registerForm.username){
+      error.username = "Username is required";
+    }
+    else{
+      error.username = "";
+    }
+
+    if(!registerForm.email){
+      error.email = "Email is required";
+    }
+    else if(!/^\S+@\S+\.\S+$/.test(registerForm.email)){
+      error.email = "Invalid email format"
+    }
+    else{
+      error.email = ""; 
+    }
+
+    if(!registerForm.password){
+      error.password = "Password is required";
+    }
+    else if(registerForm.password.length < 8){
+      error.password = "Password is too short"
+    }
+    else{
+      error.password = ""; 
+    }
+
+    if(!registerForm.confirmPassword){
+      error.confirmPassword = "Please confirm password"; 
+    }
+    else if (registerForm.password !== registerForm.confirmPassword){
+      error.confirmPassword = "Passwords do not match";
+    }
+    else{
+      error.confirmPassword="";
+    }
+
+    return error; 
+  }
+
+    
+
   return (
     <div className="signup-page-wrapper">
       <div className="row">
@@ -91,6 +169,7 @@ const SignupPage: React.FC = () => {
                   value={registerForm.username}
                   onChange={handleChange}
                 />
+                {errorMessages.username && <div className="error">{errorMessages.username}</div>}
               </div>
               <div className="form-group userinput">
                 <input
@@ -102,6 +181,7 @@ const SignupPage: React.FC = () => {
                   value={registerForm.email}
                   onChange={handleChange}
                 />
+                {errorMessages.email && <div className="error">{errorMessages.email}</div>}
               </div>
               <div className="form-group userinput">
                 <input
@@ -113,6 +193,7 @@ const SignupPage: React.FC = () => {
                   value={registerForm.password}
                   onChange={handleChange}
                 />
+                {errorMessages.password && <div className="error">{errorMessages.password}</div>}
               </div>
               <div className="form-group">
                 <input
@@ -124,6 +205,7 @@ const SignupPage: React.FC = () => {
                   value={registerForm.confirmPassword}
                   onChange={handleChange}
                 />
+                {errorMessages.confirmPassword && <div className="error">{errorMessages.confirmPassword}</div>}
               </div>
               <div className="form-group">
                 <button type="submit" className="signup-btn" onClick={signMeUp}>

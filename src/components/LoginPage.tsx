@@ -13,6 +13,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     userIdentifier: "",
     password: "",
   });
+
+  const [errorMessages, setErrorMessages] = useState({
+    userIdentifier: "",
+    password: "",
+  });
+
+  
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +30,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     }));
   };
 
+  
+
   const logMeIn = async (event: React.FormEvent) => {
     event.preventDefault();
+    const errorMessages = validate()
+    setErrorMessages(errorMessages);
 
+
+
+    if ((!loginForm.userIdentifier) || (!loginForm.password)) {
+      console.error("Missing fields");
+      return;
+    }
+  
     try {
       const response = await fetch("/api/token", {
         method: "POST",
@@ -63,6 +81,31 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     });
   };
 
+  const validate = () => {
+    const error = {
+      userIdentifier: "",
+      password: "", 
+    };
+
+    if(!loginForm.userIdentifier){
+      error.userIdentifier = "Username or email is required";
+    }
+    else{
+      error.userIdentifier = "";
+    }
+
+    if(!loginForm.password){
+      error.password = "Password is required";
+    }
+    else{
+      error.password = ""; 
+    }
+
+    return error; 
+  }
+  
+
+
   return (
     <div className="login-page-wrapper">
       <div className="row">
@@ -89,6 +132,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                   value={loginForm.userIdentifier}
                   onChange={handleChange}
                 />
+                {errorMessages.userIdentifier && <div className="error">{errorMessages.userIdentifier}</div>}
               </div>
               <div className="form-group">
                 <input
@@ -100,6 +144,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                   value={loginForm.password}
                   onChange={handleChange}
                 />
+                {errorMessages.password && <div className="error">{errorMessages.password}</div>}
               </div>
               <div className="form-group forgot-password-container">
                 <a href="/register" className="forgot-password">
