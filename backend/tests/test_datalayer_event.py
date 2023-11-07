@@ -430,3 +430,74 @@ def test_event_by_id(test_client):
     
     with app.app_context():
         assert event.title == "Event 1"
+
+def test_search_by_keyword(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    user.create_user(
+        username="testuser2",
+        email="testuser2@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    user.create_user(
+        username="testuser3",
+        email="testuser3@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    event = EventDataLayer()
+    event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name='testuser1',
+            is_published=True,
+            image=None,
+        )
+    event.create_event(
+            title="Sample Text",
+            description="Kickoff for club 2",
+            location="Evergreen",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name='testuser2',
+            is_published=True,
+            image=None,
+        )
+    event.create_event(
+            title="Sample Text",
+            description="Join us at our event in the Pit!",
+            location="London",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name='testuser3',
+            is_published=True,
+            image=None,
+        )
+    
+    try:
+        query_results = event.get_search_results_by_keyword(keyword='Eve') 
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert len(query_results) == 3
+        assert query_results[0].title == "Event 1"
+        assert query_results[1].location == "Evergreen"
+        assert query_results[2].description == "Join us at our event in the Pit!"
+
+
+
+    
