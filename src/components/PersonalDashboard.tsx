@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../App.css";
 import "../styles/Dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -23,17 +23,19 @@ const numberOfCards = 10;
 
 const PersonalDashboard: React.FC = (PostCardProps: any) => {
   const [searchResults, setSearchResults] = useState(null);
+  const [selectedButton, setSelectedButton] = useState("Favorites");
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);
   };
 
-  const [selectedButton, setSelectedButton] = useState(null);
-
   const handleButtonClick = (buttonName: any) => {
     setSelectedButton(buttonName);
   };
 
+  useEffect(() => {
+    setSelectedButton("Favorites");
+  }, []);
 
   return (
     <div className="container">
@@ -54,13 +56,13 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
                   <div className="col-12 my-3 d-flex justify-content-around">
                   <div className="background-select">
                   <div className="d-flex justify-content-center"> 
+                  <button
+                      className={`twobutton-${selectedButton !== "Favorites" ? "notselect" : "select"}`}
+                      onClick={() => handleButtonClick("Favorites")}>Favorites
+                    </button>
                     <button
                       className={`twobutton-${selectedButton !== "My Posts" ? "notselect" : "select"}`}
                       onClick={() => handleButtonClick("My Posts")}>My Posts
-                    </button>
-                    <button
-                      className={`twobutton-${selectedButton !== "Favorites" ? "notselect" : "select"}`}
-                      onClick={() => handleButtonClick("Favorites")}>Favorites
                     </button>
                   </div>
                   </div>
