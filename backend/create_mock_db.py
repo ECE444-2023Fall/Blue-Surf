@@ -63,6 +63,7 @@ def create_mock_events():
             author_id=1, # Author of this event is user 1 (id = 1).
             is_published=True,
             like_count=0,
+            club="YNCN, You're Next Career Networks",
             image=image_data
         ),
         ["Career Development"]),
@@ -75,6 +76,7 @@ def create_mock_events():
             author_id=None,
             is_published=True,
             like_count=10,
+            club="Origami club",
             image=image_data
         ),[]),
         (Event(
@@ -86,6 +88,7 @@ def create_mock_events():
             author_id=None,
             is_published=True,
             like_count=5,
+            club="Skule Soccer",
             image=image_data
         ),
         ["Career Development"]),
@@ -98,6 +101,7 @@ def create_mock_events():
             author_id=None,
             is_published=True,
             like_count=10,
+            club="Origami club",
             image=image_data
         ),[]),
         (Event(
@@ -109,6 +113,7 @@ def create_mock_events():
             author_id=None,
             is_published=True,
             like_count=10,
+            club="Skule Soccer",
             image=image_data
         ),[]),
         (Event(

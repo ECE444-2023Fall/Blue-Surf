@@ -42,6 +42,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
+    extended_description = db.Column(db.Text)
     location = db.Column(db.Text, nullable=False)
     start_time = db.Column(db.TIMESTAMP, nullable=False)
     end_time = db.Column(db.TIMESTAMP, nullable=False)
