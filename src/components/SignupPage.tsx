@@ -60,6 +60,14 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    if(!/^\S+@\S+\.\S+$/.test(registerForm.email)){
+      return;
+    }
+
+    if(!registerForm.email.includes("utoronto.ca")){
+      return; 
+    }
+
     try {
       const response = await fetch("/api/register", {
         method: "POST",
