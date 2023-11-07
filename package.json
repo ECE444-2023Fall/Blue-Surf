@@ -2,25 +2,33 @@
   "name": "blue-surf",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/react-autosuggest": "^10.1.8",
+    "@types/react-bootstrap": "^0.32.34",
     "@types/react-datepicker": "^4.19.1",
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
+    "font-awesome": "^4.7.0",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
+    "react-autosuggest": "^10.1.0",
+    "react-bootstrap": "^2.9.1",
     "react-date-range": "^1.4.0",
     "react-datepicker": "^4.21.0",
     "react-dom": "^18.2.0",
+    "react-router-bootstrap": "^0.26.2",
     "react-multi-date-picker": "^4.4.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-backend": "cd backend && venv/bin/flask run --no-debugger",
+    "start-backend": "cd backend && python3 app.py",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -42,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-router-bootstrap": "^0.26.5"
   }
 }

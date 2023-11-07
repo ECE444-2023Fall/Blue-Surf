@@ -1,8 +1,12 @@
 # Ignore virtual environment directory
+venv/
 backend/venv/
 
 # Ignore Python bytecode cache
 backend/__pycache__/
+backend/tests/__pycache__/
+backend/models/__pycache__
+backend/tests/db/
 
 # dependencies
 /node_modules
@@ -14,6 +18,9 @@ backend/__pycache__/
 
 # production
 /build
+
+# database instance
+backend/instance/bluesurf.db
 
 # misc
 .DS_Store

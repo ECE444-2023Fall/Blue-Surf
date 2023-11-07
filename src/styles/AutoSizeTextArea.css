@@ -1,0 +1,14 @@
+.edit-text-input {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    overflow: hidden;
+    word-wrap: break-word;
+    height: auto;
+}
+  
+.edit-text-input:focus {
+    outline: none; 
+    border: none;
+    box-shadow: none; 
+}

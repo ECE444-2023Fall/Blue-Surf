@@ -1,14 +1,23 @@
 .SortBy {
-    padding-bottom: 20px;
-    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    margin-top: 15px;
   }
+
+.sort-dropdown {
+  background-color: #A0D1F2;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 5px 5px;
+}
 
 .sort-title {
     color: #000;
-    font-family: "Outfit-Regular", Helvetica;
+    font-family: "Outfit", Helvetica;
     font-size: 18px;
     font-style: normal;
     font-weight: 700;
     line-height: 27.5px;
-    margin-right: 10px;
+    margin-right: 5px;
 }
