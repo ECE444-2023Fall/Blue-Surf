@@ -63,27 +63,58 @@ def create_mock_events():
             author_id=1, # Author of this event is user 1 (id = 1).
             is_published=True,
             like_count=0,
-            image=image_data,
-            club = "YNCN You're Next Career Network"
+            image=image_data
         ),
         ["Career Development"]),
         (Event(
-            title="Test Event2",
-            description="Test Event Description2",
-            location="online",
+            title="Origami",
+            description="Wouldn't you like to make some cranes?",
+            location="Bahen 8th Floor",
+            start_time=start_time,
+            end_time=end_time,
+            author_id=None,
+            is_published=True,
+            like_count=10,
+            image=image_data
+        ),[]),
+        (Event(
+            title="Soccer Practice",
+            description="Come join us for a friendly soccer match",
+            location="Varsity Stadium",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
             is_published=True,
             like_count=5,
-            image=image_data,
-            club = "Club 2"
+            image=image_data
         ),
-        ["Academic"]),
+        ["Career Development"]),
         (Event(
-            title="Test Event3",
-            description="Test Event Description3",
-            location="online",
+            title="Origami",
+            description="Wouldn't you like to make some cranes?",
+            location="Bahen 8th Floor",
+            start_time=start_time,
+            end_time=end_time,
+            author_id=None,
+            is_published=True,
+            like_count=10,
+            image=image_data
+        ),[]),
+        (Event(
+            title="Soccer Practice",
+            description="Come join us for a friendly soccer match",
+            location="Varsity Stadium",
+            start_time=start_time,
+            end_time=end_time,
+            author_id=None,
+            is_published=True,
+            like_count=10,
+            image=image_data
+        ),[]),
+        (Event(
+            title="Skateboard contest",
+            description="May the best skateboarder win!",
+            location="Galbraith",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
