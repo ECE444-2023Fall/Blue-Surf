@@ -44,3 +44,23 @@ def test_get_all_tags(test_client):
         assert "Tag 1" in tags
         assert "Tag 2" in tags
         assert "Tag 3" in tags
+
+def test_get_tag_names_by_id(test_client):
+    tag = TagDataLayer()
+    try: 
+        tag.add_tag(tag_name="Tag 1")
+        tag.add_tag(tag_name="Tag 2")
+        tag.add_tag(tag_name="Tag 3")
+        tags = tag.get_tag_names_by_ids([1,2,3])
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+    
+    with app.app_context():
+        logging.warning(f"All tags: {tags}")
+        assert "Tag 1" in tags
+        assert "Tag 2" in tags
+        assert "Tag 3" in tags

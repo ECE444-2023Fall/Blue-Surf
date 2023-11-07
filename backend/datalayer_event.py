@@ -181,6 +181,12 @@ class EventDataLayer(DataLayer):
                 raise ValueError(f"Event with id {id} does not exist")
             return event
         
-    def get_tag_ids_for_event(self, event_id):
-        event_tags = db.session.query(event_tags).filter_by(event_id=event_id).all()
-        return [event_tag.tag_id for event_tag in event_tags]
+    def get_tags_for_event(self, event_id):
+        '''
+        Returns a list of Tag objects that are associated with the given event id. 
+        '''
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if event.tags == None:
+                return []
+            return event.tags

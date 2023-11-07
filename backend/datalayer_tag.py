@@ -43,7 +43,13 @@ class TagDataLayer(DataLayer):
         '''
         Fetch the tag names for the collected tag IDs
         '''
-        tags = db.session.query(Tag).filter(Tag.id.in_(tag_ids)).all()
-        return [tag.name for tag in tags]
+        with app.app_context():
+            names = []
+            for id in tag_ids:
+                assert(type(id)==int)
+                tag = Tag.query.filter_by(id=id).first()
+                if tag is not None:
+                    names.append(tag.name)
+            return names
 
 
