@@ -173,3 +173,12 @@ class EventDataLayer(DataLayer):
                 logging.info(f"Event with id {id} does not exist")
                 raise ValueError(f"Event with id {id} does not exist")
             return event
+        
+    def delete_event_by_id(self, id):
+        with app.app_context():
+            event = Event.query.filter_by(id=id).first()
+            if event is None:
+                logging.info(f"Event with id {id} does not exist and cannot be deleted")
+                raise ValueError(f"Event with id {id} does not exist and cannot be deleted")
+            db.session.delete(event)
+            db.session.commit()
