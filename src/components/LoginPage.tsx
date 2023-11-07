@@ -17,9 +17,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
   const [errorMessages, setErrorMessages] = useState({
     userIdentifier: "",
     password: "",
+    loginErrorUser: "",
+    loginErrorPass: "",
   });
 
-  
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,20 +31,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     }));
   };
 
-  
-
   const logMeIn = async (event: React.FormEvent) => {
     event.preventDefault();
-    const errorMessages = validate()
-    setErrorMessages(errorMessages);
+    const errorMessages = validate();
+    setErrorMessages({
+      userIdentifier: "",
+      password: "",
+      loginErrorUser: "",
+      loginErrorPass: "",
+    });
 
-
-
-    if ((!loginForm.userIdentifier) || (!loginForm.password)) {
+    if (!loginForm.userIdentifier || !loginForm.password) {
       console.error("Missing fields");
       return;
     }
-  
+
     try {
       const response = await fetch("/api/token", {
         method: "POST",
@@ -59,8 +61,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
       const data = await response.json();
       if (!response.ok) {
         if (response.status === 401) {
+          setErrorMessages({
+            userIdentifier: " ",
+            password: "",
+            loginErrorUser: "",
+            loginErrorPass: "Incorrect Password",
+          });
           throw new Error(data["error message"]);
         } else if (response.status === 404) {
+          setErrorMessages({
+            userIdentifier: " ",
+            password: "",
+            loginErrorUser: "User not found",
+            loginErrorPass: "",
+          });
           throw new Error(data["error message"]);
         } else if (response.status === 500) {
           throw new Error(data["error message"]);
@@ -84,27 +98,23 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
   const validate = () => {
     const error = {
       userIdentifier: "",
-      password: "", 
+      password: "",
     };
 
-    if(!loginForm.userIdentifier){
+    if (!loginForm.userIdentifier) {
       error.userIdentifier = "Username or email is required";
-    }
-    else{
+    } else {
       error.userIdentifier = "";
     }
 
-    if(!loginForm.password){
+    if (!loginForm.password) {
       error.password = "Password is required";
-    }
-    else{
-      error.password = ""; 
+    } else {
+      error.password = "";
     }
 
-    return error; 
-  }
-  
-
+    return error;
+  };
 
   return (
     <div className="login-page-wrapper">
@@ -132,7 +142,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                   value={loginForm.userIdentifier}
                   onChange={handleChange}
                 />
-                {errorMessages.userIdentifier && <div className="error">{errorMessages.userIdentifier}</div>}
+                {errorMessages.userIdentifier && (
+                  <div className="error">{errorMessages.userIdentifier}</div>
+                )}
+                {errorMessages.userIdentifier && (
+                  <div className="error">{errorMessages.loginErrorUser}</div>
+                )}
               </div>
               <div className="form-group">
                 <input
@@ -144,7 +159,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                   value={loginForm.password}
                   onChange={handleChange}
                 />
-                {errorMessages.password && <div className="error">{errorMessages.password}</div>}
+                {errorMessages.password && (
+                  <div className="error">{errorMessages.password}</div>
+                )}
+                {errorMessages.userIdentifier && (
+                  <div className="error">{errorMessages.loginErrorPass}</div>
+                )}
               </div>
               <div className="form-group forgot-password-container">
                 <a href="/register" className="forgot-password">

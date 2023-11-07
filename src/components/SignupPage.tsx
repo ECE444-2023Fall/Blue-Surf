@@ -73,7 +73,7 @@ const SignupPage: React.FC = () => {
       if (!response.ok) {
         const data = await response.json();
         if (response.status === 400) {
-          throw new Error(data["error message"]);
+          throw new Error(data["error message"]); 
         } else if (response.status === 500) {
           throw new Error(data["error message"]);
         } else {
