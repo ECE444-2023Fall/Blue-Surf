@@ -31,7 +31,6 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
   return (
     <div className="container">
         <div className="custom-container">
-          <FNavbar />
           <div className="content-container">
             <div className="row">
               <div className="col-md-12">
@@ -62,10 +61,6 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
             </div>
           </div>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-            // below needs to have a back end supported call for data,
-            // event needs to be some sort of array containing information that matches to postCardData format
-            // lenght will also need to be calculated from the event object sent
-            // tip: set all dates to string fields on the front end to not have to deal with issues on convertions
             {Array.from({ length: 10 }).map((event: any, index: number) => (
               <PostCard key={index} {...event} />
             ))}
