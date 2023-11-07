@@ -43,19 +43,16 @@ const SignupPage: React.FC = () => {
         }),
       });
 
-      if (!response) {
-        throw new Error("Network response was not received successfully.");
-      }
-      const data = await response.json();
-
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error(data.msg);
+        const data = await response.json();
+        if (response.status === 400) {
+          throw new Error(data["error message"]);
+        } else if (response.status === 500) {
+          throw new Error(data["error message"]);
         } else {
           throw new Error("Network response was not ok.");
         }
       }
-
       navigate("/login");
     } catch (error) {
       console.error("Signup Error:", error);

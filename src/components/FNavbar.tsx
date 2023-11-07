@@ -18,14 +18,14 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
         },
       });
 
-      if (!response) {
-        throw new Error("Network response was not received successfully.");
-      }
+      const data = await response.json();
       if (!response.ok) {
+        if (response.status === 500) {
+          throw new Error(data["error message"]);
+        }
         throw new Error("Network response was not ok.");
       }
 
-      const data = await response.json();
       if (data && data.msg === "logout successful") {
         removeToken();
       } else {
@@ -49,10 +49,10 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
             Sign Out
           </Nav.Link>
         </LinkContainer>
-          <p className="navbar-link-text my-2">
-            {" "}
-            <strong>Test</strong>{" "}
-          </p>
+        <p className="navbar-link-text my-2">
+          {" "}
+          <strong>Test</strong>{" "}
+        </p>
       </Nav>
     );
   } else {

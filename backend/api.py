@@ -138,7 +138,7 @@ def setup_routes(app):
           response = {"access_token": access_token}
           return response
       else:
-        return jsonify({"error": "Incorrect password"}), 401
+        return jsonify({"error": "Failed to login", "error message": "Incorrect password."}), 401
     except ValueError as e:
         error_message = str(e)
         return jsonify({"error": "Failed to login", "error message": error_message}), 404
@@ -148,9 +148,13 @@ def setup_routes(app):
 
   @app.route("/api/logout", methods=["POST"])
   def logout():
+    try:
       response = jsonify({"msg": "logout successful"})
       unset_jwt_cookies(response)
       return response
+    except Exception as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to logout", "error message": error_message}), 500
   
   @app.route("/api/register", methods=["POST"])
   def signup():
@@ -167,9 +171,15 @@ def setup_routes(app):
         user_data.create_user(username=username, email=email, password_hash=password_hash, password_salt=salt.decode('utf-8'))
 
         return jsonify({"message": "User created successfully"})
+      except TypeError as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to create user", "error message": error_message}), 400
+      except ValueError as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to create user", "error message": error_message}), 400
       except Exception as e:
           error_message = str(e)
-          return jsonify({"error": "Failed to create user", "error message":error_message}), 500
+          return jsonify({"error": "Failed to process the request", "error message":error_message}), 500
 
       
 

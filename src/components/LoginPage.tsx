@@ -38,17 +38,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
         }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error("Incorrect password.");
+          throw new Error(data["error message"]);
         } else if (response.status === 404) {
-          throw new Error("User not found.");
+          throw new Error(data["error message"]);
+        } else if (response.status === 500) {
+          throw new Error(data["error message"]);
         } else {
           throw new Error("Network response was not ok.");
         }
       }
 
-      const data = await response.json();
       setToken(data.access_token);
       navigate("/");
     } catch (error: any) {
