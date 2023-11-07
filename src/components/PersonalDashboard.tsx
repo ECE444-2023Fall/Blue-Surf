@@ -3,9 +3,6 @@ import "./../App.css";
 import "../styles/PersonalDashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
-import SortBy from "./SortBy";
-import FNavbar from "./FNavbar";
-import { BrowserRouter as Router } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
