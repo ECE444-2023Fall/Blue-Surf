@@ -13,6 +13,7 @@ interface Post {
   start_time: Date;
   location: string;
   description: string;
+  extended_description: string;
   tags: string[];
   id: number;
   author_id: number;
@@ -193,11 +194,11 @@ const PostDetailsPage: React.FC = () => {
               {isEditing ? (
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
-                  content={EXTENTDED_DESCRIPTION}
-                  onChange={(value) => setEditedPost({ ...editedPost })}
+                  content={editedPost.extended_description}
+                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
                 />
               ) : (
-                EXTENTDED_DESCRIPTION
+                editedPost.extended_description
               )}
             </div>
             <div className="subtitle">Date</div>
