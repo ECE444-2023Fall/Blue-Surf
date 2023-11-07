@@ -121,19 +121,30 @@ def setup_routes(app):
 
   @app.route('/api/token', methods=["POST"])
   def create_token():
-      email = request.json.get("username", None)
+    try:
+      user_identifier = request.json.get("user_identifier", None)
       password = request.json.get("password", None)
 
-      # Replace this with db query to see if there is a match with email and password (using hash and salt)
-      if email != "test" or password != "test":
-          return {"msg": "Wrong email or password"}, 401
-      
-      #Set this to what the userid is of the logged-in user (which can be found from query above with email and password)
-      id = 10
+      from datalayer_user import UserDataLayer
+      user_data = UserDataLayer()
+      stored_user = user_data.get_user(user_identifier=user_identifier)
+      stored_password_hash = stored_user.password_hash
+      stored_password_salt = stored_user.password_salt
 
-      access_token = create_access_token(identity=id)
-      response = {"access_token":access_token}
-      return response
+      entered_password_hash = bcrypt.hashpw(password.encode('utf-8'), stored_password_salt.encode('utf-8')).decode('utf-8')
+
+      if entered_password_hash == stored_password_hash:
+          access_token = create_access_token(identity=stored_user.id)
+          response = {"access_token": access_token}
+          return response
+      else:
+        return jsonify({"error": "Incorrect password"}), 401
+    except ValueError as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to login", "error message": error_message}), 404
+    except Exception as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to process the request", "error message": error_message}), 500
 
   @app.route("/api/logout", methods=["POST"])
   def logout():

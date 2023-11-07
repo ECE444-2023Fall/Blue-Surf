@@ -17,28 +17,30 @@ import {
 
 function App() {
   const { token, removeToken, setToken } = useToken();
+  
+  const authenticatedRoutes = (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/post/:postId" element={<PostDetailsPage />} />
+      <Route path="/dashboard" element={<Profile token={token} setToken={setToken} />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+
+  const nonAuthenticatedRoutes = (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/post/:postId" element={<PostDetailsPage />} />
+      <Route path="/login" element={<LoginPage setToken={setToken} />} />
+      <Route path="/register" element={<SignupPage />} />
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
+  );
 
   return (
     <Router>
       <FNavbar token={token} removeToken={removeToken} />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/post/:postId" element={<PostDetailsPage />} />
-          <Route path="/login" element={<LoginPage setToken={setToken} />} />
-          <Route path="/register" element={<SignupPage />} />
-
-          {token && token !== "" && token !== undefined ? (
-            <Route
-              path="/dashboard"
-              element={<Profile token={token} setToken={setToken} />}
-            />
-          ) : (
-            <Route path="/dashboard" element={<Navigate to="/login" />} />
-          )}
-
-          {/* Define other routes here */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+      {token && token !== "" && token !== undefined ? authenticatedRoutes : nonAuthenticatedRoutes}
     </Router>
   );
 }

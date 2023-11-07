@@ -10,7 +10,7 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
   const [loginForm, setloginForm] = useState({
-    username: "",
+    userIdentifier: "",
     password: "",
   });
   const navigate = useNavigate();
@@ -33,32 +33,30 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: loginForm.username,
+          user_identifier: loginForm.userIdentifier,
           password: loginForm.password,
         }),
       });
 
-      if (!response) {
-        throw new Error("Network response was not received successfully.");
-      }
-      const data = await response.json();
-
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error(data.msg);
+          throw new Error("Incorrect password.");
+        } else if (response.status === 404) {
+          throw new Error("User not found.");
         } else {
           throw new Error("Network response was not ok.");
         }
       }
 
+      const data = await response.json();
       setToken(data.access_token);
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login Error:", error);
     }
 
     setloginForm({
-      username: "",
+      userIdentifier: "",
       password: "",
     });
   };
@@ -83,10 +81,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                 <input
                   type="text"
                   id="username"
-                  name="username"
+                  name="userIdentifier"
                   className="form-control input-boxes"
-                  placeholder="Username"
-                  value={loginForm.username}
+                  placeholder="Username/Email"
+                  value={loginForm.userIdentifier}
                   onChange={handleChange}
                 />
               </div>
