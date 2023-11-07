@@ -102,7 +102,7 @@ class EventDataLayer(DataLayer):
             db.session.commit()
 
 
-    def update_event(self, event_id, title, description, location, image=None, is_published=True, start_time=None, end_time=None):
+    def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
@@ -121,6 +121,7 @@ class EventDataLayer(DataLayer):
 
             #TODO: Implement some checks for description?
             event.description = description
+            event.extended_description = extended_description
 
             if location is None or len(location) == 0:
                 logging.info("Location should not be empty")

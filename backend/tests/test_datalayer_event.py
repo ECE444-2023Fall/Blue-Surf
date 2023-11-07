@@ -355,6 +355,7 @@ def test_event_update(test_client):
             event_id=event_id,
             title="Event 1 - CHANGED",
             description="Kickoff event CHANGED for club 1",
+            extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
             location="Toronto",
         )
         
