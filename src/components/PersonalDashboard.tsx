@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./../App.css";
-import "../styles/Dashboard.css";
+import "../styles/PersonalDashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
 import SortBy from "./SortBy";
@@ -10,16 +10,7 @@ import SearchBar from "./SearchBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // this is mock data, to be replaced later once database is setup
-const postCardData = {
-  title: "Fall Career Week",
-  date: new Date(),
-  location: "Myhal 5th Floor",
-  description:
-    "Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
-  tags: ["Professional Development"],
-};
 
-const numberOfCards = 10;
 
 const PersonalDashboard: React.FC = (PostCardProps: any) => {
   const [searchResults, setSearchResults] = useState(null);
@@ -39,7 +30,6 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
 
   return (
     <div className="container">
-      <Router>
         <div className="custom-container">
           <FNavbar />
           <div className="content-container">
@@ -72,12 +62,15 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
             </div>
           </div>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-            {Array.from({ length: numberOfCards }).map((_, index) => (
-              <PostCard key={index} {...postCardData} />
+            // below needs to have a back end supported call for data,
+            // event needs to be some sort of array containing information that matches to postCardData format
+            // lenght will also need to be calculated from the event object sent
+            // tip: set all dates to string fields on the front end to not have to deal with issues on convertions
+            {Array.from({ length: 10 }).map((event: any, index: number) => (
+              <PostCard key={index} {...event} />
             ))}
           </div>
         </div>
-      </Router>
     </div>
   );
 }
