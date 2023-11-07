@@ -17,7 +17,6 @@ const SignupPage: React.FC = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    signupError: "",
   });
   
   const navigate = useNavigate();
@@ -33,13 +32,7 @@ const SignupPage: React.FC = () => {
   const signMeUp = async (event: React.FormEvent) => {
     event.preventDefault();
     const errorMessages = validate()
-    setErrorMessages({ username: "", password: "", email: "", confirmPassword: "", signupError: "" });
-    const validateErrors = validate();
-    if(validateErrors.username || validateErrors.password || validateErrors.confirmPassword || validateErrors.email){
-      setErrorMessages({username: validateErrors.username, password: validateErrors.password, email: validateErrors.email,
-        confirmPassword: validateErrors.confirmPassword, signupError:""});
-      return;
-    }
+    setErrorMessages(errorMessages);
 
 
     // TODO: Should add a proper way to notify the user that their passwords do not match
@@ -80,7 +73,6 @@ const SignupPage: React.FC = () => {
       if (!response.ok) {
         const data = await response.json();
         if (response.status === 400) {
-          setErrorMessages({ username: "", password: "", email: "", confirmPassword: "", signupError: "Username or Email already exists" });
           throw new Error(data["error message"]); 
         } else if (response.status === 500) {
           throw new Error(data["error message"]);
@@ -166,9 +158,6 @@ const SignupPage: React.FC = () => {
             <p className="signup-subtext">
               Create an account to discover UofT activities and events.
             </p>
-            {errorMessages.signupError && (
-                  <div className="error">{errorMessages.signupError}</div>
-                )}
             <form method="post" action="/">
               <div className="form-group userinput">
                 <input
