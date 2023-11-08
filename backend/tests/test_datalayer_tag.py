@@ -3,9 +3,9 @@ import logging
 from .test_datalayer import test_client
 
 from ..app import app
-from ..datalayer.tag import TagDataLayer
-from ..datalayer.event import EventDataLayer
-from ..datalayer.user import UserDataLayer
+from ..datalayer_tag import TagDataLayer
+from ..datalayer_event import EventDataLayer
+from ..datalayer_user import UserDataLayer
 from ..models import Tag
 
 def test_add_tag(test_client):
