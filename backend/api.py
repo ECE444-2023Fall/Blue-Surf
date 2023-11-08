@@ -1,10 +1,11 @@
 from flask import jsonify, request
+import re
 
 
 def setup_routes(app):
   @app.route("/api/autosuggest", methods=["GET"])
   def autosuggest():
-      query = request.args.get("query")
+      query = request.args.get("query").lower()
       print('query: ', query)
       try:
         from datalayer_event import EventDataLayer
@@ -12,9 +13,9 @@ def setup_routes(app):
         results = event_data.get_search_results_by_keyword(query)
         suggestions = []
         for event in results:
-            if query in event.title:
+            if any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.title)):
                 suggestions.append(event.title)
-            if event.club is not None and query in event.club:
+            if event.club and any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.club)):            
                 suggestions.append(event.club)
         return jsonify(list(set(suggestions)))
       except Exception as e:
