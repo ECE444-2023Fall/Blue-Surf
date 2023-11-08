@@ -182,20 +182,26 @@ const PostDetailsPage: React.FC = () => {
                 editedPost.description
               )}
             </div>
-            {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
+            {post.tags.length > 0 &&
+              post.tags.map((tag: string, index: number) => (
+                <span className="pill">
+                  <span className="pill-tag" key={index}>
+                    {tag}
+                  </span>
                 </span>
               ))}
-            </span> */}
             <div className="subtitle">About</div>
             <div className="details">
               {isEditing ? (
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
                   content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      extended_description: value,
+                    })
+                  }
                 />
               ) : (
                 editedPost.extended_description

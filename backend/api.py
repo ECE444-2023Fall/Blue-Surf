@@ -57,7 +57,6 @@ def setup_routes(app):
 
         for event in events:
             tags = event_data.get_tags_for_event(event_id=event.id)
-            # tag_names = tag_data.get_tag_names_by_ids(event_tag_ids)
             tag_names = [tag.name for tag in tags]
           
             json_event = {
