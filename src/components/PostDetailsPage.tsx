@@ -20,6 +20,7 @@ interface Post {
   is_published: boolean;
   end_time: Date;
   like_count: number;
+  image?: string;
   club?: string;
 }
 
@@ -64,21 +65,63 @@ const PostDetailsPage: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post/${postId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedPost),
-      });
+      // Check if a new image was selected
+      if (imageSrc) {
+        console.log("here");
+        const imageFormData = new FormData();
+        imageFormData.append("image", imageSrc);
 
-      if (response.ok) {
-        console.log("Post updated successfully!");
-        setIsEditing(false);
-        setPost({ ...editedPost });
+        // Upload the image using the /api/upload-image endpoint
+        const imageUploadResponse = await fetch("/api/upload-image", {
+          method: "POST",
+          body: imageFormData,
+        });
+
+        if (!imageUploadResponse.ok) {
+          console.error("Failed to upload the image.");
+          return;
+        }
+
+        // Get the image path or filename from the imageUploadResponse if needed
+        const imageInfo = await imageUploadResponse.json();
+        const uploadedImageSrc = imageInfo.imagePath; // Replace with the actual field name
+
+        // Update the edited post with the uploaded image source
+        const postToUpdate = { ...editedPost, image: uploadedImageSrc };
+
+        // Now, update the post using the /api/update-post endpoint with the modified post data
+        const postUpdateResponse = await fetch(`/api/update-post/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postToUpdate),
+        });
+
+        if (postUpdateResponse.ok) {
+          console.log("Post updated successfully!");
+          setIsEditing(false);
+          setPost({ ...postToUpdate });
+        } else {
+          console.error("Failed to update post.");
+        }
       } else {
-        console.error("Failed to update post.");
+        // No new image selected, update the post data directly
+        const postUpdateResponse = await fetch(`/api/update-post/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedPost),
+        });
+
+        if (postUpdateResponse.ok) {
+          console.log("Post updated successfully!");
+          setIsEditing(false);
+          setPost({ ...editedPost });
+        } else {
+          console.error("Failed to update post.");
+        }
       }
     } catch (error) {
       console.error("Error:", error);
@@ -97,6 +140,7 @@ const PostDetailsPage: React.FC = () => {
 
       reader.onload = (e) => {
         const newImageSrc = e.target && e.target.result;
+        console.log("image src", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -195,7 +239,12 @@ const PostDetailsPage: React.FC = () => {
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
                   content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      extended_description: value,
+                    })
+                  }
                 />
               ) : (
                 editedPost.extended_description
