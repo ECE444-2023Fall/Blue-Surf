@@ -195,30 +195,63 @@ const PostDetailsPage: React.FC = () => {
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
                   content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      extended_description: value,
+                    })
+                  }
                 />
               ) : (
                 editedPost.extended_description
               )}
             </div>
-            <div className="subtitle">Date</div>
+            <div className="subtitle"> Start Date </div>
             <div className="details">
-            <input
-              type="datetime-local"
-              disabled={!isEditing}
-            />
               {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.start_time instanceof Date
+                      ? editedPost.start_time.toISOString().slice(0, -1)
+                      : ""
                   }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newStartTime = new Date(e.target.value);
+                    if (!isNaN(newStartTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: newStartTime,
+                      });
+                    }
+                  }}
                 />
               ) : (
                 editedPost.start_time.toLocaleString()
+              )}
+            </div>
+            <div className="subtitle"> End Date </div>
+            <div className="details">
+              {isEditing ? (
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.end_time instanceof Date
+                      ? editedPost.end_time.toISOString().slice(0, -1)
+                      : ""
+                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newEndTime = new Date(e.target.value);
+                    if (!isNaN(newEndTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: newEndTime,
+                      });
+                    }
+                  }}
+                />
+              ) : (
+                editedPost.end_time.toLocaleString()
               )}
             </div>
             <div className="subtitle">Location</div>
