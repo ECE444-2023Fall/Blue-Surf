@@ -54,6 +54,8 @@ const PostCreatePage: React.FC = () => {
       } else if (!editedPost.location) {
         setErrorMessage("Location is a required field.");
         return;
+      } else {
+        setErrorMessage("");
       }
 
       const formattedStartDate = editedPost.start_time
