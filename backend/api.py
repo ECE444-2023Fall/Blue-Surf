@@ -10,10 +10,13 @@ def setup_routes(app):
         from datalayer_event import EventDataLayer
         event_data = EventDataLayer()
         results = event_data.get_search_results_by_keyword(query)
-        suggestions = [event.title for event in results]
+        suggestions = []
         for event in results:
-            print(event.title)
-        return jsonify(suggestions)
+            if query in event.title:
+                suggestions.append(event.title)
+            if event.club is not None and query in event.club:
+                suggestions.append(event.club)
+        return jsonify(list(set(suggestions)))
       except Exception as e:
           error_message = str(e)
           return jsonify({"error": "Failed to look and display post title", "error_message":error_message}), 500
