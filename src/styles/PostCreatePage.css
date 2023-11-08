@@ -1,0 +1,18 @@
+.error-message {
+    transform: translate(-50%, -20%);
+    padding: 20px;
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    text-align: center;
+    color: #ff0000;
+    max-width: 30%;
+    font-family: Outfit;
+  }
+
+
+  @media (max-width: 768px) {
+    .error-message {
+      transform: translate(-5%, -20%);
+    }
+  }
