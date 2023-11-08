@@ -3,7 +3,7 @@ import logging
 from .test_datalayer import test_client
 
 from ..app import app, db
-from ..datalayer_user import UserDataLayer
+from ..datalayer.user import UserDataLayer
 from ..models import User
 
 def test_user_creation(test_client):
