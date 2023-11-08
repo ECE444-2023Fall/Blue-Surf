@@ -4,10 +4,10 @@ import logging
 from .test_datalayer import test_client
 
 from ..app import app, db
-from ..datalayer_user_interested import UserInterestedLayer
-from ..datalayer_user import UserDataLayer
-from ..datalayer_event import EventDataLayer
-from ..datalayer_tag import TagDataLayer
+from ..datalayer.user_interested import UserInterestedLayer
+from ..datalayer.tag import TagDataLayer
+from ..datalayer.event import EventDataLayer
+from ..datalayer.user import UserDataLayer
 from ..models import User, Event, UserInterestedEvent
 
 def test_user_interested_event(test_client):

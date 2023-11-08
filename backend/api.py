@@ -34,7 +34,7 @@ def setup_routes(app):
           updated_post = request.get_json()
           print(updated_post)
 
-          from datalayer_event import EventDataLayer
+          from datalayer.event import EventDataLayer
           event_data = EventDataLayer()
           event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], 
                                   extended_description=updated_post["extended_description"],location=updated_post["location"])
@@ -47,8 +47,8 @@ def setup_routes(app):
   @app.route("/api/", methods=["GET"])
   def index():
     try:
-        from datalayer_event import EventDataLayer
-        from datalayer_tag import TagDataLayer
+        from datalayer.event import EventDataLayer
+        from datalayer.tag import TagDataLayer
         event_data = EventDataLayer()
         tag_data = TagDataLayer()
         events = event_data.get_all_events()
@@ -85,8 +85,8 @@ def setup_routes(app):
   @app.route("/api/<int:event_id>", methods=["GET"])
   def get_event(event_id):
     try:
-        from datalayer_event import EventDataLayer
-        from datalayer_tag import TagDataLayer
+        from datalayer.event import EventDataLayer
+        from datalayer.tag import TagDataLayer
         event_data = EventDataLayer()
         event = event_data.get_event_by_id(event_id)
 
@@ -116,7 +116,7 @@ def setup_routes(app):
   @app.route("/api/get-all-tags", methods=["GET"])
   def get_all_tags():
     try:
-        from datalayer_tag import TagDataLayer
+        from datalayer.tag import TagDataLayer
         tag_data = TagDataLayer()
         tags = tag_data.get_all_tags()
         return jsonify(tags)
