@@ -21,8 +21,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
   });
 
   const [loginUserErr, setLoginUserErr] = useState({
-    loginError: ""
-  })
+    loginError: "",
+  });
 
   const navigate = useNavigate();
 
@@ -38,11 +38,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
     event.preventDefault();
     setErrorMessages({ userIdentifier: "", password: "", loginError: "" });
     const validateErrors = validate();
-    if(validateErrors.userIdentifier || validateErrors.password){
-      setErrorMessages({userIdentifier: validateErrors.userIdentifier, password: validateErrors.password, loginError:""});
+    if (validateErrors.userIdentifier || validateErrors.password) {
+      setErrorMessages({
+        userIdentifier: validateErrors.userIdentifier,
+        password: validateErrors.password,
+        loginError: "",
+      });
       return;
     }
-
 
     if (!loginForm.userIdentifier || !loginForm.password) {
       console.error("Missing fields");
@@ -64,10 +67,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
       const data = await response.json();
       if (!response.ok) {
         if (response.status === 401) {
-          setErrorMessages({userIdentifier:"", password:"", loginError:"Invalid username or password"})
+          setErrorMessages({
+            userIdentifier: "",
+            password: "",
+            loginError: "Invalid username or password",
+          });
           throw new Error(data["error message"]);
         } else if (response.status === 404) {
-          setErrorMessages({userIdentifier:"", password:"", loginError:"Invalid username or password"})
+          setErrorMessages({
+            userIdentifier: "",
+            password: "",
+            loginError: "Invalid username or password",
+          });
           throw new Error(data["error message"]);
         } else if (response.status === 500) {
           throw new Error(data["error message"]);
@@ -124,9 +135,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
             <p className="login-subtext">
               Get back to discovering UofT activities and events.
             </p>
-            {errorMessages.loginError && (
-                  <div className="error">{errorMessages.loginError}</div>
-                )}
             <form method="post" action="/">
               <div className="form-group userinput">
                 <input
@@ -154,6 +162,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                 />
                 {errorMessages.password && (
                   <div className="error">{errorMessages.password}</div>
+                )}
+                {errorMessages.loginError && (
+                  <div className="error">{errorMessages.loginError}</div>
                 )}
               </div>
               <div className="form-group">
