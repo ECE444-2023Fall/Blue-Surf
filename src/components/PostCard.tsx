@@ -50,17 +50,19 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
               {PostCardProps.description}
             </p>
             <div className="row">
-              {PostCardProps.tags.length > 0 && (
-                <div className="col">
-                  {PostCardProps.tags.map((tag: string, index: number) => (
-                    <span className="pill" data-testid="post-tags">
-                      <span className="pill-tag" key={index}>
-                        {tag}
+              <div className="col">
+                {PostCardProps.tags.length > 0 && (
+                  <>
+                    {PostCardProps.tags.map((tag: string, index: number) => (
+                      <span className="pill" data-testid="post-tags">
+                        <span className="pill-tag" key={index}>
+                          {tag}
+                        </span>
                       </span>
-                    </span>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </>
+                )}
+              </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>
                   <button

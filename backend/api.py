@@ -120,6 +120,18 @@ def setup_routes(app):
         error_message = str(e)
         return jsonify({"error": "Failed to get event", "error message": error_message}), 500
         
+  @app.route("/api/get-all-tags", methods=["GET"])
+  def get_all_tags():
+    try:
+        from datalayer_tag import TagDataLayer
+        tag_data = TagDataLayer()
+        tags = tag_data.get_all_tags()
+        return jsonify(tags)
+    except Exception as e:
+        error_message = str(e)
+        return jsonify({"error": "Failed to get all tags", "error message": error_message}), 500
+    
+
 # TODO: Remove once database is setup
 # TODO: add extendedDescription field, image url, 
 mockEvents = [
