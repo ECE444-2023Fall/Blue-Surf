@@ -4,7 +4,8 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    overflow: hidden;
+    margin-top: 30px;
 }
 
 .signup-container {
@@ -29,6 +30,7 @@
     font-size: 22px;
     font-weight: 700;
     transition: background-color 0.3s, color 0.3s;
+    margin-top: 12px;
 }
 
 .signup-btn:hover {
@@ -69,7 +71,6 @@ h1 {
     padding-top: 12px;
     padding-bottom: 12px;
     margin-top: 2px;
-    margin-bottom: 12px;
 }
 
 a {
@@ -138,5 +139,10 @@ a:hover {
     font-weight: bold;
     text-align: left;
     padding-left: 2%;
+    font-size: 14px;
+}
+
+.error-confirmpassword {
+    padding-bottom: 12px;
 }
 

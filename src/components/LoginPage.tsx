@@ -156,11 +156,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
                   <div className="error">{errorMessages.password}</div>
                 )}
               </div>
-              <div className="form-group forgot-password-container">
-                <a href="/register" className="forgot-password">
-                  Forgot password?
-                </a>
-              </div>
               <div className="form-group">
                 <button type="submit" className="login-btn" onClick={logMeIn}>
                   Login

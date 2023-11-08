@@ -234,7 +234,7 @@ const SignupPage: React.FC = () => {
                   onChange={handleChange}
                 />
                 {errorMessages.confirmpassword && (
-                  <div className="error">{errorMessages.confirmpassword}</div>
+                  <div className="error error-confirmpassword">{errorMessages.confirmpassword}</div>
                 )}
               </div>
               <div className="form-group">
