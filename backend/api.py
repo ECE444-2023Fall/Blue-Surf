@@ -51,7 +51,8 @@ def setup_routes(app):
 
           from datalayer_event import EventDataLayer
           event_data = EventDataLayer()
-          event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], location=updated_post["location"])
+          event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], 
+                                  extended_description=updated_post["extended_description"],location=updated_post["location"])
 
           return jsonify({"message": "Post updated successfully"})
       except Exception as e:
@@ -72,10 +73,12 @@ def setup_routes(app):
                 "id": event.id,
                 "title": event.title,
                 "description": event.description,
+                "extended_description": event.extended_description,
                 "location": event.location,
                 "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
                 "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
                 "author_id": event.author_id,
+                "club": event.club,
                 "is_published": event.is_published,
                 "like_count": event.like_count,
                 # Add other fields here as needed
@@ -99,10 +102,12 @@ def setup_routes(app):
             "id": event.id,
             "title": event.title,
             "description": event.description,
+            "extended_description": event.extended_description,
             "location": event.location,
             "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
             "author_id": event.author_id,
+            "club": event.club,
             "is_published": event.is_published,
             "like_count": event.like_count,
         }

@@ -6,7 +6,7 @@ import logging
 '''
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.Text, unique=True, nullable=False)
 '''
 
 class TagDataLayer(DataLayer):
