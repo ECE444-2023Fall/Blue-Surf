@@ -1,15 +1,12 @@
-import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app
-from datalayer_user import UserDataLayer
-from datalayer_event import EventDataLayer
-from datalayer_tag import TagDataLayer
-from models import User, Event, Tag
+from ..app import app
+from ..datalayer_user import UserDataLayer
+from ..datalayer_event import EventDataLayer
+from ..datalayer_tag import TagDataLayer
+from ..models import User, Event, Tag
 
 def test_event_creation(test_client):
     user = UserDataLayer()

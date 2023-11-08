@@ -1,13 +1,10 @@
-import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app, db
-from datalayer_user import UserDataLayer
-from models import User
+from ..app import app, db
+from ..datalayer_user import UserDataLayer
+from ..models import User
 
 def test_user_creation(test_client):
     user = UserDataLayer()

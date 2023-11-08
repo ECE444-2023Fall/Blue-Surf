@@ -1,10 +1,8 @@
 import os
-import sys
 import pytest
 import logging
 
-sys.path.append("../")
-from app import app, db
+from ..app import app, db
 
 @pytest.fixture(scope="function")
 def test_client():

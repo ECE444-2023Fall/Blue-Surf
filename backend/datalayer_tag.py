@@ -1,6 +1,6 @@
-from app import app, db
-from models import Tag, Event
-from datalayer_abstract import DataLayer
+from .app import app, db
+from .models import Tag, Event
+from .datalayer_abstract import DataLayer
 import logging
 
 '''

@@ -1,8 +1,8 @@
 # create_db.py
 import os
-from app import app, db
-from models import User, Event, Tag, UserInterestedEvent
 from datetime import datetime
+from .app import app, db
+from .models import User, Event, Tag, UserInterestedEvent
 
 def create_mock_users():
     users = [

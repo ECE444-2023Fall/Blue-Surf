@@ -1,10 +1,11 @@
-from app import app, db
-from models import User, Event, Tag
+import logging
 from datetime import datetime
 from flask import jsonify
-from datalayer_abstract import DataLayer
-from datalayer_tag import TagDataLayer
-import logging
+
+from .app import app, db
+from .models import User, Event, Tag
+from .datalayer_abstract import DataLayer
+
 
 '''
 class Event(db.Model):
