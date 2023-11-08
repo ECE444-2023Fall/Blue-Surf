@@ -6,7 +6,7 @@ import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 const imageTemplate = require("../assets/post-template.jpg");
-//<a href="https://www.freepik.com/free-vector/blue-fluid-patterned-background-vector_18896232.htm#query=wave&position=6&from_view=search&track=sph">Image by rawpixel.com</a> on Freepik
+//<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
 interface Post {
   title: string;
