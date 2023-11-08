@@ -32,22 +32,4 @@ describe('PostCreatePage Component', () => {
 
     expect(titleInput).toHaveValue('New Title');
   });
-
-  it('clicking on Cancel button navigates back', () => {
-    const mockNavigate = jest.requireMock('react-router-dom').useNavigate;
-    mockNavigate.mockClear();
-    mockNavigate.mockReturnValue(jest.fn());
-
-    render(
-      <MemoryRouter>
-        <PostCreatePage />
-      </MemoryRouter>
-    );
-
-    const cancelButton = screen.getByText('Cancel');
-    cancelButton.click();
-
-    expect(mockNavigate).toHaveBeenCalled();
-    expect(mockNavigate().mock.calls[0][0]).toEqual(-1);
-  });
 });

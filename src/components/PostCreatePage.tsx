@@ -92,10 +92,6 @@ const PostCreatePage: React.FC = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate(-1);
-  };
-
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
