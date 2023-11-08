@@ -104,3 +104,12 @@
     display: inline-block;
     margin-top: 20px;
 }
+
+.alert {
+    padding: 5px;
+    color: rgb(195, 5, 5);
+    margin-bottom: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: medium;
+  }

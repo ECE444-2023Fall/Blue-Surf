@@ -30,6 +30,10 @@ const PostDetailsPage: React.FC = () => {
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
+  const [alertMessage, setAlertMessage] = useState({
+    titleAlert: "",
+    summaryAlert: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +67,28 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+      setAlertMessage({
+        titleAlert: "Title cannot exceed 50 characters",
+        summaryAlert: "Summary cannot exceed 180 characters",
+      });
+      return;
+    }
+    if (editedPost.title.length > 50) {
+      setAlertMessage({
+        titleAlert: "Title cannot exceed 50 characters",
+        summaryAlert: "",
+      });
+      return;
+    }
+    if (editedPost.description.length > 180) {
+      setAlertMessage({
+        titleAlert: "",
+        summaryAlert: "Summary cannot exceed 180 characters",
+      });
+      return;
+    }
+
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`/api/update-post/${postId}`, {
@@ -77,6 +103,7 @@ const PostDetailsPage: React.FC = () => {
         console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
+        setAlertMessage({titleAlert: "", summaryAlert: ""})
       } else {
         console.error("Failed to update post.");
       }
@@ -88,6 +115,7 @@ const PostDetailsPage: React.FC = () => {
   const handleCancel = () => {
     setEditedPost({ ...post });
     setIsEditing(false);
+    setAlertMessage({ titleAlert: "", summaryAlert: "" });
   };
 
   const handleFileChange = (event: any) => {
@@ -159,6 +187,9 @@ const PostDetailsPage: React.FC = () => {
         <div className="col-md-6">
           <div className="container-styling">
             <div className="title">
+              {alertMessage.titleAlert && (
+                <div className="alert">{alertMessage.titleAlert}</div>
+              )}
               {isEditing ? (
                 <AutoSizeTextArea
                   content={editedPost.title}
@@ -170,6 +201,9 @@ const PostDetailsPage: React.FC = () => {
                 editedPost.title
               )}
             </div>
+            {alertMessage.summaryAlert && (
+              <div className="alert">{alertMessage.summaryAlert}</div>
+            )}
             <div className="summary">
               {isEditing ? (
                 <AutoSizeTextArea
@@ -195,7 +229,12 @@ const PostDetailsPage: React.FC = () => {
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
                   content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      extended_description: value,
+                    })
+                  }
                 />
               ) : (
                 editedPost.extended_description
