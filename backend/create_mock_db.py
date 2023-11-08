@@ -7,20 +7,20 @@ from datetime import datetime
 def create_mock_users():
     users = [
         User(
-            username="testuser1",
-            email="testuser1@example.com",
+            username="Sarah Hudson",
+            email="sarah@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         ),
         User(
-            username="testuser2",
-            email="testuser2@example.com",
+            username="Ahmed Khan",
+            email="ahmed@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         ),
         User(
-            username="testuser3",
-            email="testuser3@example.com",
+            username="Alex Smith",
+            email="alex@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         ),

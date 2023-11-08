@@ -36,7 +36,8 @@ def setup_routes(app):
 
           from datalayer_event import EventDataLayer
           event_data = EventDataLayer()
-          event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], location=updated_post["location"])
+          event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], 
+                                  extended_description=updated_post["extended_description"],location=updated_post["location"])
 
           return jsonify({"message": "Post updated successfully"})
       except Exception as e:
