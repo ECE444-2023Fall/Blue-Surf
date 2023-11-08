@@ -203,6 +203,10 @@ const PostDetailsPage: React.FC = () => {
             </div>
             <div className="subtitle">Date</div>
             <div className="details">
+            <input
+              type="datetime-local"
+              disabled={!isEditing}
+            />
               {isEditing ? (
                 <AutoSizeTextArea
                   content={editedPost.start_time.toLocaleString()}
