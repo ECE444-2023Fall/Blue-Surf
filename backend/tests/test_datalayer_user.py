@@ -227,3 +227,31 @@ def test_empty_password_salt(test_client):
 
     with app.app_context():
         assert User.query.filter_by(username="testuser1").first() == None
+
+def test_delete_user(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert User.query.filter_by(username="testuser1").first() != None
+    
+    try:
+        user.delete_user_by_username("testuser1")
+    except ValueError as value_error:
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    
+    with app.app_context():
+        assert User.query.filter_by(username="testuser1").first() == None

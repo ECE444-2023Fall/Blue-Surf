@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from flask import jsonify
 
 from ..app import app, db
 from ..models import User, Event, Tag
@@ -23,6 +22,27 @@ class Event(db.Model):
 '''
 
 class EventDataLayer(DataLayer):
+    def helper_valid_times(self,start_time: datetime, end_time: datetime) -> bool:
+        '''
+        Given a start and end time, it returns whether both are valid.
+        This means that:
+        - start_time and end_time are not None
+        - they are both valid datetime objects
+        - start_time is before end_time
+        '''
+        if start_time is None or end_time is None:
+            return False
+        try:
+            start = datetime(start_time)
+            end = datetime(end_time)
+        except Exception as e:
+            raise e 
+
+        if end < start:
+            return False     
+        
+        return True
+
     def create_event(self, title, description, extended_description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
         event = Event()
 
@@ -133,30 +153,46 @@ class EventDataLayer(DataLayer):
             event.location = location
 
             db.session.commit()
+            try:
+                valid_times = self.helper_valid_times(start_time, end_time)
+            except Exception as e:
+                raise ValueError(e)
+            
+            if valid_times:
+                event.start_time = start_time
+                event.end_time = end_time
+            db.session.commit()
 
-        # if start_time is None:
-        #     logging.info("Start time should not be empty")
-        #     raise TypeError("Start time should not be empty")
-        # try: 
-        #     temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("Start time is not given in correct format")
-        #     raise ValueError("Start time is not given in correct format")
 
-        # if end_time is None:
-        #     logging.info("End time should not be empty")
-        #     raise TypeError("End time should not be empty")
-        # try: 
-        #     temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("End time is not given in correct format")
-        #     raise ValueError("End time is not given in correct format")
+            # temp_start_datetime = None
+            # temp_end_datetime = None
 
-        # if temp_end_datetime < temp_start_datetime:
-        #     logging.info("Start time should be after end time")
-        #     raise ValueError("Start time should be after end time")
-        # event.start_time = temp_start_datetime
-        # event.end_time = temp_end_datetime
+            # if start_time is not None:
+            #     try: 
+            #         temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+            #     except ValueError as e:
+            #         logging.info(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
+            #         raise ValueError(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
+
+            # if end_time is not None:
+            #     try: 
+            #         temp_end_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+            #     except ValueError as e:
+            #         logging.info(f"End time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
+            #         raise ValueError(f"End time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
+
+            # if temp_end_datetime < temp_start_datetime:
+            #     logging.info("Start time should be after end time")
+            #     raise ValueError("Start time should be after end time")
+            
+            # if temp_start_datetime is not None:
+            #     logging.warning(type(temp_start_datetime))
+            #     event.start_time = temp_start_datetime
+            # if temp_end_datetime is not None:
+            #     logging.warning(type(temp_start_datetime))
+            #     event.end_time = temp_end_datetime
+            
+            db.session.commit()
 
         # with app.app_context():
         #     author = User.query.filter_by(username=author_name).first()
@@ -192,3 +228,15 @@ class EventDataLayer(DataLayer):
             if event.tags == None:
                 return []
             return event.tags
+    
+    def delete_event_by_id(self, event_id):
+        '''
+        Deletes the event with the given event id. 
+        '''
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if event is None:
+                logging.info(f"Event with id {event_id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {event_id} {self.DOES_NOT_EXIST}")
+            db.session.delete(event)
+            db.session.commit()
