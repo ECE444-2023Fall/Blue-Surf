@@ -33,7 +33,7 @@ def setup_routes(app):
           updated_post = request.get_json()
           print(updated_post)
 
-          from datalayer.event import EventDataLayer
+          from .datalayer.event import EventDataLayer
           event_data = EventDataLayer()
           event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], 
                                   extended_description=updated_post["extended_description"],location=updated_post["location"])
