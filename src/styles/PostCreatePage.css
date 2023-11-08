@@ -8,11 +8,12 @@
     color: #ff0000;
     max-width: 30%;
     font-family: Outfit;
+    transform: translate(-90%, -20%);
   }
 
 
   @media (max-width: 768px) {
     .error-message {
-      transform: translate(-5%, -20%);
+      transform: translate(-40%, -20%);
     }
   }

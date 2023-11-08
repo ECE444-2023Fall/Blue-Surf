@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
@@ -129,9 +129,6 @@ const PostCreatePage: React.FC = () => {
             {errorMessage && (
               <div className="error-message">{errorMessage}</div>
             )}
-            <button className="cancel-button" onClick={handleCancel}>
-              Cancel
-            </button>
             <button className="edit-button" onClick={handleSave}>
               Post
             </button>
