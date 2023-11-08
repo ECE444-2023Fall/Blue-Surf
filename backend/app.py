@@ -17,7 +17,7 @@ bootstrap = Bootstrap(app)
 # Initialize DB
 db = SQLAlchemy(app)
 
-import api
+from . import api
 api.setup_routes(app)
 
 

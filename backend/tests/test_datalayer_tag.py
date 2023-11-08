@@ -1,15 +1,12 @@
-import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app
-from datalayer_tag import TagDataLayer
-from datalayer_event import EventDataLayer
-from datalayer_user import UserDataLayer
-from models import Tag
+from ..app import app
+from ..datalayer_tag import TagDataLayer
+from ..datalayer_event import EventDataLayer
+from ..datalayer_user import UserDataLayer
+from ..models import Tag
 
 def test_add_tag(test_client):
     tag = TagDataLayer()

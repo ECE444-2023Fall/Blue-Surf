@@ -1,6 +1,6 @@
-from app import app, db
-from models import User
-from datalayer_abstract import DataLayer
+from .app import app, db
+from .models import User
+from .datalayer_abstract import DataLayer
 import logging
 
 '''
