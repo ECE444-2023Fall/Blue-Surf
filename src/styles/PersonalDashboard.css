@@ -36,4 +36,30 @@
     border-color: white;
     position: relative;
     width: 270px;
+    font-family: Outfit;
+}
+
+.dashboard-buttons {
+    align-items: center;
+}
+
+.create-button-div {
+    position: absolute;
+    right: 100px;
+}
+
+.create-button {
+    border-radius: 8px;
+    border: 2px solid #116D31;
+    background: #D1E8D9;
+    width: 130px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-family: Outfit;
+}
+
+.plus-icon {
+    width: fit-content;
 }
