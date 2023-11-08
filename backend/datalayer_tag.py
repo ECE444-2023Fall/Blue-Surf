@@ -1,5 +1,5 @@
 from app import app, db
-from models import Tag
+from models import Tag, Event
 from datalayer_abstract import DataLayer
 import logging
 
@@ -51,5 +51,17 @@ class TagDataLayer(DataLayer):
                 if tag is not None:
                     names.append(tag.name)
             return names
+    
+    def get_events_by_tag_names(self, tag_names):
+        '''
+        Returns a list of event_ids that contain at least one of the given tags.
+        '''
+        with app.app_context():
 
+            matching_tags = Tag.query.filter(Tag.name.in_(tag_names)).all()
+            if not matching_tags:
+                return []
 
+            matching_events = Event.query.filter(Event.tags.any(Tag.id.in_([tag.id for tag in matching_tags]))).all()
+            event_ids = [event.id for event in matching_events]
+            return event_ids

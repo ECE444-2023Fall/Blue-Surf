@@ -90,15 +90,8 @@ def setup_routes(app):
         event_data = EventDataLayer()
         event = event_data.get_event_by_id(event_id)
 
-        tag_data = TagDataLayer()
-        # tag_names = []
-        # for tag in event.tags:
-        #     tag_names.append(tag_data.get_tag_names_by_ids(tag))
-            
         tags = event_data.get_tags_for_event(event_id=event.id)
         tag_names = [tag.name for tag in tags]
-        
-        # tag_names = tag_data.get_tag_names_by_ids(event_tag_ids)
 
         json_event = {
             "id": event.id,
