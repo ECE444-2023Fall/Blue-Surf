@@ -34,18 +34,26 @@
     border-radius: 14px;
     height: 70px;
     border-color: white;
-    position: relative;
-    width: 270px;
+    text-align: center; /* Center the content */
+    width: fit-content;
+    height: fit-content;
     font-family: Outfit;
 }
 
 .dashboard-buttons {
     align-items: center;
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .create-button-div {
-    position: absolute;
-    right: 100px;
+    margin-left: auto;
+}
+.fill-space {
+    margin-right: auto;
+    visibility: hidden;
+    width: 130px;
+    height: 42px;
 }
 
 .create-button {

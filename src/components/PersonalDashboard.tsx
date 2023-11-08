@@ -13,7 +13,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const PersonalDashboard: React.FC = (PostCardProps: any) => {
   const [searchResults, setSearchResults] = useState(null);
-  const [selectedButton, setSelectedButton] = useState("Favorites");
+  const [selectedButton, setSelectedButton] = useState("Favourites");
   const navigate = useNavigate();
 
   const handleSearchData = (data: any) => {
@@ -29,7 +29,7 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
   };
 
   useEffect(() => {
-    setSelectedButton("Favorites");
+    setSelectedButton("Favourites");
   }, []);
 
   return (
@@ -46,17 +46,19 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
               <div></div>
               <div className="row">
                 <div className="col-12 my-3">
-                  <div className="d-flex justify-content-center dashboard-buttons">
+                  <div className="d-flex dashboard-buttons">
+                    <div className="fill-space">
+                    </div>
                     <div className="background-select">
                       <button
                         className={`twobutton-${
-                          selectedButton !== "Favorites"
+                          selectedButton !== "Favourites"
                             ? "notselect"
                             : "select"
                         }`}
-                        onClick={() => handleButtonClick("Favorites")}
+                        onClick={() => handleButtonClick("Favourites")}
                       >
-                        Favorites
+                        Favourites
                       </button>
                       <button
                         className={`twobutton-${
