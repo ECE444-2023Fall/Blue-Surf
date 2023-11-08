@@ -48,10 +48,11 @@ def create_mock_events():
     start_time = datetime.strptime("2023-10-28 09:00:00", "%Y-%m-%d %H:%M:%S")
     end_time = datetime.strptime("2023-10-28 11:00:00", "%Y-%m-%d %H:%M:%S")
     
-    # Read the image file
-    image_file_path = os.path.join("../images", "logo.png")
-    with open(image_file_path, "rb") as image_file:
-        image_data = image_file.read()
+    # # Read the image file
+    # image_file_path = os.path.join("../images", "logo.png")
+    # with open(image_file_path, "rb") as image_file:
+    #     image_data = image_file.read()
+    image_data = None
         
     events = [
         (Event(
@@ -161,30 +162,31 @@ def create_mock_tags():
     ]
     return tags
 
-with app.app_context():
-    # create the database and the db table
-    db.drop_all()
-    db.create_all()
-    
-    users = create_mock_users()
-    for user in users: 
-        db.session.add(user)
+def populate_database(app, db):
+    with app.app_context():
+        # create the database and the db table
+        db.drop_all()
+        db.create_all()
+        
+        users = create_mock_users()
+        for user in users: 
+            db.session.add(user)
 
-    tags = create_mock_tags()
-    for tag in tags:
-        db.session.add(tag)
+        tags = create_mock_tags()
+        for tag in tags:
+            db.session.add(tag)
+            
+        events = create_mock_events()
+        for (event, tag_names) in events:
+            db.session.add(event)
+            for tag_name in tag_names:
+                tag = Tag.query.filter_by(name=tag_name).first()
+                if tag:
+                    event.tags.append(tag)
+            
+        user_events = create_mock_user_events()
+        for user_event in user_events: 
+            db.session.add(user_event)
         
-    events = create_mock_events()
-    for (event, tag_names) in events:
-        db.session.add(event)
-        for tag_name in tag_names:
-            tag = Tag.query.filter_by(name=tag_name).first()
-            if tag:
-                event.tags.append(tag)
-        
-    user_events = create_mock_user_events()
-    for user_event in user_events: 
-        db.session.add(user_event)
-    
-    # commit the changes
-    db.session.commit()
+        # commit the changes
+        db.session.commit()
