@@ -36,8 +36,7 @@ def setup_routes(app):
     @app.route("/api/get-all-tags", methods=["GET"])
     def get_all_tags():
         try:
-            from datalayer_tag import TagDataLayer
-
+            from .datalayer.tag import TagDataLayer
             tag_data = TagDataLayer()
             tags = tag_data.get_all_tags()
             return jsonify(tags)
