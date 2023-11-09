@@ -2,14 +2,6 @@ body {
   background-color: #A0D1F2 !important;
 }
 
-.custom-container {
-  margin: 20px;
-}
-
-.content-container {
-  margin-top: 100px;
-}
-
 .custom-col-md-3 {
   flex: 0 0 20%;
   max-width: 20%;
