@@ -4,6 +4,8 @@ import "../styles/SignupPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
+const API_URL = "https://bluesurf.onrender.com"
+
 const SignupPage: React.FC = () => {
   const [registerForm, setRegisterForm] = useState({
     username: "",
@@ -75,7 +77,7 @@ const SignupPage: React.FC = () => {
 
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

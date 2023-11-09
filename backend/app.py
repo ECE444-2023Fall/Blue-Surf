@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import json
 
 # from models import User
@@ -15,6 +16,7 @@ from flask_jwt_extended import (
 )
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config["JWT_SECRET_KEY"] = "NEED TO CHANGE"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 

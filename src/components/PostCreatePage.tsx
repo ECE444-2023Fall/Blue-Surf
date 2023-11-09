@@ -6,6 +6,8 @@ import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 const imageTemplate = require("../assets/post-template.jpg");
+const API_URL = "https://bluesurf.onrender.com"
+
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
 interface Post {
@@ -73,7 +75,7 @@ const PostCreatePage: React.FC = () => {
         end_time: formattedEndDate,
       };
 
-      const response = await fetch(`/api/create-post`, {
+      const response = await fetch(`${API_URL}/api/create-post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

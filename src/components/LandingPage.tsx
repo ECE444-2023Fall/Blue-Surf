@@ -6,6 +6,8 @@ import FilterField from "./FilterField";
 import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
 
+const API_URL = "https://bluesurf.onrender.com"
+
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
   title: "Fall Career Week",
@@ -40,7 +42,7 @@ const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -67,7 +69,7 @@ const LandingPage: React.FC = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/"); // Change this to the actual API endpoint
+      const response = await fetch(`${API_URL}/api/`); // Change this to the actual API endpoint
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);

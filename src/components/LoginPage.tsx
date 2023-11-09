@@ -4,6 +4,8 @@ import "../styles/LoginPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
+const API_URL = "https://bluesurf.onrender.com"
+
 interface User {
   userId: string;
   username: string;
@@ -58,7 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
     }
 
     try {
-      const response = await fetch("/api/token", {
+      const response = await fetch(`${API_URL}/api/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -6,6 +6,8 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 const postImage = require("../assets/post1.jpeg");
 
+const API_URL = "https://bluesurf.onrender.com"
+
 const EXTENTDED_DESCRIPTION =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 interface Post {
@@ -65,7 +67,7 @@ const PostDetailsPage: React.FC = () => {
   const handleSave = async () => {
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
