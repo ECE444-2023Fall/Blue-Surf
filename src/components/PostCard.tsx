@@ -25,6 +25,11 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     setIsLiked(!isLiked);
   };
 
+  const handleDelete = () => {
+    // TODO: display pop up and perform delete upon confirmation
+    console.log("Post deleted!");
+  };
+
   return (
     <div className="col" data-testid="post-card">
       <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
@@ -71,6 +76,9 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                     data-testid="like-button"
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                  </button>
+                  <button className="trash-button" onClick={handleDelete}>
+                    <i className="fa fa-trash-o trash-icon-custom-size" />
                   </button>
                 </div>
               </div>
