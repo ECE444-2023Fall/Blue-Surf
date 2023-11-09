@@ -172,17 +172,17 @@ def populate_database(app, db):
         for user in users: 
             db.session.add(user)
 
-        tags = create_mock_tags()
-        for tag in tags:
-            db.session.add(tag)
+        # tags = create_mock_tags()
+        # for tag in tags:
+        #     db.session.add(tag)
             
-        events = create_mock_events()
-        for (event, tag_names) in events:
-            db.session.add(event)
-            for tag_name in tag_names:
-                tag = Tag.query.filter_by(name=tag_name).first()
-                if tag:
-                    event.tags.append(tag)
+        # events = create_mock_events()
+        # for (event, tag_names) in events:
+        #     db.session.add(event)
+        #     for tag_name in tag_names:
+        #         tag = Tag.query.filter_by(name=tag_name).first()
+        #         if tag:
+        #             event.tags.append(tag)
             
         # user_events = create_mock_user_events()
         # for user_event in user_events: 
