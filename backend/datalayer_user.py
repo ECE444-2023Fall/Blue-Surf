@@ -4,12 +4,13 @@ from datalayer_abstract import DataLayer
 import logging
 
 '''
-class User:
+class User(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False, unique=True)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    password_hash = db.Column(db.String(255), nullable=False)
-    password_salt = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.Text, nullable=False, unique=True)
+    email = db.Column(db.Text, nullable=False, unique=True)
+    password_hash = db.Column(db.Text, nullable=False)
+    password_salt = db.Column(db.Text, nullable=False)
 
     # Define a one-to-many relationship with events authored by the user
     events_authored = db.relationship("Event", backref="author", lazy=True)
@@ -82,5 +83,16 @@ class UserDataLayer(DataLayer):
         with app.app_context():
             db.session.add(user)
             db.session.commit() 
+
+    def get_user(self, user_identifier):
+        with app.app_context():
+            user = User.query.filter_by(username=user_identifier).first()
+            if user is not None:
+                return user
+            user = User.query.filter_by(email=user_identifier).first()
+            if user is not None:
+                return user
+            logging.info(f"User with username/email {user_identifier} {self.DOES_NOT_EXIST}")
+            raise ValueError(f"User with username/email {user_identifier} {self.DOES_NOT_EXIST}")
 
 

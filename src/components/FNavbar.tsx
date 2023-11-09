@@ -1,31 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 interface User {
-  displayName: string;
+  userId: string;
+  username: string;
 }
 
-function FNavbar() {
-  // Test user placeholder until Auth is set up
-  const [user, setUser] = useState<User | null>(null);
+interface FNavbarProps {
+  token: string | null;
+  user: User | null;
+  removeAuth: () => void;
+}
 
-  const logIn = () => {
-    // TODO: Implement sign-in logic, e.g., using an authentication service.
-    setUser({
-      displayName: "Test User",
-    });
-  };
+const FNavbar: React.FC<FNavbarProps> = ({ token, user, removeAuth }) => {
+  const logOut = async () => {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const logOut = () => {
-    // TODO: Implement sign-out logic.
-    setUser(null);
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 500) {
+          throw new Error(data["error message"]);
+        }
+        throw new Error("Network response was not ok.");
+      }
+
+      if (data && data.msg === "logout successful") {
+        removeAuth();
+      } else {
+        throw new Error("Unexpected response message after logout");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
   let renderNav: JSX.Element;
 
-  if (user) {
+  if (token && token !== "" && token !== undefined) {
     renderNav = (
       <Nav className="right-align">
         <LinkContainer to="/dashboard">
@@ -38,17 +57,15 @@ function FNavbar() {
         </LinkContainer>
         <p className="navbar-link-text my-2">
           {" "}
-          <strong>{user.displayName}</strong>{" "}
+          <strong>{user?.username}</strong>{" "}
         </p>
       </Nav>
     );
   } else {
     renderNav = (
       <div className="right-align ml-auto">
-        <LinkContainer to="/signin">
-          <Nav.Link className="navbar-link-text bold" onClick={logIn}>
-            Login / Sign Up
-          </Nav.Link>
+        <LinkContainer to="/login">
+          <Nav.Link className="navbar-link-text bold">Login / Sign Up</Nav.Link>
         </LinkContainer>
       </div>
     );
@@ -80,6 +97,6 @@ function FNavbar() {
       </Navbar.Collapse>
     </Navbar>
   );
-}
+};
 
 export default FNavbar;

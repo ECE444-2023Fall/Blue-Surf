@@ -1,4 +1,7 @@
 from app import db
+from flask_sqlalchemy import SQLAlchemy
+#from uuid import uuid
+
 
 class User(db.Model):
     """
@@ -14,10 +17,10 @@ class User(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False, unique=True)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    password_hash = db.Column(db.String(255), nullable=False)
-    password_salt = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.Text, nullable=False, unique=True)
+    email = db.Column(db.Text, nullable=False, unique=True)
+    password_hash = db.Column(db.Text, nullable=False)
+    password_salt = db.Column(db.Text, nullable=False)
 
     # Define a one-to-many relationship with events authored by the user
     events_authored = db.relationship("Event", backref="author", lazy=True)
@@ -40,22 +43,24 @@ event_tags = db.Table(
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
-    location = db.Column(db.String(255), nullable=False)
+    extended_description = db.Column(db.Text)
+    location = db.Column(db.Text, nullable=False)
     start_time = db.Column(db.TIMESTAMP, nullable=False)
     end_time = db.Column(db.TIMESTAMP, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
+    club = db.Column(db.Text)
     
      # Define a many-to-many relationship with tags through the event_tags table
     tags = db.relationship("Tag", secondary=event_tags)
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.Text, unique=True, nullable=False)
 
 class UserInterestedEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
