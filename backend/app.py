@@ -30,8 +30,15 @@ migrate = Migrate(app, db)
 from .api import setup_routes
 setup_routes(app)
 
-from .create_mock_db import populate_database
-populate_database(app, db)
+# from .create_mock_db import populate_database
+# populate_database(app, db)
+
+with app.app_context():
+    # create the database and the db table
+    db.create_all()
+
+    # commit the changes
+    db.session.commit()
 
 if __name__ == "__main__":
     app.run()
