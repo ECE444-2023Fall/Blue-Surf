@@ -36,7 +36,7 @@ const PostDetailsPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${postId}`);
+        const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
           throw new Error("Cannot fetch post.");
         }

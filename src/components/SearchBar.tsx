@@ -7,6 +7,7 @@ import '../styles/SearchBar.css';
 export interface SearchBarProps {
   onDataReceived: (data: any) => void; // Change 'any' to the expected data type
 }
+const API_URL = "https://bluesurf.onrender.com"
 
 const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -15,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
 
   const getSuggestions = async (value: string) => {
     try {
-      const response = await fetch(`/api/autosuggest?query=${value}`);
+      const response = await fetch(`${API_URL}/api/autosuggest?query=${value}`);
       if (!response || !response.ok) {
         throw new Error('Network response was not ok.');
       }
@@ -43,7 +44,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
 
   const onSearch = async (query: string) => {
     try {
-      const response = await fetch(`/api/search?query=${query}`);
+      const response = await fetch(`${API_URL}/api/search?query=${query}`);
       if (!response || !response.ok) {
         throw new Error('Network response was not ok.');
       }
