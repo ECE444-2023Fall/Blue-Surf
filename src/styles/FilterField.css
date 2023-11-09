@@ -10,7 +10,7 @@
     height: 60px;
     border-color: white;
     position: relative;
-    width: 200px;
+    width: 250px;
 }
 
 .custom-select::after {

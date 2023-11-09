@@ -25,9 +25,13 @@ bootstrap = Bootstrap(app)
 
 # Initialize DB
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-import api
-api.setup_routes(app)
+from .api import setup_routes
+setup_routes(app)
+
+from .create_mock_db import populate_database
+populate_database(app, db)
 
 if __name__ == "__main__":
     app.run()

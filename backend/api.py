@@ -1,8 +1,5 @@
 from flask import jsonify, request
 
-# from datalayer_event import EventDataLayer
-
-
 def get_matched_events(query, detailed=False):
     if not query:
         return []
@@ -41,16 +38,10 @@ def setup_routes(app):
             updated_post = request.get_json()
             print(updated_post)
 
-            from datalayer_event import EventDataLayer
-
+            from .datalayer.event import EventDataLayer
             event_data = EventDataLayer()
-            event_data.update_event(
-                event_id=post_id,
-                title=updated_post["title"],
-                description=updated_post["description"],
-                extended_description=updated_post["extended_description"],
-                location=updated_post["location"],
-            )
+            event_data.update_event(event_id=post_id, title=updated_post["title"], description=updated_post["description"], 
+                                    extended_description=updated_post["extended_description"],location=updated_post["location"])
 
             return jsonify({"message": "Post updated successfully"})
         except Exception as e:
@@ -68,7 +59,7 @@ def setup_routes(app):
             # Retrieve the updated post data from the request
             new_post = request.get_json()
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_data.create_event(
@@ -117,7 +108,7 @@ def setup_routes(app):
     @app.route("/api/", methods=["GET"])
     def index():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             events = event_data.get_all_events()
@@ -125,22 +116,22 @@ def setup_routes(app):
             json_events = []
 
             for event in events:
+                tags = event_data.get_tags_for_event(event_id=event.id)
+                tag_names = [tag.name for tag in tags]
+            
                 json_event = {
                     "id": event.id,
                     "title": event.title,
                     "description": event.description,
                     "extended_description": event.extended_description,
                     "location": event.location,
-                    "start_time": event.start_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),  # Convert to string
-                    "end_time": event.end_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),  # Convert to string
+                    "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
+                    "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
                     "author_id": event.author_id,
                     "club": event.club,
                     "is_published": event.is_published,
                     "like_count": event.like_count,
+                    "tags": tag_names,
                     # Add other fields here as needed
                 }
 
@@ -162,10 +153,12 @@ def setup_routes(app):
     @app.route("/api/<int:event_id>", methods=["GET"])
     def get_event(event_id):
         try:
-            from datalayer_event import EventDataLayer
-
+            from .datalayer.event import EventDataLayer
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
+
+            tags = event_data.get_tags_for_event(event_id=event.id)
+            tag_names = [tag.name for tag in tags]
 
             json_event = {
                 "id": event.id,
@@ -179,18 +172,25 @@ def setup_routes(app):
                 "club": event.club,
                 "is_published": event.is_published,
                 "like_count": event.like_count,
+                "tags": tag_names,
             }
 
             return jsonify(json_event)
         except Exception as e:
             error_message = str(e)
-            return (
-                jsonify(
-                    {"error": "Failed to get event", "error message": error_message}
-                ),
-                500,
-            )
-
+            return jsonify({"error": "Failed to get event", "error message": error_message}), 500
+        
+    @app.route("/api/get-all-tags", methods=["GET"])
+    def get_all_tags():
+        try:
+            from .datalayer.tag import TagDataLayer
+            tag_data = TagDataLayer()
+            tags = tag_data.get_all_tags()
+            return jsonify(tags)
+        except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": "Failed to get all tags", "error message": error_message}), 500
+        
 
 # TODO: Remove once database is setup
 # TODO: add extendedDescription field, image url,

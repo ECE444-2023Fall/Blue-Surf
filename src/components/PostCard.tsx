@@ -5,8 +5,6 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
 const postImage = require("../assets/post1.jpeg");
 
-
-
 interface PostCardProps {
   title: string;
   start_time: Date;
@@ -34,10 +32,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   return (
     <div className="col" data-testid="post-card">
-      <Link
-        to={`/post/${PostCardProps.id}`}
-        className="text-decoration-none"
-      >
+      <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
             src={postImage}
@@ -61,13 +56,17 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
             </p>
             <div className="row">
               <div className="col">
-                {/* <span className="pill" data-testid="post-tags">
-                  {PostCardProps.tags.map((tag: string, index: number) => (
-                    <span className="pill-tag" key={index}>
-                      {tag}
-                    </span>
-                  ))}
-                </span> */}
+                {PostCardProps.tags.length > 0 && (
+                  <>
+                    {PostCardProps.tags.map((tag: string, index: number) => (
+                      <span className="pill" data-testid="post-tags">
+                        <span className="pill-tag" key={index}>
+                          {tag}
+                        </span>
+                      </span>
+                    ))}
+                  </>
+                )}
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>

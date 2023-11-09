@@ -1,10 +1,9 @@
 import os
-import sys
 import pytest
 import logging
 
-sys.path.append("../")
-from app import app, db
+from ..app import app, db
+from ..models import User, Event, Tag, UserInterestedEvent
 
 @pytest.fixture(scope="function")
 def test_client():
@@ -24,12 +23,23 @@ def test_client():
         if "sqlalchemy" not in app.extensions:
             db.init_app(app)
         db.create_all()
+        
+        # Clear the tables
+        db.session.execute(User.__table__.delete())
+        db.session.execute(Event.__table__.delete())
+        db.session.execute(Tag.__table__.delete())
+        db.session.execute(UserInterestedEvent.__table__.delete())
+        db.session.commit()
 
     yield app.test_client()
 
     with app.app_context():
         db.session.remove()
-        for table in reversed(db.metadata.sorted_tables):
-            db.session.execute(table.delete())
-        db.session.commit()
+        try:
+            for table in reversed(db.metadata.sorted_tables):
+                db.session.execute(table.delete())
+            db.session.commit()
+        except Exception as e:
+            # Handle any exceptions that may occur during teardown
+            logging.error(f"Teardown error: {str(e)}")
         
