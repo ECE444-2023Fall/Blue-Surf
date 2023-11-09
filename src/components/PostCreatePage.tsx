@@ -143,7 +143,6 @@ const PostCreatePage: React.FC = () => {
   };
 
   const handleTagAddition = (selectedTag: string) => {
-    console.log("in addition");
     setEditedPost({
       ...editedPost,
       tags: [...editedPost.tags, selectedTag],
@@ -151,7 +150,6 @@ const PostCreatePage: React.FC = () => {
   };
 
   const handleTagRemoval = (selectedTag: string) => {
-    console.log("in removal");
     setEditedPost({
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
@@ -280,13 +278,6 @@ const PostCreatePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
-                </span>
-              ))}
-            </span> */}
               <div className="subtitle">About</div>
               <div className="details">
                 {/* TODO: replace with extendedDescription field */}
