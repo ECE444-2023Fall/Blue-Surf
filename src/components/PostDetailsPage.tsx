@@ -34,6 +34,9 @@ const PostDetailsPage: React.FC = () => {
     titleAlert: "",
     summaryAlert: "",
   });
+  const [blankMessage, setBlankMessage] = useState({
+    blankErrorMessage:"" 
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,6 +92,28 @@ const PostDetailsPage: React.FC = () => {
       return;
     }
 
+    if (!editedPost.location && !editedPost.title){
+      setBlankMessage({
+        blankErrorMessage: "Title and Location fields are missing"
+      })
+      return;
+    }
+
+    if (!editedPost.title){
+      setBlankMessage({
+        blankErrorMessage: "Title field is missing"
+      })
+      return;
+    }
+
+    if (!editedPost.location){
+      setBlankMessage({
+        blankErrorMessage: "Location field is missing"
+      })
+      return;
+    }
+
+
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`/api/update-post/${postId}`, {
@@ -133,90 +158,98 @@ const PostDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-      <div className="row m-2">
-        <a className="navbar-brand back-nav" href="javascript:history.back()">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
-            width="15"
-            height="15"
-            className="d-inline-block align-items-center"
-            alt=""
-          />
-          <span className="back-text">Back</span>
-        </a>
-        <div className="row m-2 justify-content-end">
-          {isEditing ? (
-            <>
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancel
-              </button>
-              <button className="edit-button" onClick={handleSave}>
-                Save
-              </button>
-            </>
-          ) : (
-            <button className="edit-button" onClick={toggleEdit}>
-              Edit
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="row g-5 m-2">
-        <div className="col-md-6">
-          <img src={imageSrc} className="card-img-top rounded-edge" alt="..." />
-          <div className="row g-5 m-2 d-flex justify-content-center">
-            {isEditing && (
+    <div className="post-details-wrapper">
+      <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
+        <div className="row m-2">
+        {blankMessage.blankErrorMessage && (
+              <div className="alert">{blankMessage.blankErrorMessage}</div>
+            )}
+          <a className="navbar-brand back-nav" href="javascript:history.back()">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
+              width="15"
+              height="15"
+              className="d-inline-block align-items-center"
+              alt=""
+            />
+            <span className="back-text">Back</span>
+          </a>
+          <div className="row m-2 justify-content-end">
+            {isEditing ? (
               <>
-                <input
-                  type="file"
-                  id="fileInput"
-                  className="hidden-input"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-                <label htmlFor="fileInput" className="custom-file-input">
-                  Choose a File
-                </label>
+                <button className="cancel-button" onClick={handleCancel}>
+                  Cancel
+                </button>
+                <button className="edit-button" onClick={handleSave}>
+                  Save
+                </button>
               </>
+            ) : (
+              <button className="edit-button" onClick={toggleEdit}>
+                Edit
+              </button>
             )}
           </div>
         </div>
 
-        <div className="col-md-6">
-          <div className="container-styling">
-            <div className="title">
+        <div className="row g-5 m-2">
+          <div className="col-md-6">
+            <img
+              src={imageSrc}
+              className="card-img-top rounded-edge"
+              alt="..."
+            />
+            <div className="row g-5 m-2 d-flex justify-content-center">
+              {isEditing && (
+                <>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    className="hidden-input"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="fileInput" className="custom-file-input">
+                    Choose a File
+                  </label>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="container-styling">
+              <div className="title">
               {alertMessage.titleAlert && (
                 <div className="alert">{alertMessage.titleAlert}</div>
               )}
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.title}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, title: value })
-                  }
-                />
-              ) : (
-                editedPost.title
-              )}
-            </div>
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.title}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, title: value })
+                    }
+                  />
+                ) : (
+                  editedPost.title
+                )}
+              </div>
             {alertMessage.summaryAlert && (
               <div className="alert">{alertMessage.summaryAlert}</div>
             )}
-            <div className="summary">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.description}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, description: value })
-                  }
-                />
-              ) : (
-                editedPost.description
-              )}
-            </div>
-            {/* <span className="pill">
+              <div className="summary">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.description}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, description: value })
+                    }
+                  />
+                ) : (
+                  editedPost.description
+                )}
+              </div>
+              {/* <span className="pill">
               {post.tags.map((tag: string, index: number) => (
                 <span className="pill-tag" key={index}>
                   {tag}
@@ -292,6 +325,7 @@ const PostDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
