@@ -135,7 +135,9 @@ def setup_routes(app):
 
       if entered_password_hash == stored_password_hash:
           access_token = create_access_token(identity=stored_user.id)
-          response = {"access_token": access_token}
+          response = {"access_token": access_token,
+                      "id": stored_user.id,
+                      "username": stored_user.username}
           return response
       else:
         return jsonify({"error": "Failed to login", "error message": "Incorrect password."}), 401

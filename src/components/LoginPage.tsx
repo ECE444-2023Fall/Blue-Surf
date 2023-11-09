@@ -4,11 +4,16 @@ import "../styles/LoginPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
-interface LoginPageProps {
-  setToken: (token: string | null) => void;
+interface User {
+  userId: string;
+  username: string;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
+interface LoginPageProps {
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
   const [loginForm, setloginForm] = useState({
     userIdentifier: "",
     password: "",
@@ -87,7 +92,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setToken }) => {
         }
       }
 
-      setToken(data.access_token);
+      setAuth(data.access_token, {userId: data.id, username: data.username});
       navigate("/");
     } catch (error: any) {
       console.error("Login Error:", error);

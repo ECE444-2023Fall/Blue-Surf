@@ -3,12 +3,18 @@ import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-interface FNavbarProps {
-  token: string | null;
-  removeToken: () => void;
+interface User {
+  userId: string;
+  username: string;
 }
 
-const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
+interface FNavbarProps {
+  token: string | null;
+  user: User | null;
+  removeAuth: () => void;
+}
+
+const FNavbar: React.FC<FNavbarProps> = ({ token, user, removeAuth }) => {
   const logOut = async () => {
     try {
       const response = await fetch("/api/logout", {
@@ -27,7 +33,7 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
       }
 
       if (data && data.msg === "logout successful") {
-        removeToken();
+        removeAuth();
       } else {
         throw new Error("Unexpected response message after logout");
       }
@@ -51,7 +57,7 @@ const FNavbar: React.FC<FNavbarProps> = ({ token, removeToken }) => {
         </LinkContainer>
         <p className="navbar-link-text my-2">
           {" "}
-          <strong>Test</strong>{" "}
+          <strong>{user?.username}</strong>{" "}
         </p>
       </Nav>
     );

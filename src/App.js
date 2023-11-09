@@ -3,7 +3,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FNavbar from "./components/FNavbar";
 import LandingPage from "./components/LandingPage";
-import useToken from "./components/useToken";
+import useAuth from "./components/useAuth";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import Profile from "./components/Profile";
@@ -16,13 +16,13 @@ import {
 } from "react-router-dom";
 
 function App() {
-  const { token, removeToken, setToken } = useToken();
+  const { token, user, removeAuth, setAuth } = useAuth();
   
   const authenticatedRoutes = (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/post/:postId" element={<PostDetailsPage />} />
-      <Route path="/dashboard" element={<Profile token={token} setToken={setToken} />} />
+      <Route path="/dashboard" element={<Profile token={token} user={user} setAuth={setAuth} />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
@@ -31,7 +31,7 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/post/:postId" element={<PostDetailsPage />} />
-      <Route path="/login" element={<LoginPage setToken={setToken} />} />
+      <Route path="/login" element={<LoginPage setAuth={setAuth} />} />
       <Route path="/register" element={<SignupPage />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
@@ -39,7 +39,7 @@ function App() {
 
   return (
     <Router>
-      <FNavbar token={token} removeToken={removeToken} />
+      <FNavbar token={token} user={user} removeAuth={removeAuth} />
       {token && token !== "" && token !== undefined ? authenticatedRoutes : nonAuthenticatedRoutes}
     </Router>
   );

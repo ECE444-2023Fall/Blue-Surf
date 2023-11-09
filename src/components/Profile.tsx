@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 
+interface User {
+  userId: string;
+  username: string;
+}
+
 interface ProfileProps {
   token: string;
-  setToken: (token: string) => void;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
 }
 
 const Profile: React.FC<ProfileProps> = (props) => {
@@ -19,7 +25,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
     })
       .then((response: AxiosResponse<any>) => {
         const res = response.data;
-        res.access_token && props.setToken(res.access_token);
+        res.access_token && props.setAuth(res.access_token, props.user);
         setProfileData({
           profile_name: res.name,
           about_me: res.about,
