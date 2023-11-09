@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
 import FilterField from "./FilterField";
@@ -40,10 +40,31 @@ const filterOptions = [
   },
 ];
 
-const numberOfCards = 10;
-
 const LandingPage: React.FC = () => {
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/"); // Change this to the actual API endpoint
+      console.log(response);
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data);
+        console.log(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);
@@ -72,9 +93,13 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-          {Array.from({ length: numberOfCards }).map((_, index) => (
-            <PostCard key={index} {...postCardData} postId={index} />
-          ))}
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            searchResults.map((event: any, index: number) => (
+              <PostCard key={index} {...event} />
+            ))
+          )}
         </div>
       </div>
     </div>

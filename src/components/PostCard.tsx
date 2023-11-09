@@ -5,13 +5,19 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
 const postImage = require("../assets/post1.jpeg");
 
+
+
 interface PostCardProps {
   title: string;
-  date: Date;
+  start_time: Date;
   location: string;
   description: string;
   tags: string[];
-  postId: number;
+  id: number;
+  author_id: number;
+  is_published: boolean;
+  end_time: Date;
+  like_count: number;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
@@ -21,10 +27,15 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     setIsLiked(!isLiked);
   };
 
+  const handleDelete = () => {
+    // TODO: display pop up and perform delete upon confirmation
+    console.log("Post deleted!");
+  };
+
   return (
     <div className="col" data-testid="post-card">
       <Link
-        to={`/post/${PostCardProps.postId}`}
+        to={`/post/${PostCardProps.id}`}
         className="text-decoration-none"
       >
         <div className="card">
@@ -43,20 +54,20 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
               </span>
             </div>
             <p className="p text-center" data-testid="post-date-location">
-              {PostCardProps.date.toDateString()} | {PostCardProps.location}
+              {PostCardProps.start_time} | {PostCardProps.location}
             </p>
             <p className="card-text text-left" data-testid="post-description">
               {PostCardProps.description}
             </p>
             <div className="row">
               <div className="col">
-                <span className="pill" data-testid="post-tags">
+                {/* <span className="pill" data-testid="post-tags">
                   {PostCardProps.tags.map((tag: string, index: number) => (
                     <span className="pill-tag" key={index}>
                       {tag}
                     </span>
                   ))}
-                </span>
+                </span> */}
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>
@@ -66,6 +77,9 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                     data-testid="like-button"
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                  </button>
+                  <button className="trash-button" onClick={handleDelete}>
+                    <i className="fa fa-trash-o trash-icon-custom-size" />
                   </button>
                 </div>
               </div>
