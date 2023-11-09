@@ -27,22 +27,22 @@ def create_mock_users():
     ]
     return users
 
-def create_mock_user_events():
-    user_events = [
-        UserInterestedEvent(
-            user_id=1,
-            event_id=1
-        ),
-        UserInterestedEvent(
-            user_id=1,
-            event_id=2
-        ),
-        UserInterestedEvent(
-            user_id=3,
-            event_id=3
-        ),
-    ]
-    return user_events
+# def create_mock_user_events():
+#     user_events = [
+#         UserInterestedEvent(
+#             user_id=1,
+#             event_id=1
+#         ),
+#         UserInterestedEvent(
+#             user_id=1,
+#             event_id=2
+#         ),
+#         UserInterestedEvent(
+#             user_id=3,
+#             event_id=3
+#         ),
+#     ]
+#     return user_events
 
 def create_mock_events():
     start_time = datetime.strptime("2023-10-28 09:00:00", "%Y-%m-%d %H:%M:%S")
