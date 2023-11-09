@@ -129,6 +129,7 @@ const PostDetailsPage: React.FC = () => {
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({titleAlert: "", summaryAlert: ""})
+        setBlankMessage({ blankErrorMessage: ""})
       } else {
         console.error("Failed to update post.");
       }
@@ -141,6 +142,7 @@ const PostDetailsPage: React.FC = () => {
     setEditedPost({ ...post });
     setIsEditing(false);
     setAlertMessage({ titleAlert: "", summaryAlert: "" });
+    setBlankMessage({ blankErrorMessage: ""})
   };
 
   const handleFileChange = (event: any) => {
