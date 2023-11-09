@@ -34,7 +34,6 @@ const PostDetailsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
   const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");

@@ -57,7 +57,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
             <div className="row">
               <div className="col">
                 <div className="tags-container">
-                  {PostCardProps.tags.length > 0 && (
+                  {PostCardProps.tags && PostCardProps.tags.length > 0 && (
                     <>
                       {PostCardProps.tags.map((tag: string, index: number) => (
                         <span className="pill" data-testid="post-tags">
