@@ -23,13 +23,11 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 bootstrap = Bootstrap(app)
 
-bootstrap = Bootstrap(app)
 # Initialize DB
 db = SQLAlchemy(app)
 
 import api
 api.setup_routes(app)
-
 
 if __name__ == "__main__":
     app.run()
