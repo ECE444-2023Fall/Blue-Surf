@@ -92,54 +92,37 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="row">
-      <div className="custom-col-md-3">
-        {filterOptionValuesByAPI.map((option, index) => (
-          <FilterField
-            key={index}
-            title={option.title}
-            values={option.values}
-          />
-        ))}
-      </div>
-      <div className="col-md-9">
-        <div className="row">
-          <div className="col-12">
-            <SearchBar onDataReceived={handleSearchData} />
-          </div>
-=======
     <div className="landing-page-wrapper">
       <div className="row">
         <div className="custom-col-md-3">
-          {filterOptions.map((option, index) => (
+          {filterOptionValuesByAPI.map((option, index) => (
             <FilterField
               key={index}
               title={option.title}
               values={option.values}
             />
           ))}
->>>>>>> main
         </div>
         <div className="col-md-9">
           <div className="row">
             <div className="col-12">
               <SearchBar onDataReceived={handleSearchData} />
             </div>
-          </div>
-          <div className="row">
-            <div className="col-12">
-              <SortBy options={["Sort Option 1", "Sort Option 2"]} />
+
+            <div className="row">
+              <div className="col-12">
+                <SortBy options={["Sort Option 1", "Sort Option 2"]} />
+              </div>
             </div>
-          </div>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              searchResults.map((event: any, index: number) => (
-                <PostCard key={index} {...event} />
-              ))
-            )}
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                searchResults.map((event: any, index: number) => (
+                  <PostCard key={index} {...event} />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -79,7 +79,7 @@ def setup_routes(app):
             # Retrieve the updated post data from the request
             new_post = request.get_json()
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_data.create_event(
@@ -138,7 +138,7 @@ def setup_routes(app):
             for event in events:
                 tags = event_data.get_tags_for_event(event_id=event.id)
                 tag_names = [tag.name for tag in tags]
-          
+
                 json_event = {
                     "id": event.id,
                     "title": event.title,
@@ -197,7 +197,7 @@ def setup_routes(app):
                 "club": event.club,
                 "is_published": event.is_published,
                 "like_count": event.like_count,
-            "tags": tag_names,
+                "tags": tag_names,
             }
 
             return jsonify(json_event)
@@ -233,7 +233,7 @@ def setup_routes(app):
             user_identifier = request.json.get("user_identifier", None)
             password = request.json.get("password", None)
 
-            from datalayer_user import UserDataLayer
+            from .datalayer.user import UserDataLayer
 
             user_data = UserDataLayer()
             stored_user = user_data.get_user(user_identifier=user_identifier)
@@ -305,7 +305,7 @@ def setup_routes(app):
                 "utf-8"
             )
 
-            from datalayer_user import UserDataLayer
+            from .datalayer.user import UserDataLayer
 
             user_data = UserDataLayer()
             user_data.create_user(

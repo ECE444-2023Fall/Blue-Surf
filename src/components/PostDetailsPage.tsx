@@ -159,28 +159,7 @@ const PostDetailsPage: React.FC = () => {
                 </>
               )}
             </div>
-<<<<<<< HEAD
-            <div className="summary">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.description}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, description: value })
-                  }
-                />
-              ) : (
-                editedPost.description
-              )}
-            </div>
-            {post.tags.length > 0 &&
-              post.tags.map((tag: string, index: number) => (
-                <span className="pill">
-                  <span className="pill-tag" key={index}>
-                    {tag}
-                  </span>
-=======
           </div>
-
           <div className="col-md-6">
             <div className="container-styling">
               <div className="title">
@@ -207,83 +186,84 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.description
                 )}
               </div>
-              {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
->>>>>>> main
-                </span>
-              ))}
-            <div className="subtitle">About</div>
-            <div className="details">
-              {isEditing ? (
-                // TODO: replace with extendedDescription field
-                <AutoSizeTextArea
-                  content={editedPost.extended_description}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      extended_description: value,
-                    })
-                  }
-                />
-              ) : (
-                editedPost.extended_description
-              )}
-            </div>
-            <div className="subtitle">Date</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
-                  }
-                />
-              ) : (
-                editedPost.start_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                />
-              ) : (
-                editedPost.location
-              )}
-            </div>
-            {editedPost.club && (
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  {isEditing ? (
-                    <AutoSizeTextArea
-                      content={editedPost.club}
-                      onChange={(value) =>
-                        setEditedPost({ ...editedPost, club: value })
-                      }
-                    />
-                  ) : (
-                    editedPost.club
-                  )}
-                </div>
+              {post.tags.length > 0 &&
+                post.tags.map((tag: string, index: number) => (
+                  <span className="pill">
+                    <span className="pill-tag" key={index}>
+                      {tag}
+                    </span>
+                  </span>
+                ))}
+              <div className="subtitle">About</div>
+              <div className="details">
+                {isEditing ? (
+                  // TODO: replace with extendedDescription field
+                  <AutoSizeTextArea
+                    content={editedPost.extended_description}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        extended_description: value,
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.extended_description
+                )}
               </div>
-            )}
-            <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button">Favourite?</button>
+              <div className="subtitle">Date</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.start_time.toLocaleString()}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: new Date(value),
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.start_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.location}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, location: value })
+                    }
+                  />
+                ) : (
+                  editedPost.location
+                )}
+              </div>
+              {editedPost.club && (
+                <div>
+                  <div className="subtitle">Club</div>
+                  <div className="details">
+                    {isEditing ? (
+                      <AutoSizeTextArea
+                        content={editedPost.club}
+                        onChange={(value) =>
+                          setEditedPost({ ...editedPost, club: value })
+                        }
+                      />
+                    ) : (
+                      editedPost.club
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="row g-5 m-2 d-flex justify-content-center">
+                <button className="favourite-button">Favourite?</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
