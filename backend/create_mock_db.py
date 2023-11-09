@@ -184,9 +184,9 @@ def populate_database(app, db):
                 if tag:
                     event.tags.append(tag)
             
-        user_events = create_mock_user_events()
-        for user_event in user_events: 
-            db.session.add(user_event)
+        # user_events = create_mock_user_events()
+        # for user_event in user_events: 
+        #     db.session.add(user_event)
         
         # commit the changes
         db.session.commit()
