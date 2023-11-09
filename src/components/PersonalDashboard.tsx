@@ -12,9 +12,33 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 // this is mock data, to be replaced later once database is setup
 
 const PersonalDashboard: React.FC = (PostCardProps: any) => {
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [selectedButton, setSelectedButton] = useState("Favourites");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/"); // Change this to the actual API endpoint
+      console.log(response);
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data);
+        console.log(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+    setSelectedButton("Favourites");
+  }, []);
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);
@@ -28,9 +52,6 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
     navigate("/create");
   };
 
-  useEffect(() => {
-    setSelectedButton("Favourites");
-  }, []);
 
   return (
     <div className="container dashboard-wrapper">
@@ -87,10 +108,14 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
           </div>
         </div>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-          {Array.from({ length: 10 }).map((event: any, index: number) => (
-            <PostCard key={index} {...event} />
-          ))}
-        </div>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              searchResults.map((event: any, index: number) => (
+                <PostCard key={index} {...event} />
+              ))
+            )}
+          </div>
       </div>
     </div>
   );
