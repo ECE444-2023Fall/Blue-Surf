@@ -197,17 +197,56 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter extended description here]"
                 />
               </div>
-              <div className="subtitle">Date</div>
-              <div className="details">
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
+              <div className="subtitle"> Start Date </div>
+            <div className="details">
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.start_time instanceof Date
+                      ? new Date(
+                          editedPost.start_time.getTime() -
+                            editedPost.start_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
                   }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newStartTime = new Date(e.target.value);
+                    if (!isNaN(newStartTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: newStartTime,
+                      });
+                    }
+                  }}
                 />
+            </div>
+            <div className="subtitle"> End Date </div>
+            <div className="details">
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.end_time instanceof Date
+                      ? new Date(
+                          editedPost.end_time.getTime() -
+                            editedPost.end_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
+                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newEndTime = new Date(e.target.value);
+                    if (!isNaN(newEndTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        end_time: newEndTime,
+                      });
+                    }
+                  }}
+                />
+            </div>
               </div>
               <div className="subtitle">Location</div>
               <div className="details">
@@ -235,7 +274,6 @@ const PostCreatePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
