@@ -41,7 +41,18 @@ const filterOptions = [
   },
 ];
 
-const LandingPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface LandingPageProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,7 +110,7 @@ const LandingPage: React.FC = () => {
               <p>Loading...</p>
             ) : (
               searchResults.map((event: any, index: number) => (
-                <PostCard key={index} {...event} />
+                <PostCard key={index} token={token} user={user} setAuth={setAuth}{...event} />
               ))
             )}
           </div>

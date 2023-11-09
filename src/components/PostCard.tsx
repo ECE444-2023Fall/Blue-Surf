@@ -5,7 +5,10 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
 const postImage = require("../assets/post1.jpeg");
 
-
+interface User {
+  userId: string;
+  username: string;
+}
 
 interface PostCardProps {
   title: string;
@@ -18,10 +21,16 @@ interface PostCardProps {
   is_published: boolean;
   end_time: Date;
   like_count: number;
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
   const [isLiked, setIsLiked] = React.useState(false);
+  const isAuthor =
+    PostCardProps.user &&
+    parseInt(PostCardProps.user.userId) === PostCardProps.author_id;
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
@@ -34,10 +43,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   return (
     <div className="col" data-testid="post-card">
-      <Link
-        to={`/post/${PostCardProps.id}`}
-        className="text-decoration-none"
-      >
+      <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
             src={postImage}
@@ -78,9 +84,11 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
                   </button>
-                  <button className="trash-button" onClick={handleDelete}>
-                    <i className="fa fa-trash-o trash-icon-custom-size" />
-                  </button>
+                  {isAuthor && (
+                    <button className="trash-button" onClick={handleDelete}>
+                      <i className="fa fa-trash-o trash-icon-custom-size" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

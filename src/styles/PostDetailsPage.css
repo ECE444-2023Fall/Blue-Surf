@@ -113,3 +113,15 @@
     display: inline-block;
     margin-top: 20px;
 }
+
+.trash-button-details-page {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: fit-content;
+  }
+  
+  .trash-icon-custom-size-details-page {
+    font-size: 35px;
+  }

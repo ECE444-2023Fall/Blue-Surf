@@ -12,10 +12,17 @@ jest.mock('react-router-dom', () => {
 });
 
 describe('PostCreatePage Component', () => {
+  const mockUser = {
+    userId: '123',
+    username: 'testUser',
+  };
+
+  const mockSetAuth = jest.fn();
+
   it('renders PostCreatePage component without crashing', () => {
     render(
       <MemoryRouter>
-        <PostCreatePage />
+        <PostCreatePage token="mockToken" user={mockUser} setAuth={mockSetAuth}/>
       </MemoryRouter>
     );
   });
@@ -23,7 +30,7 @@ describe('PostCreatePage Component', () => {
   it('typing in the title field updates state', () => {
     render(
       <MemoryRouter>
-        <PostCreatePage />
+        <PostCreatePage token="mockToken" user={mockUser} setAuth={mockSetAuth} />
       </MemoryRouter>
     );
     const titleInput = screen.getByPlaceholderText('[enter title here]');

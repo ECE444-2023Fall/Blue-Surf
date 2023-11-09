@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import DeletePopUp from "./DeletePopUp";
 const postImage = require("../assets/post1.jpeg");
 
 const EXTENTDED_DESCRIPTION =
@@ -23,13 +24,32 @@ interface Post {
   club?: string;
 }
 
-const PostDetailsPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface PostDetailsProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PostDetailsPage: React.FC<PostDetailsProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const { postId } = useParams();
+  const navigate = useNavigate();
 
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
+  const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+
+  const isAuthor = user && post && parseInt(user.userId) === post.author_id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,6 +110,35 @@ const PostDetailsPage: React.FC = () => {
     setIsEditing(false);
   };
 
+  const handleDelete = async (confirmed: boolean) => {
+    if (confirmed) {
+      try {
+        const response = await fetch(`/api/delete-post/${postId}`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          data.access_token && setAuth(data.access_token, user);
+          navigate(-1);
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Delete request failed");
+        }
+      } catch (error) {
+        console.error("Delete Post Error:", error);
+      }
+    }
+    setShowDeletePopUp(false);
+  };
+
+  const handleDeleteButtonClick = () => {
+    setShowDeletePopUp(true);
+  };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -106,6 +155,7 @@ const PostDetailsPage: React.FC = () => {
 
   return (
     <div className="post-details-wrapper">
+      {showDeletePopUp && <DeletePopUp handleDelete={handleDelete} />}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2">
           <a className="navbar-brand back-nav" href="javascript:history.back()">
@@ -129,9 +179,21 @@ const PostDetailsPage: React.FC = () => {
                 </button>
               </>
             ) : (
-              <button className="edit-button" onClick={toggleEdit}>
-                Edit
-              </button>
+              <>
+                {isAuthor && (
+                  <>
+                    <button className="edit-button" onClick={toggleEdit}>
+                      Edit
+                    </button>
+                    <button
+                      className="trash-button-details-page"
+                      onClick={handleDeleteButtonClick}
+                    >
+                      <i className="fa fa-trash-o trash-icon-custom-size-details-page" />
+                    </button>
+                  </>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -194,71 +256,76 @@ const PostDetailsPage: React.FC = () => {
                 </span>
               ))}
             </span> */}
-            <div className="subtitle">About</div>
-            <div className="details">
-              {isEditing ? (
-                // TODO: replace with extendedDescription field
-                <AutoSizeTextArea
-                  content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
-                />
-              ) : (
-                editedPost.extended_description
-              )}
-            </div>
-            <div className="subtitle">Date</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
-                  }
-                />
-              ) : (
-                editedPost.start_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                />
-              ) : (
-                editedPost.location
-              )}
-            </div>
-            {editedPost.club && (
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  {isEditing ? (
-                    <AutoSizeTextArea
-                      content={editedPost.club}
-                      onChange={(value) =>
-                        setEditedPost({ ...editedPost, club: value })
-                      }
-                    />
-                  ) : (
-                    editedPost.club
-                  )}
-                </div>
+              <div className="subtitle">About</div>
+              <div className="details">
+                {isEditing ? (
+                  // TODO: replace with extendedDescription field
+                  <AutoSizeTextArea
+                    content={editedPost.extended_description}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        extended_description: value,
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.extended_description
+                )}
               </div>
-            )}
-            <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button">Favourite?</button>
+              <div className="subtitle">Date</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.start_time.toLocaleString()}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: new Date(value),
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.start_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.location}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, location: value })
+                    }
+                  />
+                ) : (
+                  editedPost.location
+                )}
+              </div>
+              {editedPost.club && (
+                <div>
+                  <div className="subtitle">Club</div>
+                  <div className="details">
+                    {isEditing ? (
+                      <AutoSizeTextArea
+                        content={editedPost.club}
+                        onChange={(value) =>
+                          setEditedPost({ ...editedPost, club: value })
+                        }
+                      />
+                    ) : (
+                      editedPost.club
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="row g-5 m-2 d-flex justify-content-center">
+                <button className="favourite-button">Favourite?</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

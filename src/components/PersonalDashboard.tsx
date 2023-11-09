@@ -47,8 +47,7 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
               <div className="row">
                 <div className="col-12 my-3">
                   <div className="d-flex dashboard-buttons">
-                    <div className="fill-space">
-                    </div>
+                    <div className="fill-space"></div>
                     <div className="background-select">
                       <button
                         className={`twobutton-${

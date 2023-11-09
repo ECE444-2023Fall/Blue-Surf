@@ -89,7 +89,9 @@ def setup_routes(app):
                 location=new_post["location"],
                 start_time=new_post["start_time"],
                 end_time=new_post["end_time"],
-                author_name="Sarah Hudson",  # TODO: Needs to be changed to actual author
+                author_id=new_post[
+                    "author_id"
+                ],  # TODO: Needs to be changed to actual author
                 is_published=True,
                 club=new_post["club"],
                 image=None,
@@ -112,6 +114,38 @@ def setup_routes(app):
                     {"error": "Failed to create post", "error message": error_message}
                 ),
                 400,
+            )
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to process reqquest",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
+    @app.route("/api/delete-post/<int:post_id>", methods=["POST"])
+    @jwt_required()
+    def delete_post(post_id):
+        try:
+            from datalayer_event import EventDataLayer
+
+            event_data = EventDataLayer()
+            event_data.delete_event_by_id(
+                id=post_id,
+            )
+
+            return jsonify({"message": "Post deleted successfully"})
+        except ValueError as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to delete post", "error message": error_message}
+                ),
+                404,
             )
         except Exception as e:
             error_message = str(e)
