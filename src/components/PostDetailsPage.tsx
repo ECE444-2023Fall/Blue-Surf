@@ -91,6 +91,7 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    console.log(editedPost);
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`/api/update-post/${postId}`, {
