@@ -9,19 +9,20 @@ import logging
 '''
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
-    location = db.Column(db.String(255))
+    location = db.Column(db.Text, nullable=False)
     start_time = db.Column(db.TIMESTAMP, nullable=False)
     end_time = db.Column(db.TIMESTAMP, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
+    club = db.Column(db.Text)
 '''
 
 class EventDataLayer(DataLayer):
-    def create_event(self, title, description, location, start_time, end_time, author_name, is_published, image=None, tags=None):
+    def create_event(self, title, description, extended_description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
         event = Event()
 
         if title is None or len(title) == 0:
@@ -34,6 +35,9 @@ class EventDataLayer(DataLayer):
 
         #TODO: Implement some checks for description?
         event.description = description
+        
+        #TODO: Implement some checks for extended description?
+        event.extended_description = extended_description
 
         if location is None or len(location) == 0:
             logging.info(f"Location {self.SHOULD_NOT_BE_EMPTY}")
@@ -66,6 +70,9 @@ class EventDataLayer(DataLayer):
             raise ValueError("Start time should be after end time")
         event.start_time = temp_start_datetime
         event.end_time = temp_end_datetime
+        
+        #TODO: Implement some checks for club?
+        event.club = club
 
         with app.app_context():
             author = User.query.filter_by(username=author_name).first()
@@ -95,7 +102,7 @@ class EventDataLayer(DataLayer):
             db.session.commit()
 
 
-    def update_event(self, event_id, title, description, location, image=None, is_published=True, start_time=None, end_time=None):
+    def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
@@ -114,6 +121,7 @@ class EventDataLayer(DataLayer):
 
             #TODO: Implement some checks for description?
             event.description = description
+            event.extended_description = extended_description
 
             if location is None or len(location) == 0:
                 logging.info("Location should not be empty")

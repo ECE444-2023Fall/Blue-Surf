@@ -13,6 +13,7 @@ interface Post {
   start_time: Date;
   location: string;
   description: string;
+  extended_description: string;
   tags: string[];
   id: number;
   author_id: number;
@@ -193,67 +194,66 @@ const PostDetailsPage: React.FC = () => {
                 </span>
               ))}
             </span> */}
-              <div className="subtitle">About</div>
-              <div className="details">
-                {isEditing ? (
-                  // TODO: replace with extendedDescription field
-                  <AutoSizeTextArea
-                    content={EXTENTDED_DESCRIPTION}
-                    onChange={(value) => setEditedPost({ ...editedPost })}
-                  />
-                ) : (
-                  EXTENTDED_DESCRIPTION
-                )}
-              </div>
-              <div className="subtitle">Date</div>
-              <div className="details">
-                {isEditing ? (
-                  <AutoSizeTextArea
-                    content={editedPost.start_time.toLocaleString()}
-                    onChange={(value) =>
-                      setEditedPost({
-                        ...editedPost,
-                        start_time: new Date(value),
-                      })
-                    }
-                  />
-                ) : (
-                  editedPost.start_time.toLocaleString()
-                )}
-              </div>
-              <div className="subtitle">Location</div>
-              <div className="details">
-                {isEditing ? (
-                  <AutoSizeTextArea
-                    content={editedPost.location}
-                    onChange={(value) =>
-                      setEditedPost({ ...editedPost, location: value })
-                    }
-                  />
-                ) : (
-                  editedPost.location
-                )}
-              </div>
-              {editedPost.club && (
-                <div>
-                  <div className="subtitle">Club</div>
-                  <div className="details">
-                    {isEditing ? (
-                      <AutoSizeTextArea
-                        content={editedPost.club}
-                        onChange={(value) =>
-                          setEditedPost({ ...editedPost, club: value })
-                        }
-                      />
-                    ) : (
-                      editedPost.club
-                    )}
-                  </div>
-                </div>
+            <div className="subtitle">About</div>
+            <div className="details">
+              {isEditing ? (
+                // TODO: replace with extendedDescription field
+                <AutoSizeTextArea
+                  content={editedPost.extended_description}
+                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
+                />
+              ) : (
+                editedPost.extended_description
               )}
-              <div className="row g-5 m-2 d-flex justify-content-center">
-                <button className="favourite-button">Favourite?</button>
+            </div>
+            <div className="subtitle">Date</div>
+            <div className="details">
+              {isEditing ? (
+                <AutoSizeTextArea
+                  content={editedPost.start_time.toLocaleString()}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      start_time: new Date(value),
+                    })
+                  }
+                />
+              ) : (
+                editedPost.start_time.toLocaleString()
+              )}
+            </div>
+            <div className="subtitle">Location</div>
+            <div className="details">
+              {isEditing ? (
+                <AutoSizeTextArea
+                  content={editedPost.location}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, location: value })
+                  }
+                />
+              ) : (
+                editedPost.location
+              )}
+            </div>
+            {editedPost.club && (
+              <div>
+                <div className="subtitle">Club</div>
+                <div className="details">
+                  {isEditing ? (
+                    <AutoSizeTextArea
+                      content={editedPost.club}
+                      onChange={(value) =>
+                        setEditedPost({ ...editedPost, club: value })
+                      }
+                    />
+                  ) : (
+                    editedPost.club
+                  )}
+                </div>
               </div>
+            )}
+            <div className="row g-5 m-2 d-flex justify-content-center">
+              <button className="favourite-button">Favourite?</button>
             </div>
           </div>
         </div>

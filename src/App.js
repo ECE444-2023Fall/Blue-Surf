@@ -8,12 +8,15 @@ import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import Profile from "./components/Profile";
 import PostDetailsPage from "./components/PostDetailsPage";
+import PostCreatePage from "./components/PostCreatePage";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+import PersonalDashboard from "./components/PersonalDashboard"
+
 
 function App() {
   const { token, user, removeAuth, setAuth } = useAuth();
@@ -22,7 +25,9 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/post/:postId" element={<PostDetailsPage />} />
-      <Route path="/dashboard" element={<Profile token={token} user={user} setAuth={setAuth} />} />
+      <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
+      <Route path="/create" element={<PostCreatePage />} />
+      <Route path="/dashboard" element={<PersonalDashboard />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
