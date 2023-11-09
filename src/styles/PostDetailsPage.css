@@ -1,3 +1,6 @@
+.post-details-wrapper {
+    margin-top: 100px;
+}
 .container-styling{
     color: #000;
     font-family: Outfit;
@@ -6,6 +9,12 @@
 
 .background-colour {
     background: rgba(255, 255, 255, 0.80);
+}
+
+.back-nav {
+    display: flex;
+    align-items: center;
+    width: fit-content;
 }
 
 .title {
