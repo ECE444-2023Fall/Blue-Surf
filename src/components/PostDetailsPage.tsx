@@ -105,84 +105,89 @@ const PostDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-      <div className="row m-2">
-        <a className="navbar-brand back-nav" href="javascript:history.back()">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
-            width="15"
-            height="15"
-            className="d-inline-block align-items-center"
-            alt=""
-          />
-          <span className="back-text">Back</span>
-        </a>
-        <div className="row m-2 justify-content-end">
-          {isEditing ? (
-            <>
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancel
-              </button>
-              <button className="edit-button" onClick={handleSave}>
-                Save
-              </button>
-            </>
-          ) : (
-            <button className="edit-button" onClick={toggleEdit}>
-              Edit
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="row g-5 m-2">
-        <div className="col-md-6">
-          <img src={imageSrc} className="card-img-top rounded-edge" alt="..." />
-          <div className="row g-5 m-2 d-flex justify-content-center">
-            {isEditing && (
+    <div className="post-details-wrapper">
+      <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
+        <div className="row m-2">
+          <a className="navbar-brand back-nav" href="javascript:history.back()">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
+              width="15"
+              height="15"
+              className="d-inline-block align-items-center"
+              alt=""
+            />
+            <span className="back-text">Back</span>
+          </a>
+          <div className="row m-2 justify-content-end">
+            {isEditing ? (
               <>
-                <input
-                  type="file"
-                  id="fileInput"
-                  className="hidden-input"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-                <label htmlFor="fileInput" className="custom-file-input">
-                  Choose a File
-                </label>
+                <button className="cancel-button" onClick={handleCancel}>
+                  Cancel
+                </button>
+                <button className="edit-button" onClick={handleSave}>
+                  Save
+                </button>
               </>
+            ) : (
+              <button className="edit-button" onClick={toggleEdit}>
+                Edit
+              </button>
             )}
           </div>
         </div>
 
-        <div className="col-md-6">
-          <div className="container-styling">
-            <div className="title">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.title}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, title: value })
-                  }
-                />
-              ) : (
-                editedPost.title
+        <div className="row g-5 m-2">
+          <div className="col-md-6">
+            <img
+              src={imageSrc}
+              className="card-img-top rounded-edge"
+              alt="..."
+            />
+            <div className="row g-5 m-2 d-flex justify-content-center">
+              {isEditing && (
+                <>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    className="hidden-input"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="fileInput" className="custom-file-input">
+                    Choose a File
+                  </label>
+                </>
               )}
             </div>
-            <div className="summary">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.description}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, description: value })
-                  }
-                />
-              ) : (
-                editedPost.description
-              )}
-            </div>
-            {/* <span className="pill">
+          </div>
+
+          <div className="col-md-6">
+            <div className="container-styling">
+              <div className="title">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.title}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, title: value })
+                    }
+                  />
+                ) : (
+                  editedPost.title
+                )}
+              </div>
+              <div className="summary">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.description}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, description: value })
+                    }
+                  />
+                ) : (
+                  editedPost.description
+                )}
+              </div>
+              {/* <span className="pill">
               {post.tags.map((tag: string, index: number) => (
                 <span className="pill-tag" key={index}>
                   {tag}
@@ -300,6 +305,7 @@ const PostDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

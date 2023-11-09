@@ -1,10 +1,11 @@
-body {
+.login-page-wrapper {
     background-color: #A0D1F2;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    overflow: hidden;
 }
 
 .login-container {
@@ -29,6 +30,7 @@ body {
     font-size: 22px;
     font-weight: 700;
     transition: background-color 0.3s, color 0.3s;
+    margin-top: 12px;
 }
 
 .login-btn:hover {
@@ -62,20 +64,6 @@ h1 {
 
 .userinput {
     margin-bottom: 23px;
-}
-
-.forgot-password-container {
-    position: relative;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    margin-top: 2px;
-    margin-bottom: 12px;
-}
-
-.forgot-password {
-    position: absolute;
-    right: 5px;
-    top: 0;
 }
 
 a {
@@ -131,9 +119,18 @@ a:hover {
 .surf-image {
     z-index: 2;
     left: 125px;
+    top: -12px;
 }
   
 .wave-image {
     z-index: 0;
     left: 7px;
+    top: -12px;
+}
+
+.error{
+    color:red;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 2%;
 }

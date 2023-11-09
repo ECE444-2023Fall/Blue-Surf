@@ -3,11 +3,13 @@ import "../styles/AutoSizeTextArea.css";
 interface AutoSizeTextAreaProps {
   content: string;
   onChange: (value: string) => void;
+  placeholderWord?: string;
 }
 
 const AutoSizeTextArea: React.FC<AutoSizeTextAreaProps> = ({
   content,
   onChange,
+  placeholderWord,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [textareaHeight, setTextAreaHeight] = useState<string>("auto");
@@ -43,6 +45,7 @@ const AutoSizeTextArea: React.FC<AutoSizeTextAreaProps> = ({
       value={content}
       onChange={handleTextAreaChange}
       style={{ height: textareaHeight }}
+      placeholder={placeholderWord}
     />
   );
 };
