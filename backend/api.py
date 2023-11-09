@@ -61,6 +61,7 @@ def setup_routes(app):
                 description=updated_post["description"],
                 extended_description=updated_post["extended_description"],
                 location=updated_post["location"],
+                tags=updated_post["tags"],
             )
 
             return jsonify({"message": "Post updated successfully"})

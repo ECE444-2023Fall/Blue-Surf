@@ -335,6 +335,9 @@ def test_event_update(test_client):
         password_salt="testpassword",
     )
 
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
     event = EventDataLayer()
     event.create_event(
             title="Event 1",
@@ -357,6 +360,7 @@ def test_event_update(test_client):
             description="Kickoff event CHANGED for club 1",
             extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
             location="Toronto",
+            tags=["Tag 1"],
         )
         
     except ValueError as value_error: 
@@ -370,6 +374,8 @@ def test_event_update(test_client):
         new_event = Event.query.filter_by(id=event_id).first()
         assert new_event is not None
         assert new_event.title=="Event 1 - CHANGED"
+        assert len(new_event.tags)==1
+        assert new_event.tags[0].name=="Tag 1"
 
 def test_get_all_events(test_client):
     user = UserDataLayer()

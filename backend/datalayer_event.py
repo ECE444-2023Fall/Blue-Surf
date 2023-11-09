@@ -102,7 +102,7 @@ class EventDataLayer(DataLayer):
             db.session.commit()
 
 
-    def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
+    def update_event(self, event_id, title, description, extended_description, location, tags, image=None, is_published=True, start_time=None, end_time=None):
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
@@ -130,6 +130,12 @@ class EventDataLayer(DataLayer):
                 logging.info("Location should be under 255 characters")
                 raise ValueError("Location should be under 255 characters")
             event.location = location
+
+            if tags:
+                for tag_name in tags:
+                    tag = Tag.query.filter_by(name=tag_name).first()
+                    if tag is not None:
+                        event.tags.append(tag)
 
             db.session.commit()
 
