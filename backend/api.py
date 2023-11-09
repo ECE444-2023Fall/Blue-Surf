@@ -33,6 +33,23 @@ def get_matched_events(query, detailed=False):
 
 
 def setup_routes(app):
+    @app.route("/api/get-all-tags", methods=["GET"])
+    def get_all_tags():
+        try:
+            from datalayer_tag import TagDataLayer
+
+            tag_data = TagDataLayer()
+            tags = tag_data.get_all_tags()
+            return jsonify(tags)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to get all tags", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query")
