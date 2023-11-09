@@ -213,18 +213,17 @@ const PostDetailsPage: React.FC = () => {
                   type="datetime-local"
                   value={
                     editedPost.start_time instanceof Date
-                      ? editedPost.start_time.toISOString().slice(0, -8)
+                      ? new Date(
+                          editedPost.start_time.getTime() -
+                            editedPost.start_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
                       : ""
                   }
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const newStartTime = new Date(e.target.value);
                     if (!isNaN(newStartTime.getTime())) {
-                      // Adjust for the local time zone offset
-                      newStartTime.setMinutes(
-                        newStartTime.getMinutes() -
-                          newStartTime.getTimezoneOffset()
-                      );
-                      newStartTime.setHours(newStartTime.getHours())
                       setEditedPost({
                         ...editedPost,
                         start_time: newStartTime,
@@ -243,16 +242,17 @@ const PostDetailsPage: React.FC = () => {
                   type="datetime-local"
                   value={
                     editedPost.end_time instanceof Date
-                      ? editedPost.end_time.toISOString().slice(0, -8)
+                      ? new Date(
+                          editedPost.end_time.getTime() -
+                            editedPost.end_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
                       : ""
                   }
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const newEndTime = new Date(e.target.value);
                     if (!isNaN(newEndTime.getTime())) {
-                      // Adjust for the local time zone offset
-                      newEndTime.setMinutes(
-                        newEndTime.getMinutes() - newEndTime.getTimezoneOffset()
-                      );
                       setEditedPost({
                         ...editedPost,
                         end_time: newEndTime,
