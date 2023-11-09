@@ -128,7 +128,7 @@ def setup_routes(app):
     @app.route("/api/", methods=["GET"])
     def index():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             events = event_data.get_all_events()
@@ -136,8 +136,8 @@ def setup_routes(app):
             json_events = []
 
             for event in events:
-            tags = event_data.get_tags_for_event(event_id=event.id)
-            tag_names = [tag.name for tag in tags]
+                tags = event_data.get_tags_for_event(event_id=event.id)
+                tag_names = [tag.name for tag in tags]
           
                 json_event = {
                     "id": event.id,
@@ -155,7 +155,7 @@ def setup_routes(app):
                     "club": event.club,
                     "is_published": event.is_published,
                     "like_count": event.like_count,
-                "tags": tag_names,
+                    "tags": tag_names,
                     # Add other fields here as needed
                 }
 
@@ -182,8 +182,8 @@ def setup_routes(app):
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
 
-        tags = event_data.get_tags_for_event(event_id=event.id)
-        tag_names = [tag.name for tag in tags]
+            tags = event_data.get_tags_for_event(event_id=event.id)
+            tag_names = [tag.name for tag in tags]
 
             json_event = {
                 "id": event.id,
