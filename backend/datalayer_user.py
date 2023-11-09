@@ -84,4 +84,15 @@ class UserDataLayer(DataLayer):
             db.session.add(user)
             db.session.commit() 
 
+    def get_user(self, user_identifier):
+        with app.app_context():
+            user = User.query.filter_by(username=user_identifier).first()
+            if user is not None:
+                return user
+            user = User.query.filter_by(email=user_identifier).first()
+            if user is not None:
+                return user
+            logging.info(f"User with username/email {user_identifier} {self.DOES_NOT_EXIST}")
+            raise ValueError(f"User with username/email {user_identifier} {self.DOES_NOT_EXIST}")
+
 

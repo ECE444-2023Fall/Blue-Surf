@@ -33,6 +33,7 @@
 
   .right-align {
     margin-left: auto;
+    align-items: center;
   }
 
   .collapsed-navbar-align{

@@ -143,6 +143,7 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleTagAddition = (selectedTag: string) => {
+    console.log("in addition");
     setEditedPost({
       ...editedPost,
       tags: [...editedPost.tags, selectedTag],
@@ -150,6 +151,7 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleTagRemoval = (selectedTag: string) => {
+    console.log("in removal");
     setEditedPost({
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
@@ -157,202 +159,207 @@ const PostDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-      <div className="row m-2">
-        <a className="navbar-brand back-nav" href="javascript:history.back()">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
-            width="15"
-            height="15"
-            className="d-inline-block align-items-center"
-            alt=""
-          />
-          <span className="back-text">Back</span>
-        </a>
-        <div className="row m-2 justify-content-end">
-          {isEditing ? (
-            <>
-              <button className="cancel-button" onClick={handleCancel}>
-                Cancel
-              </button>
-              <button className="edit-button" onClick={handleSave}>
-                Save
-              </button>
-            </>
-          ) : (
-            <button className="edit-button" onClick={toggleEdit}>
-              Edit
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="row g-5 m-2">
-        <div className="col-md-6">
-          <img src={imageSrc} className="card-img-top rounded-edge" alt="..." />
-          <div className="row g-5 m-2 d-flex justify-content-center">
-            {isEditing && (
+    <div className="post-details-wrapper">
+      <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
+        <div className="row m-2">
+          <a className="navbar-brand back-nav" href="javascript:history.back()">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
+              width="15"
+              height="15"
+              className="d-inline-block align-items-center"
+              alt=""
+            />
+            <span className="back-text">Back</span>
+          </a>
+          <div className="row m-2 justify-content-end">
+            {isEditing ? (
               <>
-                <input
-                  type="file"
-                  id="fileInput"
-                  className="hidden-input"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-                <label htmlFor="fileInput" className="custom-file-input">
-                  Choose a File
-                </label>
+                <button className="cancel-button" onClick={handleCancel}>
+                  Cancel
+                </button>
+                <button className="edit-button" onClick={handleSave}>
+                  Save
+                </button>
               </>
+            ) : (
+              <button className="edit-button" onClick={toggleEdit}>
+                Edit
+              </button>
             )}
           </div>
         </div>
 
-        <div className="col-md-6">
-          <div className="container-styling">
-            <div className="title">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.title}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, title: value })
-                  }
-                />
-              ) : (
-                editedPost.title
-              )}
-            </div>
-            <div className="summary">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.description}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, description: value })
-                  }
-                />
-              ) : (
-                editedPost.description
-              )}
-            </div>
-            <div className="row align-items-center">
-              <div
-                className="col d-flex"
-                style={{ marginRight: calculatePillsWidth() }}
-              >
-                <div className="selected-tags-container">
-                  {editedPost.tags.length > 0 &&
-                    editedPost.tags.map((tag: string, index: number) => (
-                      <span className="pill" key={index}>
-                        <span className="pill-tag">
-                          {tag}
-                          {isEditing && (
-                            <button
-                              className="remove-tag-button"
-                              onClick={() => handleTagRemoval(tag)}
-                            >
-                              <FontAwesomeIcon icon={faXmark} />
-                            </button>
-                          )}
-                        </span>
-                      </span>
-                    ))}
-                  {isEditing && (
-                    <Dropdown>
-                      <Dropdown.Toggle
-                        className="plus-icon"
-                        variant="secondary"
-                      >
-                        <FontAwesomeIcon icon={faPlus} />
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        {tags.map(
-                          (tag: string) =>
-                            // Only show tags not already in the post
-                            !editedPost.tags.includes(tag) && (
-                              <Dropdown.Item
-                                key={tag}
-                                onClick={() => handleTagAddition(tag)}
-                                className="dropdown-item-tag"
-                              >
-                                <span className="pill">
-                                  <span className="pill-tag"></span>
-                                  {tag}
-                                </span>
-                              </Dropdown.Item>
-                            )
-                        )}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="subtitle">About</div>
-            <div className="details">
-              {isEditing ? (
-                // TODO: replace with extendedDescription field
-                <AutoSizeTextArea
-                  content={editedPost.extended_description}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      extended_description: value,
-                    })
-                  }
-                />
-              ) : (
-                editedPost.extended_description
-              )}
-            </div>
-            <div className="subtitle">Date</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
-                  }
-                />
-              ) : (
-                editedPost.start_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                />
-              ) : (
-                editedPost.location
-              )}
-            </div>
-            {editedPost.club && (
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  {isEditing ? (
-                    <AutoSizeTextArea
-                      content={editedPost.club}
-                      onChange={(value) =>
-                        setEditedPost({ ...editedPost, club: value })
-                      }
-                    />
-                  ) : (
-                    editedPost.club
-                  )}
-                </div>
-              </div>
-            )}
+        <div className="row g-5 m-2">
+          <div className="col-md-6">
+            <img
+              src={imageSrc}
+              className="card-img-top rounded-edge"
+              alt="..."
+            />
             <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button">Favourite?</button>
+              {isEditing && (
+                <>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    className="hidden-input"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="fileInput" className="custom-file-input">
+                    Choose a File
+                  </label>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="container-styling">
+              <div className="title">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.title}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, title: value })
+                    }
+                  />
+                ) : (
+                  editedPost.title
+                )}
+              </div>
+              <div className="summary">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.description}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, description: value })
+                    }
+                  />
+                ) : (
+                  editedPost.description
+                )}
+              </div>
+              <div className="row align-items-center">
+                <div
+                  className="col d-flex"
+                  style={{ marginRight: calculatePillsWidth() }}
+                >
+                  <div className="selected-tags-container">
+                    {editedPost.tags.length > 0 &&
+                      editedPost.tags.map((tag: string, index: number) => (
+                        <span className="pill" key={index}>
+                          <span className="pill-tag">
+                            {tag}
+                            {isEditing && (
+                              <button
+                                className="remove-tag-button"
+                                onClick={() => handleTagRemoval(tag)}
+                              >
+                                <FontAwesomeIcon icon={faXmark} />
+                              </button>
+                            )}
+                          </span>
+                        </span>
+                      ))}
+                    {isEditing && (
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          className="plus-icon"
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {tags.map(
+                            (tag: string) =>
+                              // Only show tags not already in the post
+                              !editedPost.tags.includes(tag) && (
+                                <Dropdown.Item
+                                  key={tag}
+                                  onClick={() => handleTagAddition(tag)}
+                                  className="dropdown-item-tag"
+                                >
+                                  <span className="pill">
+                                    <span className="pill-tag"></span>
+                                    {tag}
+                                  </span>
+                                </Dropdown.Item>
+                              )
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="subtitle">About</div>
+              <div className="details">
+                {isEditing ? (
+                  // TODO: replace with extendedDescription field
+                  <AutoSizeTextArea
+                    content={editedPost.extended_description}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        extended_description: value,
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.extended_description
+                )}
+              </div>
+              <div className="subtitle">Date</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.start_time.toLocaleString()}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: new Date(value),
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.start_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.location}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, location: value })
+                    }
+                  />
+                ) : (
+                  editedPost.location
+                )}
+              </div>
+              {editedPost.club && (
+                <div>
+                  <div className="subtitle">Club</div>
+                  <div className="details">
+                    {isEditing ? (
+                      <AutoSizeTextArea
+                        content={editedPost.club}
+                        onChange={(value) =>
+                          setEditedPost({ ...editedPost, club: value })
+                        }
+                      />
+                    ) : (
+                      editedPost.club
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="row g-5 m-2 d-flex justify-content-center">
+                <button className="favourite-button">Favourite?</button>
+              </div>
             </div>
           </div>
         </div>

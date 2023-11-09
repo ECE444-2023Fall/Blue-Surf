@@ -1,3 +1,7 @@
+.post-create-wrapper {
+  margin-top: 100px;
+}
+
 .error-message {
     transform: translate(-50%, -20%);
     padding: 20px;

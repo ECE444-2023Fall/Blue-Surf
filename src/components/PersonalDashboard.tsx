@@ -33,7 +33,7 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container dashboard-wrapper">
       <div className="custom-container">
         <div className="content-container">
           <div className="row">

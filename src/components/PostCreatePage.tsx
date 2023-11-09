@@ -107,123 +107,129 @@ const PostCreatePage: React.FC = () => {
   };
 
   return (
-    <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-      <div className="row m-2">
-        <a className="navbar-brand back-nav" href="javascript:history.back()">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
-            width="15"
-            height="15"
-            className="d-inline-block align-items-center"
-            alt=""
-          />
-          <span className="back-text">Back</span>
-        </a>
-        <div className="row m-2 justify-content-end">
-          <>
-            {/* Display the error message */}
-            {errorMessage && (
-              <div className="error-message">{errorMessage}</div>
-            )}
-            <button className="edit-button" onClick={handleSave}>
-              Post
-            </button>
-          </>
-        </div>
-      </div>
-
-      <div className="row g-5 m-2">
-        <div className="col-md-6">
-          <img src={imageSrc} className="card-img-top rounded-edge" alt="..." />
-          <div className="row g-5 m-2 d-flex justify-content-center">
+    <div className="post-create-wrapper">
+      <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
+        <div className="row m-2">
+          <a className="navbar-brand back-nav" href="javascript:history.back()">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
+              width="15"
+              height="15"
+              className="d-inline-block align-items-center"
+              alt=""
+            />
+            <span className="back-text">Back</span>
+          </a>
+          <div className="row m-2 justify-content-end">
             <>
-              <input
-                type="file"
-                id="fileInput"
-                className="hidden-input"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              <label htmlFor="fileInput" className="custom-file-input">
-                Choose a File
-              </label>
+              {/* Display the error message */}
+              {errorMessage && (
+                <div className="error-message">{errorMessage}</div>
+              )}
+              <button className="edit-button" onClick={handleSave}>
+                Post
+              </button>
             </>
           </div>
         </div>
 
-        <div className="col-md-6">
-          <div className="container-styling">
-            <div className="title">
-              <AutoSizeTextArea
-                content={editedPost.title}
-                onChange={(value) =>
-                  setEditedPost({ ...editedPost, title: value })
-                }
-                placeholderWord="[enter title here]"
-              />
+        <div className="row g-5 m-2">
+          <div className="col-md-6">
+            <img
+              src={imageSrc}
+              className="card-img-top rounded-edge"
+              alt="..."
+            />
+            <div className="row g-5 m-2 d-flex justify-content-center">
+              <>
+                <input
+                  type="file"
+                  id="fileInput"
+                  className="hidden-input"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="fileInput" className="custom-file-input">
+                  Choose a File
+                </label>
+              </>
             </div>
-            <div className="summary">
-              <AutoSizeTextArea
-                content={editedPost.description}
-                onChange={(value) =>
-                  setEditedPost({ ...editedPost, description: value })
-                }
-                placeholderWord="[enter description here]"
-              />
-            </div>
-            {/* <span className="pill">
+          </div>
+
+          <div className="col-md-6">
+            <div className="container-styling">
+              <div className="title">
+                <AutoSizeTextArea
+                  content={editedPost.title}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, title: value })
+                  }
+                  placeholderWord="[enter title here]"
+                />
+              </div>
+              <div className="summary">
+                <AutoSizeTextArea
+                  content={editedPost.description}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, description: value })
+                  }
+                  placeholderWord="[enter description here]"
+                />
+              </div>
+              {/* <span className="pill">
               {post.tags.map((tag: string, index: number) => (
                 <span className="pill-tag" key={index}>
                   {tag}
                 </span>
               ))}
             </span> */}
-            <div className="subtitle">About</div>
-            <div className="details">
-              {/* TODO: replace with extendedDescription field */}
-              <AutoSizeTextArea
-                content={editedPost.extended_description}
-                onChange={(value) =>
-                  setEditedPost({
-                    ...editedPost,
-                    extended_description: value,
-                  })
-                }
-                placeholderWord="[enter extended description here]"
-              />
-            </div>
-            <div className="subtitle">Date</div>
-            <div className="details">
-              <AutoSizeTextArea
-                content={editedPost.start_time.toLocaleString()}
-                onChange={(value) =>
-                  setEditedPost({
-                    ...editedPost,
-                    start_time: new Date(value),
-                  })
-                }
-              />
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              <AutoSizeTextArea
-                content={editedPost.location}
-                onChange={(value) =>
-                  setEditedPost({ ...editedPost, location: value })
-                }
-                placeholderWord="[enter location here]"
-              />
-            </div>
-            <div>
-              <div className="subtitle">Club</div>
+              <div className="subtitle">About</div>
+              <div className="details">
+                {/* TODO: replace with extendedDescription field */}
+                <AutoSizeTextArea
+                  content={editedPost.extended_description}
+                  onChange={(value) =>
+                    setEditedPost({
+                      ...editedPost,
+                      extended_description: value,
+                    })
+                  }
+                  placeholderWord="[enter extended description here]"
+                />
+              </div>
+              <div className="subtitle">Date</div>
               <div className="details">
                 <AutoSizeTextArea
-                  content={editedPost.club || ""}
+                  content={editedPost.start_time.toLocaleString()}
                   onChange={(value) =>
-                    setEditedPost({ ...editedPost, club: value })
+                    setEditedPost({
+                      ...editedPost,
+                      start_time: new Date(value),
+                    })
                   }
-                  placeholderWord="[enter club name here if applicable]"
                 />
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                <AutoSizeTextArea
+                  content={editedPost.location}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, location: value })
+                  }
+                  placeholderWord="[enter location here]"
+                />
+              </div>
+              <div>
+                <div className="subtitle">Club</div>
+                <div className="details">
+                  <AutoSizeTextArea
+                    content={editedPost.club || ""}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, club: value })
+                    }
+                    placeholderWord="[enter club name here if applicable]"
+                  />
+                </div>
               </div>
             </div>
           </div>

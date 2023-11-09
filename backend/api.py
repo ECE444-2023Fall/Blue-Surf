@@ -1,4 +1,15 @@
 from flask import jsonify, request
+from datetime import datetime, timedelta, timezone
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    unset_jwt_cookies,
+    jwt_required,
+    JWTManager,
+)
+import json
+import bcrypt
 
 # from datalayer_event import EventDataLayer
 
@@ -209,6 +220,153 @@ def setup_routes(app):
                 ),
                 500,
             )
+
+    @app.after_request
+    def refresh_expiring_jwts(response):
+        try:
+            exp_timestamp = get_jwt()["exp"]
+            now = datetime.now(timezone.utc)
+            target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+            if target_timestamp > exp_timestamp:
+                access_token = create_access_token(identity=get_jwt_identity())
+                data = response.get_json()
+                if type(data) is dict:
+                    data["access_token"] = access_token
+                    response.data = json.dumps(data)
+            return response
+        except (RuntimeError, KeyError):
+            # Case where there is not a valid JWT. Just return the original respone
+            return response
+
+    @app.route("/api/token", methods=["POST"])
+    def create_token():
+        try:
+            user_identifier = request.json.get("user_identifier", None)
+            password = request.json.get("password", None)
+
+            from datalayer_user import UserDataLayer
+
+            user_data = UserDataLayer()
+            stored_user = user_data.get_user(user_identifier=user_identifier)
+            stored_password_hash = stored_user.password_hash
+            stored_password_salt = stored_user.password_salt
+
+            entered_password_hash = bcrypt.hashpw(
+                password.encode("utf-8"), stored_password_salt.encode("utf-8")
+            ).decode("utf-8")
+
+            if entered_password_hash == stored_password_hash:
+                access_token = create_access_token(identity=stored_user.id)
+                response = {
+                    "access_token": access_token,
+                    "id": stored_user.id,
+                    "username": stored_user.username,
+                }
+                return response
+            else:
+                return (
+                    jsonify(
+                        {
+                            "error": "Failed to login",
+                            "error message": "Incorrect password.",
+                        }
+                    ),
+                    401,
+                )
+        except ValueError as e:
+            error_message = str(e)
+            return (
+                jsonify({"error": "Failed to login", "error message": error_message}),
+                404,
+            )
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to process the request",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
+    @app.route("/api/logout", methods=["POST"])
+    def logout():
+        try:
+            response = jsonify({"msg": "logout successful"})
+            unset_jwt_cookies(response)
+            return response
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify({"error": "Failed to logout", "error message": error_message}),
+                500,
+            )
+
+    @app.route("/api/register", methods=["POST"])
+    def signup():
+        try:
+            username = request.json.get("username", None)
+            email = request.json.get("email", None)
+            password = request.json.get("password", None)
+
+            salt = bcrypt.gensalt()
+            password_hash = bcrypt.hashpw(password.encode("utf-8"), salt).decode(
+                "utf-8"
+            )
+
+            from datalayer_user import UserDataLayer
+
+            user_data = UserDataLayer()
+            user_data.create_user(
+                username=username,
+                email=email,
+                password_hash=password_hash,
+                password_salt=salt.decode("utf-8"),
+            )
+
+            return jsonify({"message": "User created successfully"})
+        except TypeError as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to create user", "error message": error_message}
+                ),
+                400,
+            )
+        except ValueError as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to create user", "error message": error_message}
+                ),
+                400,
+            )
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to process the request",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
+    @app.route("/api/dashboard")
+    @jwt_required()  # new line
+    def my_profile():
+        # Call get_jwt_identity() to fetch userid for the logged-in user
+
+        # Replace with db query that will fetch data based on the userid
+        response_body = {
+            "name": "Nagato",
+            "about": "Hello! I'm a full stack developer that loves python and javascript",
+        }
+
+        return response_body
 
 
 # TODO: Remove once database is setup
