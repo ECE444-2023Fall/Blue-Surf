@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 import "../styles/LoginPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
@@ -182,7 +183,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
             </form>
             <p className="login-subtext bottom-subtext">
               {" "}
-              New to BlueSurf? <a href="/register">Join Now</a>
+              New to BlueSurf? <Link to="/register">Join Now</Link>
             </p>
           </div>
         </div>

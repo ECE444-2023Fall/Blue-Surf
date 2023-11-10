@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/SignupPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
@@ -246,7 +246,7 @@ const SignupPage: React.FC = () => {
               </div>
             </form>
             <p className="signup-subtext bottom-subtext">
-              Already have an account? <a href="/login">Login</a>
+              Already have an account? <Link to="/login">Login</Link>
             </p>
           </div>
         </div>
