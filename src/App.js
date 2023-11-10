@@ -15,7 +15,7 @@ import PostCreatePage from "./components/PostCreatePage";
 //   Route,
 //   Navigate,
 // } from "react-router-dom";
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PersonalDashboard from "./components/PersonalDashboard"
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -23,16 +23,14 @@ function App() {
   const { token, user, removeAuth, setAuth } = useAuth();
   
   const authenticatedRoutes = (
-    <Router>
-      <Switch>
+    <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/post/:postId" element={<PostDetailsPage />} />
         <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
         <Route path="/dashboard" element={<PersonalDashboard token={token} user={user} setAuth={setAuth}/>} />
         <Route path="/create" element={<PostCreatePage />} />
         <Route path="*" element={<Navigate to="/" />} />
-      </Switch>
-    </Router>
+    </Routes>
   );
 
   const nonAuthenticatedRoutes = (
