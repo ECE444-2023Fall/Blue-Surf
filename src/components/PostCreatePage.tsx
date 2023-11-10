@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment-timezone";
 import { useNavigate } from "react-router-dom";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
@@ -85,14 +86,22 @@ const PostCreatePage: React.FC = () => {
         setErrorMessage("");
       }
 
-      const formattedStartDate = editedPost.start_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
-      const formattedEndDate = editedPost.end_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
+      // const formattedStartDate = editedPost.start_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+      // const formattedEndDate = editedPost.end_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+
+      const formattedStartDate = moment(editedPost.start_time)
+        .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      const formattedEndDate = moment(editedPost.end_time)
+        .tz("America/New_York")
+        .format("YYYY-MM-DD HH:mm:ss");
 
       const postData = {
         ...editedPost,
@@ -293,7 +302,7 @@ const PostCreatePage: React.FC = () => {
                 />
               </div>
               <div className="subtitle"> Start Date </div>
-            <div className="details">
+              <div className="details">
                 <input
                   type="datetime-local"
                   value={
@@ -316,9 +325,9 @@ const PostCreatePage: React.FC = () => {
                     }
                   }}
                 />
-            </div>
-            <div className="subtitle"> End Date </div>
-            <div className="details">
+              </div>
+              <div className="subtitle"> End Date </div>
+              <div className="details">
                 <input
                   type="datetime-local"
                   value={
@@ -341,34 +350,34 @@ const PostCreatePage: React.FC = () => {
                     }
                   }}
                 />
-            </div>
               </div>
-              <div className="subtitle">Location</div>
+            </div>
+            <div className="subtitle">Location</div>
+            <div className="details">
+              <AutoSizeTextArea
+                content={editedPost.location}
+                onChange={(value) =>
+                  setEditedPost({ ...editedPost, location: value })
+                }
+                placeholderWord="[enter location here]"
+              />
+            </div>
+            <div>
+              <div className="subtitle">Club</div>
               <div className="details">
                 <AutoSizeTextArea
-                  content={editedPost.location}
+                  content={editedPost.club || ""}
                   onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
+                    setEditedPost({ ...editedPost, club: value })
                   }
-                  placeholderWord="[enter location here]"
+                  placeholderWord="[enter club name here if applicable]"
                 />
-              </div>
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  <AutoSizeTextArea
-                    content={editedPost.club || ""}
-                    onChange={(value) =>
-                      setEditedPost({ ...editedPost, club: value })
-                    }
-                    placeholderWord="[enter club name here if applicable]"
-                  />
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
