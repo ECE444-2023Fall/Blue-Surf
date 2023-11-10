@@ -7,7 +7,7 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-const postImage = require("../assets/post1.jpeg");
+const postImage = require("../assets/surf-emoji.png");
 
 const EXTENTDED_DESCRIPTION =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -24,6 +24,7 @@ interface Post {
   end_time: Date;
   like_count: number;
   club?: string;
+  image?: Blob;
 }
 
 const PostDetailsPage: React.FC = () => {
@@ -32,7 +33,7 @@ const PostDetailsPage: React.FC = () => {
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
-  const [imageSrc, setImageSrc] = useState(postImage);
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [tags, setTags] = useState<string[]>([]);
 
   const getTagNames = async (): Promise<any[] | null> => {
@@ -65,11 +66,12 @@ const PostDetailsPage: React.FC = () => {
         if (!response || !response.ok) {
           throw new Error("Cannot fetch post.");
         }
-        const data = await response.json();
+        const data: Post = await response.json();
         setPost(data);
-        setEditedPost(data);
+        setEditedPost({ ...data, image: undefined }); // Set image to undefined initially
+        setImageSrc(data.image ? URL.createObjectURL(data.image) : undefined);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        console.error("Error fetching post:", error);
       }
     };
 
@@ -118,14 +120,21 @@ const PostDetailsPage: React.FC = () => {
     setIsEditing(false);
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files && event.target.files[0];
+
     if (selectedFile) {
       const reader = new FileReader();
 
       reader.onload = (e) => {
         const newImageSrc = e.target && e.target.result;
-        setImageSrc(newImageSrc);
+
+        if (newImageSrc instanceof Blob) {
+          setImageSrc(URL.createObjectURL(newImageSrc));
+          setEditedPost({ ...editedPost!, image: newImageSrc });
+        } else if (typeof newImageSrc === "string") {
+          setImageSrc(newImageSrc);
+        }
       };
 
       reader.readAsDataURL(selectedFile);
