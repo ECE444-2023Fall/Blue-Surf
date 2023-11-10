@@ -13,27 +13,84 @@ from flask_jwt_extended import (
 import json
 import bcrypt
 
+"""
+Helper Methods 
+"""
+
+
+def jsonify_event(event):
+    """
+    Returns a json string of a single event
+    """
+    json_event = {
+        "id": event.id,
+        "title": event.title,
+        "description": event.description,
+        "extended_description": event.extended_description,
+        "location": event.location,
+        "start_time": event.start_time.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),  # Convert to string
+        "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),  # Convert to string
+        "author_id": event.author_id,
+        "club": event.club,
+        "is_published": event.is_published,
+        "like_count": event.like_count,
+        # Add other fields here as needed
+    }
+    return json_event
+
+
+def jsonify_event_list(events):
+    """
+    Returns a json string of a list of events
+    """
+    json_events = []
+    for event in events:
+        json_event = jsonify_event(event)
+        json_events.append(json_event)
+    return jsonify(json_events)
+
+
+"""
+Routes
+"""
+
 
 def setup_routes(app):
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
-        print('query: ', query)
+        print("query: ", query)
         try:
             from datalayer_event import EventDataLayer
+
             event_data = EventDataLayer()
             results = event_data.get_search_results_by_keyword(query)
             suggestions = []
             for event in results:
-                if any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.title)):
+                if any(
+                    word.lower().startswith(query)
+                    for word in re.findall(r"\b\w+\b", event.title)
+                ):
                     suggestions.append(event.title)
-                if event.club and any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.club)):            
+                if event.club and any(
+                    word.lower().startswith(query)
+                    for word in re.findall(r"\b\w+\b", event.club)
+                ):
                     suggestions.append(event.club)
             return jsonify(list(set(suggestions)))
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to look and display post title", "error_message":error_message}), 500
-    
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to look and display post title",
+                        "error_message": error_message,
+                    }
+                ),
+                500,
+            )
 
     @app.route("/api/search", methods=["GET"])
     def search():
@@ -41,23 +98,30 @@ def setup_routes(app):
         print("Printing query: ", query)
         try:
             from datalayer_event import EventDataLayer
+
             event_data = EventDataLayer()
             results = event_data.get_search_results_by_keyword(query)
             json_event = [
                 {
-                    'id': event.id,
-                    'title': event.title,
-                    'description': event.description,
-                    'location': event.location,
-                    'start_time': event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                    'end_time': event.end_time.strftime("%Y-%m-%d %H:%M:%S"), 
-                } for event in results
+                    "id": event.id,
+                    "title": event.title,
+                    "description": event.description,
+                    "location": event.location,
+                    "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                for event in results
             ]
             return jsonify(json_event)
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to look for post", "error_message":error_message}), 500
-     
+            return (
+                jsonify(
+                    {"error": "Failed to look for post", "error_message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/update-post/<int:post_id>", methods=["POST"])
     def update_post(post_id):
         try:
@@ -85,7 +149,7 @@ def setup_routes(app):
                 ),
                 500,
             )
-        
+
     @app.route("/api/create-post", methods=["POST"])
     def create_post():
         try:
@@ -137,7 +201,7 @@ def setup_routes(app):
                 ),
                 500,
             )
-    
+
     @app.route("/api/", methods=["GET"])
     def index():
         try:
@@ -146,31 +210,8 @@ def setup_routes(app):
             event_data = EventDataLayer()
             events = event_data.get_all_events()
 
-            json_events = []
+            return jsonify_event_list(events)
 
-            for event in events:
-                json_event = {
-                    "id": event.id,
-                    "title": event.title,
-                    "description": event.description,
-                    "extended_description": event.extended_description,
-                    "location": event.location,
-                    "start_time": event.start_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),  # Convert to string
-                    "end_time": event.end_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),  # Convert to string
-                    "author_id": event.author_id,
-                    "club": event.club,
-                    "is_published": event.is_published,
-                    "like_count": event.like_count,
-                    # Add other fields here as needed
-                }
-
-                json_events.append(json_event)
-
-            return jsonify(json_events)
         except Exception as e:
             error_message = str(e)
             return (
@@ -190,22 +231,8 @@ def setup_routes(app):
 
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
+            return jsonify_event(event)
 
-            json_event = {
-                "id": event.id,
-                "title": event.title,
-                "description": event.description,
-                "extended_description": event.extended_description,
-                "location": event.location,
-                "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                "author_id": event.author_id,
-                "club": event.club,
-                "is_published": event.is_published,
-                "like_count": event.like_count,
-            }
-
-            return jsonify(json_event)
         except Exception as e:
             error_message = str(e)
             return (
@@ -352,14 +379,24 @@ def setup_routes(app):
     @app.route("/api/dashboard")
     @jwt_required()  # new line
     def my_profile():
-        # Call get_jwt_identity() to fetch userid for the logged-in user
+        try:
+            # Call get_jwt_identity() to fetch userid for the logged-in user
+            userid = get_jwt_identity()
+            print("userid: " + str(userid))
+            from datalayer_event import EventDataLayer
 
-        # Replace with db query that will fetch data based on the userid
-        response_body = {
-            "name": "Nagato",
-            "about": "Hello! I'm a full stack developer that loves python and javascript",
-        }
+            event_data = EventDataLayer()
+            events = event_data.get_authored_events(userid)
+            return jsonify_event_list(events)
 
-        return response_body
-
-
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to process the request",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
