@@ -372,11 +372,6 @@ def setup_routes(app):
         }
 
         return response_body
-    
-    @app.route('/')
-    @app.route('/dashboard')
-    @app.route('/login')
-    @app.route('/register')
 
 
 # TODO: Remove once database is setup
