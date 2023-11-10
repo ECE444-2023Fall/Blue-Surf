@@ -15,6 +15,17 @@ import bcrypt
 
 
 def setup_routes(app):
+    @app.route("/api/get-all-tags", methods=["GET"])
+    def get_all_tags():
+        try:
+            from datalayer_tag import TagDataLayer
+            tag_data = TagDataLayer()
+            tags = tag_data.get_all_tags()
+            return jsonify(tags)
+        except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": "Failed to get all tags", "error message": error_message}), 500
+    
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
@@ -74,6 +85,7 @@ def setup_routes(app):
                 description=updated_post["description"],
                 extended_description=updated_post["extended_description"],
                 location=updated_post["location"],
+                tags=updated_post["tags"],
             )
 
             return jsonify({"message": "Post updated successfully"})
@@ -147,8 +159,10 @@ def setup_routes(app):
             events = event_data.get_all_events()
 
             json_events = []
-
             for event in events:
+                tags = event_data.get_tags_for_event(event_id=event.id)
+                tag_names = [tag.name for tag in tags]
+          
                 json_event = {
                     "id": event.id,
                     "title": event.title,
@@ -165,6 +179,7 @@ def setup_routes(app):
                     "club": event.club,
                     "is_published": event.is_published,
                     "like_count": event.like_count,
+                "tags": tag_names,
                     # Add other fields here as needed
                 }
 
@@ -185,11 +200,14 @@ def setup_routes(app):
 
     @app.route("/api/<int:event_id>", methods=["GET"])
     def get_event(event_id):
+        from datalayer_event import EventDataLayer
+        from datalayer_tag import TagDataLayer
         try:
-            from datalayer_event import EventDataLayer
-
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
+
+            tags = event_data.get_tags_for_event(event_id=event.id)
+            tag_names = [tag.name for tag in tags]
 
             json_event = {
                 "id": event.id,
@@ -203,6 +221,7 @@ def setup_routes(app):
                 "club": event.club,
                 "is_published": event.is_published,
                 "like_count": event.like_count,
+                "tags": tag_names,
             }
 
             return jsonify(json_event)
