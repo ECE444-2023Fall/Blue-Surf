@@ -1,5 +1,4 @@
-from flask import jsonify, request, redirect
-from urllib.parse import quote_plus
+from flask import jsonify, request
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
@@ -373,12 +372,6 @@ def setup_routes(app):
         }
 
         return response_body
-    
-    @app.errorhandler(404)
-    def handle_404(e):
-        if request.method == 'GET':
-            return redirect(f'/?request_path={quote_plus(request.path)}')
-        return e
 
 
 # TODO: Remove once database is setup
