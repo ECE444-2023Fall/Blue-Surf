@@ -57,6 +57,7 @@ def setup_routes(app):
         except Exception as e:
             error_message = str(e)
             return jsonify({"error": "Failed to look for post", "error_message":error_message}), 500
+        
      
     @app.route("/api/update-post/<int:post_id>", methods=["POST"])
     def update_post(post_id):
@@ -361,5 +362,34 @@ def setup_routes(app):
         }
 
         return response_body
+    
+    @app.route("/api/filter/<string:tagname>")
+    def filter_tags(tagname):
+        try: 
+            from datalayer_event import EventDataLayer
+            event_data = EventDataLayer()
+            events = event_data.get_events_by_tag(tag_name=tagname)
+            events_data = [{
+                'id': event.id,
+                'title': event.title,
+                'description': event.description,
+                'extended_description': event.extended_description,
+                'location': event.location,
+                'start_time': event.start_time.isoformat(),
+                'end_time': event.end_time.isoformat(),
+                'author_id': event.author_id,
+                'is_published': event.is_published,
+                'like_count': event.like_count,
+                'club': event.club,
+                'tags': [tag.name for tag in event.tags]
+            } for event in events]
+            return jsonify(events_data)
+        except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": "Failed to retrieve events by tag", "error message": error_message}), 500
+
+
+
+
 
 

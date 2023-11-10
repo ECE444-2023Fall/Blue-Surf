@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Event, Tag
+from models import User, Event, Tag, event_tags
 from datetime import datetime
 from flask import jsonify
 from datalayer_abstract import DataLayer
@@ -154,3 +154,12 @@ class EventDataLayer(DataLayer):
                 logging.info(f"Event with id {id} does not exist")
                 raise ValueError(f"Event with id {id} does not exist")
             return event
+
+    def get_events_by_tag(self, tag_name):
+        with app.app_context():
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if tag is None:
+                logging.info(f"Tag does not exist")
+                raise ValueError(f"Tag does not exist")
+            events = Event.query.join(event_tags).join(Tag).filter(Tag.id == tag.id).all()
+            return events
