@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://bluesurf.onrender.com',
+      target: 'https://127.0.0.1:5000',
       changeOrigin: true,
     })
   );
