@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import moment from "moment-timezone";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -90,6 +91,14 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    const formattedStartDate = moment(editedPost.start_time)
+      .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    const formattedEndDate = moment(editedPost.end_time)
+      .tz("America/New_York")
+      .format("YYYY-MM-DD HH:mm:ss");
+
     console.log(editedPost);
     try {
       // Send a POST request to the backend to update the post
@@ -247,113 +256,118 @@ const PostDetailsPage: React.FC = () => {
                 </span>
               ))}
             </span> */}
-            <div className="subtitle">About</div>
-            <div className="details">
-              {isEditing ? (
-                // TODO: replace with extendedDescription field
-                <AutoSizeTextArea
-                  content={editedPost.extended_description}
-                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
-                />
-              ) : (
-                editedPost.extended_description
-              )}
-            </div>
-            <div className="subtitle"> Start Date </div>
-            <div className="details">
-              {isEditing ? (
-                <input
-                  type="datetime-local"
-                  value={
-                    editedPost.start_time instanceof Date
-                      ? new Date(
-                          editedPost.start_time.getTime() -
-                            editedPost.start_time.getTimezoneOffset() * 60000
-                        )
-                          .toISOString()
-                          .slice(0, -8)
-                      : ""
-                  }
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const newStartTime = new Date(e.target.value);
-                    if (!isNaN(newStartTime.getTime())) {
+              <div className="subtitle">About</div>
+              <div className="details">
+                {isEditing ? (
+                  // TODO: replace with extendedDescription field
+                  <AutoSizeTextArea
+                    content={editedPost.extended_description}
+                    onChange={(value) =>
                       setEditedPost({
                         ...editedPost,
-                        start_time: newStartTime,
-                      });
+                        extended_description: value,
+                      })
                     }
-                  }}
-                />
-              ) : (
-                editedPost.start_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle"> End Date </div>
-            <div className="details">
-              {isEditing ? (
-                <input
-                  type="datetime-local"
-                  value={
-                    editedPost.end_time instanceof Date
-                      ? new Date(
-                          editedPost.end_time.getTime() -
-                            editedPost.end_time.getTimezoneOffset() * 60000
-                        )
-                          .toISOString()
-                          .slice(0, -8)
-                      : ""
-                  }
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const newEndTime = new Date(e.target.value);
-                    if (!isNaN(newEndTime.getTime())) {
-                      setEditedPost({
-                        ...editedPost,
-                        end_time: newEndTime,
-                      });
-                    }
-                  }}
-                />
-              ) : (
-                editedPost.end_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                />
-              ) : (
-                editedPost.location
-              )}
-            </div>
-            {editedPost.club && (
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  {isEditing ? (
-                    <AutoSizeTextArea
-                      content={editedPost.club}
-                      onChange={(value) =>
-                        setEditedPost({ ...editedPost, club: value })
-                      }
-                    />
-                  ) : (
-                    editedPost.club
-                  )}
-                </div>
+                  />
+                ) : (
+                  editedPost.extended_description
+                )}
               </div>
-            )}
-            <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button">Favourite?</button>
+              <div className="subtitle"> Start Date </div>
+              <div className="details">
+                {isEditing ? (
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.start_time instanceof Date
+                        ? new Date(
+                            editedPost.start_time.getTime() -
+                              editedPost.start_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
+                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newStartTime = new Date(e.target.value);
+                      if (!isNaN(newStartTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          start_time: newStartTime,
+                        });
+                      }
+                    }}
+                  />
+                ) : (
+                  editedPost.start_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle"> End Date </div>
+              <div className="details">
+                {isEditing ? (
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.end_time instanceof Date
+                        ? new Date(
+                            editedPost.end_time.getTime() -
+                              editedPost.end_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
+                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newEndTime = new Date(e.target.value);
+                      if (!isNaN(newEndTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          end_time: newEndTime,
+                        });
+                      }
+                    }}
+                  />
+                ) : (
+                  editedPost.end_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.location}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, location: value })
+                    }
+                  />
+                ) : (
+                  editedPost.location
+                )}
+              </div>
+              {editedPost.club && (
+                <div>
+                  <div className="subtitle">Club</div>
+                  <div className="details">
+                    {isEditing ? (
+                      <AutoSizeTextArea
+                        content={editedPost.club}
+                        onChange={(value) =>
+                          setEditedPost({ ...editedPost, club: value })
+                        }
+                      />
+                    ) : (
+                      editedPost.club
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="row g-5 m-2 d-flex justify-content-center">
+                <button className="favourite-button">Favourite?</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
