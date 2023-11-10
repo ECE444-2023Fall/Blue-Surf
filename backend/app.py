@@ -37,6 +37,8 @@ if url.startswith("postgres://"):
 SQLALCHEMY_DATABASE_URI = url
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 
+print(f"Using database: {SQLALCHEMY_DATABASE_URI}")
+
 bootstrap = Bootstrap(app)
 # Initialize DB
 db = SQLAlchemy(app)
