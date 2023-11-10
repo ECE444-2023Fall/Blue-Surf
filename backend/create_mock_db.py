@@ -106,7 +106,7 @@ def create_mock_events():
             like_count=10,
             image=image_data
         ),
-        ["Clubs & Organizations", "Arts & Culture"]),
+        ["Clubs & Organizations", "Arts & Culture", "Academic"]),
         (Event(
             title="Spanish Lessons",
             description="Want to learn Spanish? Join our club.",

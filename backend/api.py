@@ -363,7 +363,7 @@ def setup_routes(app):
 
         return response_body
     
-    @app.route("/api/filter/<string:tagname>")
+    @app.route("/api/filter/<string:tagname>", methods=["GET"])
     def filter_tags(tagname):
         try: 
             from datalayer_event import EventDataLayer
@@ -387,8 +387,6 @@ def setup_routes(app):
         except Exception as e:
             error_message = str(e)
             return jsonify({"error": "Failed to retrieve events by tag", "error message": error_message}), 500
-
-
 
 
 
