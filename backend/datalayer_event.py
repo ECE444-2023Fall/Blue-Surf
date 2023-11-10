@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Event, Tag, event_tags
+from models import User, Event, Tag
 from datetime import datetime
 from flask import jsonify
 from datalayer_abstract import DataLayer
@@ -48,6 +48,7 @@ class EventDataLayer(DataLayer):
             raise ValueError(f"Title {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
         event.title = title
 
+        # TODO: Implement some checks for description?
         # TODO: Implement some checks for description?
         event.description = description
 
@@ -220,17 +221,34 @@ class EventDataLayer(DataLayer):
         # event.is_published = is_published
 
     def get_all_events(self):
+        """
+        Returns all events.
+        """
         with app.app_context():
             events = Event.query.all()
             return events
 
     def get_event_by_id(self, id):
+        """
+        Returns the event with the given id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=id).first()
             if event is None:
-                logging.info(f"Event with id {id} does not exist")
-                raise ValueError(f"Event with id {id} does not exist")
+                logging.info(f"Event with id {id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {id} {self.DOES_NOT_EXIST}")
             return event
+
+    def get_authored_events(self, author_id):
+        """
+        Returns all events authored by the given author_id.
+        """
+        with app.app_context():
+            events = Event.query.filter_by(author_id=author_id).all()
+            if events is None:
+                logging.info(f"Event with author_id {author_id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {author_id} {self.DOES_NOT_EXIST}")
+            return events
 
     def get_tags_for_event(self, event_id):
         """
