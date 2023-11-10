@@ -21,6 +21,12 @@ def jsonify_event(event):
     """
     Returns a json string of a single event
     """
+    from datalayer_event import EventDataLayer
+
+    event_data = EventDataLayer()
+    tags = event_data.get_tags_for_event(event_id=event.id)
+    tag_names = [tag.name for tag in tags]
+
     json_event = {
         "id": event.id,
         "title": event.title,
@@ -35,6 +41,7 @@ def jsonify_event(event):
         "club": event.club,
         "is_published": event.is_published,
         "like_count": event.like_count,
+        "tags": tag_names,
         # Add other fields here as needed
     }
     return json_event
@@ -57,6 +64,23 @@ Routes
 
 
 def setup_routes(app):
+    @app.route("/api/get-all-tags", methods=["GET"])
+    def get_all_tags():
+        try:
+            from datalayer_tag import TagDataLayer
+
+            tag_data = TagDataLayer()
+            tags = tag_data.get_all_tags()
+            return jsonify(tags)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to get all tags", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
@@ -99,19 +123,8 @@ def setup_routes(app):
             from datalayer_event import EventDataLayer
 
             event_data = EventDataLayer()
-            results = event_data.get_search_results_by_keyword(query)
-            json_event = [
-                {
-                    "id": event.id,
-                    "title": event.title,
-                    "description": event.description,
-                    "location": event.location,
-                    "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                }
-                for event in results
-            ]
-            return jsonify(json_event)
+            events = event_data.get_search_results_by_keyword(query)
+            return jsonify_event_list(events)
         except Exception as e:
             error_message = str(e)
             return (
@@ -137,6 +150,7 @@ def setup_routes(app):
                 description=updated_post["description"],
                 extended_description=updated_post["extended_description"],
                 location=updated_post["location"],
+                tags=updated_post["tags"],
             )
 
             return jsonify({"message": "Post updated successfully"})
@@ -225,13 +239,13 @@ def setup_routes(app):
 
     @app.route("/api/<int:event_id>", methods=["GET"])
     def get_event(event_id):
-        try:
-            from datalayer_event import EventDataLayer
+        from datalayer_event import EventDataLayer
+        from datalayer_tag import TagDataLayer
 
+        try:
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
             return jsonify_event(event)
-
         except Exception as e:
             error_message = str(e)
             return (
@@ -399,34 +413,45 @@ def setup_routes(app):
                 ),
                 500,
             )
-            
+
     @app.route("/api/like/<int:event_id>", methods=["POST"])
-    @jwt_required()  
+    @jwt_required()
     def like_post(event_id):
         try:
             user_id = get_jwt_identity()
-            
+
             from datalayer_like import LikeLayer
+
             like_layer = LikeLayer()
             like_layer.like_by_id(user_id, event_id)
 
             return jsonify({"message": "Post liked successfully"})
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to like post", "error message": error_message}), 500
+            return (
+                jsonify(
+                    {"error": "Failed to like post", "error message": error_message}
+                ),
+                500,
+            )
 
     @app.route("/api/unlike/<int:event_id>", methods=["POST"])
-    @jwt_required()  
+    @jwt_required()
     def unlike_post(event_id):
         try:
             user_id = get_jwt_identity()
-            
+
             from datalayer_like import LikeLayer
+
             like_layer = LikeLayer()
             like_layer.unlike_by_id(user_id, event_id)
 
             return jsonify({"message": "Post unliked successfully"})
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to unlike post", "error message": error_message}), 500
-
+            return (
+                jsonify(
+                    {"error": "Failed to unlike post", "error message": error_message}
+                ),
+                500,
+            )
