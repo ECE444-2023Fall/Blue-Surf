@@ -101,6 +101,9 @@ class EventDataLayer(DataLayer):
                 raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
             event.is_published = is_published
 
+            if image is not None:
+                event.image = image
+
             # Add the event to the database
             db.session.add(event)
             db.session.commit()
@@ -180,6 +183,9 @@ class EventDataLayer(DataLayer):
                     tag = Tag.query.filter_by(name=tag_name).first()
                     if tag is not None:
                         event.tags.append(tag)
+
+            if image is not None:
+                event.image = image
 
             db.session.commit()
 
