@@ -1,5 +1,5 @@
 from backend.app import app, db
-from backend.models import User, Event, Tag, UserInterestedEvent, EventTag
+from backend.models import User, Event, Tag, Like, EventTag
 
 
 with app.app_context():
