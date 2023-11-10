@@ -5,6 +5,7 @@ from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
+from sqlalchemy import or_
 
 """
 class Event(db.Model):
@@ -106,10 +107,9 @@ class EventDataLayer(DataLayer):
 
             # Associate tags with the event
             logging.warning(f"Tags is {tags}")
-            
+
             event.tags = []
             if tags:
-
                 for tag_name in tags:
                     tag = Tag.query.filter_by(name=tag_name).first()
                     if tag is not None:
@@ -118,6 +118,21 @@ class EventDataLayer(DataLayer):
             # Commit the changes to the session after adding tags
             db.session.commit()
 
+    def get_search_results_by_keyword(self, keyword):
+        keyword_word_pattern = "% {}%".format(keyword)
+        keyword_start_pattern = "{}%".format(keyword)
+        with app.app_context():
+            query = Event.query.filter(
+                or_(
+                    Event.title.ilike(keyword_word_pattern),
+                    Event.club.ilike(keyword_word_pattern),
+                    Event.title.ilike(keyword_start_pattern),
+                    Event.club.ilike(keyword_start_pattern),
+                )
+            )
+            results = query.all()
+            return results
+
     def update_event(
         self,
         event_id,
@@ -125,7 +140,7 @@ class EventDataLayer(DataLayer):
         description,
         extended_description,
         location,
-        tags,
+        tags=[],
         image=None,
         is_published=True,
         start_time=None,

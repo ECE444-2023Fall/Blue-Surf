@@ -95,10 +95,10 @@ def create_mock_events():
             image=image_data
         ),[]),
         (Event(
-            title="Skateboard Contest",
-            description="Compete or just have fun at our skateboard contest.",
-            extended_description="Our annual skateboard contest is back, bigger and better than ever. Skateboarders from all over the city will come together to showcase their skills and compete for prizes. With categories for different age groups and skill levels, everyone from novices to pros can participate. Even if you're not competing, come enjoy the vibrant atmosphere and cheer on your favorite skaters.",
-            location="Galbraith",
+            title="Hockey Game",
+            description="Come watch our varsity team play.",
+            extended_description="Join us at the Varisty Arena to watch our varsity hockey team play against Waterloo",
+            location="Varsity Arena",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
@@ -108,16 +108,16 @@ def create_mock_events():
         ),
         ["Clubs & Organizations", "Arts & Culture"]),
         (Event(
-            title="Community Soccer Match",
-            description="Join us for a friendly soccer match.",
-            extended_description="The community soccer match is a weekly event that invites players of all skill levels to enjoy a fun and competitive game. It's a fantastic opportunity to stay active, meet new friends, and indulge in the love of the sport. Whether you're an experienced player or just looking to kick the ball around, the event is open to everyone.",
-            location="Varsity Stadium",
+            title="Spanish Lessons",
+            description="Want to learn Spanish? Join our club.",
+            extended_description="The spanish lesson meetup is a weekly event that invites non native spanish speakers to learn.",
+            location="Bahen",
             start_time=start_time,
             end_time=end_time,
             author_id=None,
             is_published=True,
             like_count=5,
-            club="Skule Soccer",
+            club="Lesa",
             image=image_data
         ),[]),
         (Event(
