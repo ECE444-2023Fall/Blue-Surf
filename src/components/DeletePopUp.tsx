@@ -2,8 +2,9 @@ import React from 'react';
 import "../styles/DeletePopUp.css";
 
 const DeletePopUp: React.FC<{
+  postTitle: string,
   handleDelete: (confirmed: boolean) => void;
-}> = ({ handleDelete }) => {
+}> = ({ postTitle, handleDelete }) => {
 
   const confirmDelete = () => {
     handleDelete(true);
@@ -19,7 +20,7 @@ const DeletePopUp: React.FC<{
                 <div className="popupbackground">
                     <div className="centered-text">
                             <p className="confirm-text">Are you sure you want to delete the post titled:</p>
-                            <p className="event-text">Fall Career Week?</p>
+                            <p className="event-text">{postTitle}</p>
                             <p className="undone-text">This action cannot be undone.</p>
                             <div className="row">
                             <button className = "yes-button" onClick={confirmDelete}>Delete</button>

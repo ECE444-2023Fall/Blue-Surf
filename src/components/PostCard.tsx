@@ -24,6 +24,7 @@ interface PostCardProps {
   token: string;
   user: User;
   setAuth: (token: string | null, user: User | null) => void;
+  showDeletePopUp: (postId: number, postTitle: string) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
@@ -36,9 +37,8 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     setIsLiked(!isLiked);
   };
 
-  const handleDelete = () => {
-    // TODO: display pop up and perform delete upon confirmation
-    console.log("Post deleted!");
+  const handleDeleteButtonClick = () => {
+    PostCardProps.showDeletePopUp(PostCardProps.id, PostCardProps.title);
   };
 
   return (
@@ -85,7 +85,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
                   </button>
                   {isAuthor && (
-                    <button className="trash-button" onClick={handleDelete}>
+                    <button className="trash-button" onClick={handleDeleteButtonClick}>
                       <i className="fa fa-trash-o trash-icon-custom-size" />
                     </button>
                   )}

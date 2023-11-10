@@ -155,7 +155,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   return (
     <div className="post-details-wrapper">
-      {showDeletePopUp && <DeletePopUp handleDelete={handleDelete} />}
+      {showDeletePopUp && <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2">
           <a className="navbar-brand back-nav" href="javascript:history.back()">
