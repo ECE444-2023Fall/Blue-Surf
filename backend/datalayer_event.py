@@ -6,6 +6,9 @@ from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
 from sqlalchemy import or_
+import base64
+from PIL import Image
+import io
 
 """
 class Event(db.Model):
@@ -102,7 +105,13 @@ class EventDataLayer(DataLayer):
             event.is_published = is_published
 
             if image is not None:
-                event.image = image
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
 
             # Add the event to the database
             db.session.add(event)
@@ -185,7 +194,13 @@ class EventDataLayer(DataLayer):
                         event.tags.append(tag)
 
             if image is not None:
-                event.image = image
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
 
             db.session.commit()
 
@@ -247,3 +262,17 @@ class EventDataLayer(DataLayer):
             if event.tags == None:
                 return []
             return event.tags
+
+    def update_image(self, event_id, image):
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if image is not None:
+                try:
+                    # make sure the image can be opened (given in correct format)
+                    Image.open(io.BytesIO(image))
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
+            event.image = image
+            db.session.commit()

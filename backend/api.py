@@ -19,32 +19,52 @@ def setup_routes(app):
     def get_all_tags():
         try:
             from datalayer_tag import TagDataLayer
+
             tag_data = TagDataLayer()
             tags = tag_data.get_all_tags()
             return jsonify(tags)
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to get all tags", "error message": error_message}), 500
-    
+            return (
+                jsonify(
+                    {"error": "Failed to get all tags", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
-        print('query: ', query)
+        print("query: ", query)
         try:
             from datalayer_event import EventDataLayer
+
             event_data = EventDataLayer()
             results = event_data.get_search_results_by_keyword(query)
             suggestions = []
             for event in results:
-                if any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.title)):
+                if any(
+                    word.lower().startswith(query)
+                    for word in re.findall(r"\b\w+\b", event.title)
+                ):
                     suggestions.append(event.title)
-                if event.club and any(word.lower().startswith(query) for word in re.findall(r'\b\w+\b', event.club)):            
+                if event.club and any(
+                    word.lower().startswith(query)
+                    for word in re.findall(r"\b\w+\b", event.club)
+                ):
                     suggestions.append(event.club)
             return jsonify(list(set(suggestions)))
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to look and display post title", "error_message":error_message}), 500
-    
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to look and display post title",
+                        "error_message": error_message,
+                    }
+                ),
+                500,
+            )
 
     @app.route("/api/search", methods=["GET"])
     def search():
@@ -52,23 +72,30 @@ def setup_routes(app):
         print("Printing query: ", query)
         try:
             from datalayer_event import EventDataLayer
+
             event_data = EventDataLayer()
             results = event_data.get_search_results_by_keyword(query)
             json_event = [
                 {
-                    'id': event.id,
-                    'title': event.title,
-                    'description': event.description,
-                    'location': event.location,
-                    'start_time': event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                    'end_time': event.end_time.strftime("%Y-%m-%d %H:%M:%S"), 
-                } for event in results
+                    "id": event.id,
+                    "title": event.title,
+                    "description": event.description,
+                    "location": event.location,
+                    "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                for event in results
             ]
             return jsonify(json_event)
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to look for post", "error_message":error_message}), 500
-     
+            return (
+                jsonify(
+                    {"error": "Failed to look for post", "error_message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/update-post/<int:post_id>", methods=["POST"])
     def update_post(post_id):
         try:
@@ -97,7 +124,52 @@ def setup_routes(app):
                 ),
                 500,
             )
-        
+
+    @app.route("/api/update-post-image/<int:post_id>", methods=["POST"])
+    def update_post_image(post_id):
+        try:
+            # Check if the request contains a file in the 'image' field
+            if "image" not in request.files:
+                return jsonify({"error": "No image file provided"}), 400
+
+            # Retrieve the image file from the request
+            uploaded_file = request.files["image"]
+
+            # Read the image file data
+            image_data = uploaded_file.read()
+
+            from datalayer_event import EventDataLayer
+
+            event_data = EventDataLayer()
+            event_data.update_image(event_id=post_id, image=image_data)
+
+            # THIS IS FOR TESTING PURPOSES ONLY
+            # import io
+            # from pathlib import Path
+            # from PIL import Image
+
+            # # Process the image data
+            # image = Image.open(io.BytesIO(image_data))
+
+            # # Save the received image for testing purposes
+            # subdirectory_name = "output_images"
+            # output_directory = Path.cwd() / subdirectory_name
+            # output_directory.mkdir(parents=True, exist_ok=True)
+
+            # output_image_path = output_directory / "received_image.png"
+            # image.save(output_image_path)
+
+            return jsonify({"message": "Image updated successfully"})
+
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to update image", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/create-post", methods=["POST"])
     def create_post():
         try:
@@ -117,7 +189,6 @@ def setup_routes(app):
                 author_name="Sarah Hudson",  # TODO: Needs to be changed to actual author
                 is_published=True,
                 club=new_post["club"],
-                image=None,
                 tags=new_post["tags"],
             )
 
@@ -149,7 +220,7 @@ def setup_routes(app):
                 ),
                 500,
             )
-    
+
     @app.route("/api/", methods=["GET"])
     def index():
         try:
@@ -162,7 +233,7 @@ def setup_routes(app):
             for event in events:
                 tags = event_data.get_tags_for_event(event_id=event.id)
                 tag_names = [tag.name for tag in tags]
-          
+
                 json_event = {
                     "id": event.id,
                     "title": event.title,
@@ -179,7 +250,7 @@ def setup_routes(app):
                     "club": event.club,
                     "is_published": event.is_published,
                     "like_count": event.like_count,
-                "tags": tag_names,
+                    "tags": tag_names,
                     # Add other fields here as needed
                 }
 
@@ -202,6 +273,7 @@ def setup_routes(app):
     def get_event(event_id):
         from datalayer_event import EventDataLayer
         from datalayer_tag import TagDataLayer
+
         try:
             event_data = EventDataLayer()
             event = event_data.get_event_by_id(event_id)
@@ -380,5 +452,3 @@ def setup_routes(app):
         }
 
         return response_body
-
-
