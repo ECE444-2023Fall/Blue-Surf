@@ -116,13 +116,26 @@
 
 .alert {
     padding: 5px;
-    color: rgb(195, 5, 5);
+    color: #ff0000;
     margin-bottom: 5px;
     border-radius: 4px;
     text-align: center;
     font-size: medium;
   
     /* Added styles */
-    border: 1px solid rgb(195, 5, 5);
-    background-color: rgba(195, 5, 5, 0.1); /* Adjust the alpha value for the desired background transparency */
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+  }
+
+  .error-message {
+    /* transform: translate(-50%, -20%); */
+    padding: 20px;
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    text-align: center;
+    color: #ff0000;
+    max-width: 30%;
+    font-family: Outfit;
+    /* transform: translate(-90%, -20%); */
   }

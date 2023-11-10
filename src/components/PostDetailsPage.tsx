@@ -35,8 +35,8 @@ const PostDetailsPage: React.FC = () => {
     summaryAlert: "",
   });
   const [blankMessage, setBlankMessage] = useState({
-    blankErrorMessage:"" 
-  })
+    blankErrorMessage: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,27 +92,26 @@ const PostDetailsPage: React.FC = () => {
       return;
     }
 
-    if (!editedPost.location && !editedPost.title){
+    if (!editedPost.location && !editedPost.title) {
       setBlankMessage({
-        blankErrorMessage: "Title and Location fields are missing"
-      })
+        blankErrorMessage: "Title and Location fields are missing",
+      });
       return;
     }
 
-    if (!editedPost.title){
+    if (!editedPost.title) {
       setBlankMessage({
-        blankErrorMessage: "Title field is missing"
-      })
+        blankErrorMessage: "Title field is missing",
+      });
       return;
     }
 
-    if (!editedPost.location){
+    if (!editedPost.location) {
       setBlankMessage({
-        blankErrorMessage: "Location field is missing"
-      })
+        blankErrorMessage: "Location field is missing",
+      });
       return;
     }
-
 
     try {
       // Send a POST request to the backend to update the post
@@ -128,8 +127,8 @@ const PostDetailsPage: React.FC = () => {
         console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
-        setAlertMessage({titleAlert: "", summaryAlert: ""})
-        setBlankMessage({ blankErrorMessage: ""})
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
+        setBlankMessage({ blankErrorMessage: "" });
       } else {
         console.error("Failed to update post.");
       }
@@ -142,7 +141,7 @@ const PostDetailsPage: React.FC = () => {
     setEditedPost({ ...post });
     setIsEditing(false);
     setAlertMessage({ titleAlert: "", summaryAlert: "" });
-    setBlankMessage({ blankErrorMessage: ""})
+    setBlankMessage({ blankErrorMessage: "" });
   };
 
   const handleFileChange = (event: any) => {
@@ -163,9 +162,11 @@ const PostDetailsPage: React.FC = () => {
     <div className="post-details-wrapper">
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2">
-        {blankMessage.blankErrorMessage && (
-              <div className="alert">{blankMessage.blankErrorMessage}</div>
-            )}
+          {blankMessage.blankErrorMessage && (
+            <div className="alert">
+              {blankMessage.blankErrorMessage}
+            </div>
+          )}
           <a className="navbar-brand back-nav" href="javascript:history.back()">
             <img
               src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
@@ -222,9 +223,6 @@ const PostDetailsPage: React.FC = () => {
           <div className="col-md-6">
             <div className="container-styling">
               <div className="title">
-              {alertMessage.titleAlert && (
-                <div className="alert">{alertMessage.titleAlert}</div>
-              )}
                 {isEditing ? (
                   <AutoSizeTextArea
                     content={editedPost.title}
@@ -236,9 +234,9 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.title
                 )}
               </div>
-            {alertMessage.summaryAlert && (
-              <div className="alert">{alertMessage.summaryAlert}</div>
-            )}
+              {alertMessage.titleAlert && (
+                <div className="alert">{alertMessage.titleAlert}</div>
+              )}
               <div className="summary">
                 {isEditing ? (
                   <AutoSizeTextArea
@@ -258,76 +256,79 @@ const PostDetailsPage: React.FC = () => {
                 </span>
               ))}
             </span> */}
-            <div className="subtitle">About</div>
-            <div className="details">
-              {isEditing ? (
-                // TODO: replace with extendedDescription field
-                <AutoSizeTextArea
-                  content={editedPost.extended_description}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      extended_description: value,
-                    })
-                  }
-                />
-              ) : (
-                editedPost.extended_description
+              {alertMessage.summaryAlert && (
+                <div className="alert">{alertMessage.summaryAlert}</div>
               )}
-            </div>
-            <div className="subtitle">Date</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
-                  }
-                />
-              ) : (
-                editedPost.start_time.toLocaleString()
-              )}
-            </div>
-            <div className="subtitle">Location</div>
-            <div className="details">
-              {isEditing ? (
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                />
-              ) : (
-                editedPost.location
-              )}
-            </div>
-            {editedPost.club && (
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  {isEditing ? (
-                    <AutoSizeTextArea
-                      content={editedPost.club}
-                      onChange={(value) =>
-                        setEditedPost({ ...editedPost, club: value })
-                      }
-                    />
-                  ) : (
-                    editedPost.club
-                  )}
-                </div>
+              <div className="subtitle">About</div>
+              <div className="details">
+                {isEditing ? (
+                  // TODO: replace with extendedDescription field
+                  <AutoSizeTextArea
+                    content={editedPost.extended_description}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        extended_description: value,
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.extended_description
+                )}
               </div>
-            )}
-            <div className="row g-5 m-2 d-flex justify-content-center">
-              <button className="favourite-button">Favourite?</button>
+              <div className="subtitle">Date</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.start_time.toLocaleString()}
+                    onChange={(value) =>
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: new Date(value),
+                      })
+                    }
+                  />
+                ) : (
+                  editedPost.start_time.toLocaleString()
+                )}
+              </div>
+              <div className="subtitle">Location</div>
+              <div className="details">
+                {isEditing ? (
+                  <AutoSizeTextArea
+                    content={editedPost.location}
+                    onChange={(value) =>
+                      setEditedPost({ ...editedPost, location: value })
+                    }
+                  />
+                ) : (
+                  editedPost.location
+                )}
+              </div>
+              {editedPost.club && (
+                <div>
+                  <div className="subtitle">Club</div>
+                  <div className="details">
+                    {isEditing ? (
+                      <AutoSizeTextArea
+                        content={editedPost.club}
+                        onChange={(value) =>
+                          setEditedPost({ ...editedPost, club: value })
+                        }
+                      />
+                    ) : (
+                      editedPost.club
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="row g-5 m-2 d-flex justify-content-center">
+                <button className="favourite-button">Favourite?</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
