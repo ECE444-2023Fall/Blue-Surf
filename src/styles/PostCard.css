@@ -31,6 +31,7 @@ h1 {
   padding: 4px 8px;
   text-decoration: none;
   padding-bottom: 5px;
+  margin-right: 5px;
 }
 
 .btn-custom-primary {
@@ -87,4 +88,13 @@ h1 {
 
 .trash-icon-custom-size {
   font-size: 24px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tags-container .pill-tag {
+  margin: 2px;
 }

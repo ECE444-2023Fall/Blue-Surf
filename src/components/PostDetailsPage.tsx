@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const postImage = require("../assets/post1.jpeg");
 
 const EXTENTDED_DESCRIPTION =
@@ -30,6 +33,30 @@ const PostDetailsPage: React.FC = () => {
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
+  const [tags, setTags] = useState<string[]>([]);
+
+  const getTagNames = async (): Promise<any[] | null> => {
+    const response = await fetch("/api/get-all-tags");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      console.error("Failed to fetch all tag names");
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const tags = await getTagNames();
+      if (tags) {
+        setTags(tags);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +90,7 @@ const PostDetailsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    console.log(editedPost);
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`/api/update-post/${postId}`, {
@@ -102,6 +130,31 @@ const PostDetailsPage: React.FC = () => {
 
       reader.readAsDataURL(selectedFile);
     }
+  };
+
+  const calculatePillsWidth = () => {
+    const pillTags = document.querySelectorAll(".pill-tag");
+    let totalWidth = 0;
+    pillTags.forEach((pillTag) => {
+      totalWidth += pillTag.clientWidth;
+    });
+    return totalWidth;
+  };
+
+  const handleTagAddition = (selectedTag: string) => {
+    console.log("in addition");
+    setEditedPost({
+      ...editedPost,
+      tags: [...editedPost.tags, selectedTag],
+    });
+  };
+
+  const handleTagRemoval = (selectedTag: string) => {
+    console.log("in removal");
+    setEditedPost({
+      ...editedPost,
+      tags: editedPost.tags.filter((tag) => tag !== selectedTag),
+    });
   };
 
   return (
@@ -200,12 +253,7 @@ const PostDetailsPage: React.FC = () => {
                 // TODO: replace with extendedDescription field
                 <AutoSizeTextArea
                   content={editedPost.extended_description}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      extended_description: value,
-                    })
-                  }
+                  onChange={(value) => setEditedPost({ ...editedPost, extended_description: value })}
                 />
               ) : (
                 editedPost.extended_description

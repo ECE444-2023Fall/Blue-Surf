@@ -16,7 +16,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import PersonalDashboard from "./components/PersonalDashboard"
-
+import 'react-datepicker/dist/react-datepicker.css';
 
 function App() {
   const { token, user, removeAuth, setAuth } = useAuth();
