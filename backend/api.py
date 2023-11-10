@@ -1,6 +1,4 @@
 from flask import jsonify, request
-import re
-
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
@@ -12,6 +10,7 @@ from flask_jwt_extended import (
 )
 import json
 import bcrypt
+import re
 
 """
 Helper Methods 
@@ -400,3 +399,34 @@ def setup_routes(app):
                 ),
                 500,
             )
+            
+    @app.route("/api/like/<int:event_id>", methods=["POST"])
+    @jwt_required()  
+    def like_post(event_id):
+        try:
+            user_id = get_jwt_identity()
+            
+            from datalayer_like import LikeLayer
+            like_layer = LikeLayer()
+            like_layer.like_by_id(user_id, event_id)
+
+            return jsonify({"message": "Post liked successfully"})
+        except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": "Failed to like post", "error message": error_message}), 500
+
+    @app.route("/api/unlike/<int:event_id>", methods=["POST"])
+    @jwt_required()  
+    def unlike_post(event_id):
+        try:
+            user_id = get_jwt_identity()
+            
+            from datalayer_like import LikeLayer
+            like_layer = LikeLayer()
+            like_layer.unlike_by_id(user_id, event_id)
+
+            return jsonify({"message": "Post unliked successfully"})
+        except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": "Failed to unlike post", "error message": error_message}), 500
+
