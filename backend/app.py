@@ -14,16 +14,11 @@ from flask_jwt_extended import (
     get_jwt,
     get_jwt_identity,
     unset_jwt_cookies,
+    jwt_required,
     JWTManager,
 )
 
-#app = Flask(__name__)
-app = Flask(__name__, static_folder='../client/build', static_url_path='/')
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-@app.errorhandler(404)
-def catch_all(path):
-    return app.send_static_file('index.js')
+app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config["JWT_SECRET_KEY"] = "NEED TO CHANGE"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
