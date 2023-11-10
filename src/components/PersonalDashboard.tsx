@@ -9,22 +9,39 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-// this is mock data, to be replaced later once database is setup
+interface User {
+  userId: string;
+  username: string;
+}
 
-const PersonalDashboard: React.FC = (PostCardProps: any) => {
+interface DashboardProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedButton, setSelectedButton] = useState("Favourites");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (buttonName: string) => {
     try {
-      const response = await fetch("/api/"); // Change this to the actual API endpoint
-      console.log(response);
+      let route = "/api/dashboard"
+      if (buttonName==="Favourites") {
+        route = "/api/" //Change to /like/<event_id
+      }
+      const response = await fetch(`${route}`, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      });
+
       if (response.ok) {
         const data = await response.json();
+        data.access_token && setAuth(data.access_token, user); //Refreshes token if needed
         setSearchResults(data);
-        console.log(data);
       } else {
         console.error("Failed to fetch data");
       }
@@ -36,16 +53,16 @@ const PersonalDashboard: React.FC = (PostCardProps: any) => {
   };
 
   useEffect(() => {
-    fetchEvents();
-    setSelectedButton("Favourites");
+    fetchEvents("Favourites");
   }, []);
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);
   };
 
-  const handleButtonClick = (buttonName: any) => {
+  const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
+    fetchEvents(buttonName);
   };
 
   const handleCreateButtonClick = () => {
