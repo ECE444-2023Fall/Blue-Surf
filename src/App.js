@@ -9,12 +9,13 @@ import SignupPage from "./components/SignupPage";
 import Profile from "./components/Profile";
 import PostDetailsPage from "./components/PostDetailsPage";
 import PostCreatePage from "./components/PostCreatePage";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   Navigate,
+// } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import PersonalDashboard from "./components/PersonalDashboard"
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -22,14 +23,16 @@ function App() {
   const { token, user, removeAuth, setAuth } = useAuth();
   
   const authenticatedRoutes = (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/post/:postId" element={<PostDetailsPage />} />
-      <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
-      <Route path="/dashboard" element={<PersonalDashboard token={token} user={user} setAuth={setAuth}/>} />
-      <Route path="/create" element={<PostCreatePage />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <Router>
+      <Switch>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/post/:postId" element={<PostDetailsPage />} />
+        <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
+        <Route path="/dashboard" element={<PersonalDashboard token={token} user={user} setAuth={setAuth}/>} />
+        <Route path="/create" element={<PostCreatePage />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Switch>
+    </Router>
   );
 
   const nonAuthenticatedRoutes = (
