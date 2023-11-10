@@ -1,7 +1,7 @@
 # create_db.py
 import os
 from app import app, db
-from models import User, Event, Tag, UserInterestedEvent
+from models import User, Event, Tag, Like
 from datetime import datetime
 
 def create_mock_users():
@@ -29,15 +29,15 @@ def create_mock_users():
 
 def create_mock_user_events():
     user_events = [
-        UserInterestedEvent(
+        Like(
             user_id=1,
             event_id=1
         ),
-        UserInterestedEvent(
+        Like(
             user_id=1,
             event_id=2
         ),
-        UserInterestedEvent(
+        Like(
             user_id=3,
             event_id=3
         ),
