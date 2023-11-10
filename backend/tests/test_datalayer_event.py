@@ -457,7 +457,7 @@ def test_event_by_id(test_client):
     
     with app.app_context():
         assert event.title == "Event 1"
-        
+
 def test_null_club(test_client):
     user = UserDataLayer()
     user.create_user(
@@ -495,3 +495,52 @@ def test_null_club(test_client):
     with app.app_context():
         event = Event.query.filter_by(title="Event 1").first()
         assert event.club == None
+
+def test_search_by_keyword(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+   
+    event = EventDataLayer()
+    event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name='testuser1',
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+    event.create_event(
+            title="Faculty party planning",
+            description="Join us at our meeting",
+            extended_description="Extended decription for faculty party planning, longer than the description",
+            location="UC college",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name='testuser1',
+            club="Faculty Event Planning",
+            is_published=True,
+            image=None,
+        )
+    
+    try:
+        query_results = event.get_search_results_by_keyword(keyword='Ev') 
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert len(query_results) == 2
+        assert query_results[0].title == "Event 1"
+        assert query_results[1].club == "Faculty Event Planning"

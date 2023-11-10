@@ -5,6 +5,7 @@ from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
+from sqlalchemy import or_
 
 '''
 class Event(db.Model):
@@ -101,6 +102,14 @@ class EventDataLayer(DataLayer):
             # Commit the changes to the session after adding tags
             db.session.commit()
 
+    def get_search_results_by_keyword(self, keyword):
+        keyword_word_pattern = "% {}%".format(keyword)
+        keyword_start_pattern = "{}%".format(keyword)
+        with app.app_context():
+            query = Event.query.filter(or_(Event.title.ilike(keyword_word_pattern), Event.club.ilike(keyword_word_pattern), Event.title.ilike(keyword_start_pattern), Event.club.ilike(keyword_start_pattern)))
+            results = query.all()
+            return results
+
 
     def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
         # get the event by event_id
@@ -132,42 +141,6 @@ class EventDataLayer(DataLayer):
             event.location = location
 
             db.session.commit()
-
-        # if start_time is None:
-        #     logging.info("Start time should not be empty")
-        #     raise TypeError("Start time should not be empty")
-        # try: 
-        #     temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("Start time is not given in correct format")
-        #     raise ValueError("Start time is not given in correct format")
-
-        # if end_time is None:
-        #     logging.info("End time should not be empty")
-        #     raise TypeError("End time should not be empty")
-        # try: 
-        #     temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("End time is not given in correct format")
-        #     raise ValueError("End time is not given in correct format")
-
-        # if temp_end_datetime < temp_start_datetime:
-        #     logging.info("Start time should be after end time")
-        #     raise ValueError("Start time should be after end time")
-        # event.start_time = temp_start_datetime
-        # event.end_time = temp_end_datetime
-
-        # with app.app_context():
-        #     author = User.query.filter_by(username=author_name).first()
-        # if author is None:
-        #     logging.info(f"Username {author_name} unable to post")
-        #     raise TypeError(f"Username {author_name} unable to post")
-        # event.author_id = author.id
-        
-        # if is_published is None:
-        #     logging.info("Event was not published")
-        #     raise TypeError("Event was not published")
-        # event.is_published = is_published
 
     def get_all_events(self):
         with app.app_context():
