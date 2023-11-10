@@ -37,11 +37,7 @@ const filterOptionValuesByAPI = [
   },
 ];
 
-interface Props {
-  history: any;
-}
-
-const LandingPage: React.FC<Props> = ({ history }) => {
+const LandingPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -92,20 +88,6 @@ const LandingPage: React.FC<Props> = ({ history }) => {
     fetchEvents();
     fetchDataAndInitializeTags();
   }, []);
-
-  useEffect(() => {
-    const requestPathInput = document.querySelector('input[name=request_path]') as HTMLInputElement | null;
-
-    if (requestPathInput) {
-      const val = requestPathInput.value;
-
-      if (val) {
-        requestPathInput.value = "";
-        history.push(val);
-      }
-    }
-  }, [history]);
-  
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);

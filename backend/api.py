@@ -1,5 +1,4 @@
-from flask import jsonify, request, redirect, render_template
-from urllib.parse import quote_plus
+from flask import jsonify, request
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
@@ -34,13 +33,6 @@ def get_matched_events(query, detailed=False):
 
 
 def setup_routes(app):
-    @app.errorhandler(404)
-    def handle_404(e):
-        if request.method == 'GET':
-            return redirect(f'/?request_path={quote_plus(request.path)}')
-        return e
-    
-
     @app.route("/api/get-all-tags", methods=["GET"])
     def get_all_tags():
         try:
