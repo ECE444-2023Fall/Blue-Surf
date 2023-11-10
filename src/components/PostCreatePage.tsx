@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const imageTemplate = require("../assets/post-template.jpg");
 const API_URL = "https://bluesurf.onrender.com"
 
@@ -44,6 +47,30 @@ const PostCreatePage: React.FC = () => {
   });
   const [imageSrc, setImageSrc] = useState(imageTemplate);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+
+  const getTagNames = async (): Promise<any[] | null> => {
+    const response = await fetch("/api/get-all-tags");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      console.error("Failed to fetch all tag names");
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const tags = await getTagNames();
+      if (tags) {
+        setTags(tags);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -106,6 +133,29 @@ const PostCreatePage: React.FC = () => {
 
       reader.readAsDataURL(selectedFile);
     }
+  };
+
+  const calculatePillsWidth = () => {
+    const pillTags = document.querySelectorAll(".pill-tag");
+    let totalWidth = 0;
+    pillTags.forEach((pillTag) => {
+      totalWidth += pillTag.clientWidth;
+    });
+    return totalWidth;
+  };
+
+  const handleTagAddition = (selectedTag: string) => {
+    setEditedPost({
+      ...editedPost,
+      tags: [...editedPost.tags, selectedTag],
+    });
+  };
+
+  const handleTagRemoval = (selectedTag: string) => {
+    setEditedPost({
+      ...editedPost,
+      tags: editedPost.tags.filter((tag) => tag !== selectedTag),
+    });
   };
 
   return (
@@ -178,13 +228,58 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter description here]"
                 />
               </div>
-              {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
-                </span>
-              ))}
-            </span> */}
+              <div className="subtitle">Tags</div>
+              <div className="row align-items-center">
+                <div
+                  className="col d-flex"
+                  style={{ marginRight: calculatePillsWidth() }}
+                >
+                  <div className="selected-tags-container">
+                    {editedPost.tags.length > 0 &&
+                      editedPost.tags.map((tag: string, index: number) => (
+                        <span className="pill" key={index}>
+                          <span className="pill-tag">
+                            {tag}
+                            <button
+                              className="remove-tag-button"
+                              onClick={() => handleTagRemoval(tag)}
+                            >
+                              <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                          </span>
+                        </span>
+                      ))}
+                    {
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          className="plus-icon"
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {tags.map(
+                            (tag: string) =>
+                              // Only show tags not already in the post
+                              !editedPost.tags.includes(tag) && (
+                                <Dropdown.Item
+                                  key={tag}
+                                  onClick={() => handleTagAddition(tag)}
+                                  className="dropdown-item-tag"
+                                >
+                                  <span className="pill">
+                                    <span className="pill-tag"></span>
+                                    {tag}
+                                  </span>
+                                </Dropdown.Item>
+                              )
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    }
+                  </div>
+                </div>
+              </div>
               <div className="subtitle">About</div>
               <div className="details">
                 {/* TODO: replace with extendedDescription field */}

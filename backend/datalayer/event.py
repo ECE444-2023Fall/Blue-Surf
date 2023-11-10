@@ -1,12 +1,12 @@
-import logging
-from datetime import datetime
-
 from ..app import app, db
 from ..models import User, Event, Tag
 from .abstract import DataLayer
 
+import logging
+from datetime import datetime
+from sqlalchemy import or_
 
-'''
+"""
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -19,31 +19,45 @@ class Event(db.Model):
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
     club = db.Column(db.Text)
-'''
+"""
+
 
 class EventDataLayer(DataLayer):
-    def helper_valid_times(self,start_time: datetime, end_time: datetime) -> bool:
-        '''
+    def helper_valid_times(self, start_time: datetime, end_time: datetime) -> bool:
+        """
         Given a start and end time, it returns whether both are valid.
         This means that:
         - start_time and end_time are not None
         - they are both valid datetime objects
         - start_time is before end_time
-        '''
+        """
         if start_time is None or end_time is None:
             return False
         try:
             start = datetime(start_time)
             end = datetime(end_time)
         except Exception as e:
-            raise e 
+            raise e
 
         if end < start:
-            return False     
-        
+            return False
+
         return True
 
-    def create_event(self, title, description, extended_description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
+    def create_event(
+        self,
+        title,
+        description,
+        extended_description,
+        location,
+        start_time,
+        end_time,
+        author_name,
+        is_published,
+        club,
+        image=None,
+        tags=None,
+    ):
         event = Event()
 
         if title is None or len(title) == 0:
@@ -54,10 +68,10 @@ class EventDataLayer(DataLayer):
             raise ValueError(f"Title {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
         event.title = title
 
-        #TODO: Implement some checks for description?
+        # TODO: Implement some checks for description?
         event.description = description
-        
-        #TODO: Implement some checks for extended description?
+
+        # TODO: Implement some checks for extended description?
         event.extended_description = extended_description
 
         if location is None or len(location) == 0:
@@ -71,7 +85,7 @@ class EventDataLayer(DataLayer):
         if start_time is None:
             logging.info(f"Start time {self.SHOULD_NOT_BE_EMPTY}")
             raise TypeError(f"Start time {self.SHOULD_NOT_BE_EMPTY}")
-        try: 
+        try:
             temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             logging.info(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
@@ -80,7 +94,7 @@ class EventDataLayer(DataLayer):
         if end_time is None:
             logging.info(f"End time {self.SHOULD_NOT_BE_EMPTY}")
             raise TypeError(f"End time {self.SHOULD_NOT_BE_EMPTY}")
-        try: 
+        try:
             temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             logging.info(f"End time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
@@ -91,8 +105,8 @@ class EventDataLayer(DataLayer):
             raise ValueError("Start time should be after end time")
         event.start_time = temp_start_datetime
         event.end_time = temp_end_datetime
-        
-        #TODO: Implement some checks for club?
+
+        # TODO: Implement some checks for club?
         event.club = club
 
         with app.app_context():
@@ -113,24 +127,52 @@ class EventDataLayer(DataLayer):
 
             # Associate tags with the event
             logging.warning(f"Tags is {tags}")
+
+            event.tags = []
             if tags:
                 for tag_name in tags:
                     tag = Tag.query.filter_by(name=tag_name).first()
                     if tag is not None:
-                        event.tags.append(tag) 
+                        event.tags.append(tag)
 
             # Commit the changes to the session after adding tags
             db.session.commit()
 
+    def get_search_results_by_keyword(self, keyword):
+        keyword_word_pattern = "% {}%".format(keyword)
+        keyword_start_pattern = "{}%".format(keyword)
+        with app.app_context():
+            query = Event.query.filter(
+                or_(
+                    Event.title.ilike(keyword_word_pattern),
+                    Event.club.ilike(keyword_word_pattern),
+                    Event.title.ilike(keyword_start_pattern),
+                    Event.club.ilike(keyword_start_pattern),
+                )
+            )
+            results = query.all()
+            return results
 
-    def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
+    def update_event(
+        self,
+        event_id,
+        title,
+        description,
+        extended_description,
+        location,
+        tags=[],
+        image=None,
+        is_published=True,
+        start_time=None,
+        end_time=None,
+    ):
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
             if event is None:
                 logging.info(f"Event with id {event_id} does not exist")
                 raise ValueError(f"Event with id {event_id} does not exist")
-                
+
             # UPDATE event in db
             if title is None or len(title) == 0:
                 logging.info("Title should not be empty")
@@ -140,7 +182,7 @@ class EventDataLayer(DataLayer):
                 raise ValueError("Title should be under 255 characters")
             event.title = title
 
-            #TODO: Implement some checks for description?
+            # TODO: Implement some checks for description?
             event.description = description
             event.extended_description = extended_description
 
@@ -152,30 +194,36 @@ class EventDataLayer(DataLayer):
                 raise ValueError("Location should be under 255 characters")
             event.location = location
 
+            event.tags = []
+            if tags:
+                for tag_name in tags:
+                    tag = Tag.query.filter_by(name=tag_name).first()
+                    if tag is not None:
+                        event.tags.append(tag)
+
             db.session.commit()
             try:
                 valid_times = self.helper_valid_times(start_time, end_time)
             except Exception as e:
                 raise ValueError(e)
-            
+
             if valid_times:
                 event.start_time = start_time
                 event.end_time = end_time
             db.session.commit()
 
-
             # temp_start_datetime = None
             # temp_end_datetime = None
 
             # if start_time is not None:
-            #     try: 
+            #     try:
             #         temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
             #     except ValueError as e:
             #         logging.info(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
             #         raise ValueError(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
 
             # if end_time is not None:
-            #     try: 
+            #     try:
             #         temp_end_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
             #     except ValueError as e:
             #         logging.info(f"End time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}, {e}")
@@ -184,14 +232,14 @@ class EventDataLayer(DataLayer):
             # if temp_end_datetime < temp_start_datetime:
             #     logging.info("Start time should be after end time")
             #     raise ValueError("Start time should be after end time")
-            
+
             # if temp_start_datetime is not None:
             #     logging.warning(type(temp_start_datetime))
             #     event.start_time = temp_start_datetime
             # if temp_end_datetime is not None:
             #     logging.warning(type(temp_start_datetime))
             #     event.end_time = temp_end_datetime
-            
+
             db.session.commit()
 
         # with app.app_context():
@@ -200,7 +248,7 @@ class EventDataLayer(DataLayer):
         #     logging.info(f"Username {author_name} unable to post")
         #     raise TypeError(f"Username {author_name} unable to post")
         # event.author_id = author.id
-        
+
         # if is_published is None:
         #     logging.info("Event was not published")
         #     raise TypeError("Event was not published")
@@ -210,7 +258,7 @@ class EventDataLayer(DataLayer):
         with app.app_context():
             events = Event.query.all()
             return events
-        
+
     def get_event_by_id(self, id):
         with app.app_context():
             event = Event.query.filter_by(id=id).first()
@@ -218,21 +266,21 @@ class EventDataLayer(DataLayer):
                 logging.info(f"Event with id {id} does not exist")
                 raise ValueError(f"Event with id {id} does not exist")
             return event
-        
+
     def get_tags_for_event(self, event_id):
-        '''
-        Returns a list of Tag objects that are associated with the given event id. 
-        '''
+        """
+        Returns a list of Tag objects that are associated with the given event id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
             if event.tags == None:
                 return []
             return event.tags
-    
+
     def delete_event_by_id(self, event_id):
-        '''
-        Deletes the event with the given event id. 
-        '''
+        """
+        Deletes the event with the given event id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
             if event is None:
