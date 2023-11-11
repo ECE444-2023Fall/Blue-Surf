@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
-const postImage = require("../assets/post1.jpeg");
+const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface User {
   userId: string;
@@ -27,10 +27,43 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
-  const [isLiked, setIsLiked] = React.useState<boolean>(false);
+  const postId = PostCardProps.id;
+
+  const [isLiked, setIsLiked] = React.useState(false);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+
+  const fetchImage = async () => {
+    try {
+      const postImageResponse = await fetch(`/api/${postId}/image`);
+      if (!postImageResponse || !postImageResponse.ok) {
+        throw new Error("Cannot fetch post image.");
+      }
+
+      // Get the image data as a Blob
+      const imageBlob = await postImageResponse.blob();
+
+      console.log("blob", imageBlob);
+
+      // Create a File object with the image data
+      const newImageFile = new File([imageBlob], `image_${postId}.png`, {
+        type: "image/png", // Adjust the type based on your image format
+      });
+
+      console.log("file", newImageFile);
+
+      // Set the image file in state
+      setImageFile(newImageFile);
+    } catch (error) {
+      console.error("Error fetching postcard image:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
 
   const checkIfLiked = (data: any, eventId: number) => {
-    setIsLiked(data.some((event: any) => event.id === eventId));
+    setIsLiked(data && data.some((event: any) => event.id === eventId));
   };
 
   const isAuthor =
@@ -111,7 +144,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
-            src={postImage}
+            src={imageFile ? URL.createObjectURL(imageFile) : defaultImage}
             className="card-img-top rounded-top-34"
             alt="..."
           />
@@ -136,10 +169,12 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                   {PostCardProps.tags && PostCardProps.tags.length > 0 && (
                     <>
                       {PostCardProps.tags.map((tag: string, index: number) => (
-                        <span className="pill" data-testid="post-tags">
-                          <span className="pill-tag" key={index}>
-                            {tag}
-                          </span>
+                        <span
+                          className="pill"
+                          data-testid="post-tags"
+                          key={tag}
+                        >
+                          <span className="pill-tag">{tag}</span>
                         </span>
                       ))}
                     </>

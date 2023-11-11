@@ -7,10 +7,7 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-const postImage = require("../assets/post1.jpeg");
-
-const EXTENTDED_DESCRIPTION =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+const defaultImage = require("../assets/image_placeholder.jpeg");
 interface Post {
   title: string;
   start_time: Date;
@@ -24,6 +21,7 @@ interface Post {
   end_time: Date;
   like_count: number;
   club?: string;
+  image: string;
 }
 
 interface User {
@@ -47,12 +45,13 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
-  const [imageSrc, setImageSrc] = useState(postImage);
+  const [imageSrc, setImageSrc] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const checkIfLiked = (data: any, eventId: string) => {
-    setIsLiked(data.some((event: any) => event.id === parseInt(eventId)));
+    setIsLiked(data && data.some((event: any) => event.id === parseInt(eventId)));
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
@@ -110,8 +109,28 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         const data = await response.json();
         setPost(data);
         setEditedPost(data);
+
+        const postImageResponse = await fetch(`/api/${postId}/image`);
+        if (!postImageResponse || !postImageResponse.ok) {
+          throw new Error("Cannot fetch post image.");
+        }
+
+        // Get the image data as a Blob
+        const imageBlob = await postImageResponse.blob();
+
+        console.log("blob", imageBlob);
+
+        // Create a File object with the image data
+        const imageFile = new File([imageBlob], `image_${postId}.png`, {
+          type: "image/png", // Adjust the type based on your image format
+        });
+
+        console.log("file", imageFile);
+
+        // Set the image file in state
+        setImageFile(imageFile);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        console.error("Error fetching post:", error);
       }
     };
 
@@ -154,6 +173,36 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         body: JSON.stringify(editedPost),
       });
 
+      console.log("content", JSON.stringify(editedPost));
+
+      if (response.ok) {
+        console.log("Post updated successfully!");
+        setIsEditing(false);
+        setPost({ ...editedPost });
+      } else {
+        console.error("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    // Append the image data to the FormData
+    const formData = new FormData();
+    formData.append("image", imageFile!);
+
+    console.log("FormData:");
+
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      // Send a POST request to the backend to update the post
+      const response = await fetch(`/api/update-post-image/${postId}`, {
+        method: "POST",
+        body: formData,
+      });
+
       if (response.ok) {
         console.log("Post updated successfully!");
         setIsEditing(false);
@@ -171,13 +220,16 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     setIsEditing(false);
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -269,7 +321,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile) : defaultImage}
               className="card-img-top rounded-edge"
               alt="..."
             />

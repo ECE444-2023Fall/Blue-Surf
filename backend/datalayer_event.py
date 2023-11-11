@@ -6,6 +6,9 @@ from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
 from sqlalchemy import or_
+import base64
+from PIL import Image
+import io
 
 """
 class Event(db.Model):
@@ -38,6 +41,10 @@ class EventDataLayer(DataLayer):
         image=None,
         tags=None,
     ):
+        """
+        Creates an event with the given parameters and adds it to the database.
+        Returns the id of the event.
+        """
         event = Event()
 
         if title is None or len(title) == 0:
@@ -102,6 +109,15 @@ class EventDataLayer(DataLayer):
                 raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
             event.is_published = is_published
 
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             # Add the event to the database
             db.session.add(event)
             db.session.commit()
@@ -118,6 +134,7 @@ class EventDataLayer(DataLayer):
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            return event.id
 
     def get_search_results_by_keyword(self, keyword):
         keyword_word_pattern = "% {}%".format(keyword)
@@ -181,6 +198,15 @@ class EventDataLayer(DataLayer):
                     tag = Tag.query.filter_by(name=tag_name).first()
                     if tag is not None:
                         event.tags.append(tag)
+
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
 
             db.session.commit()
 
@@ -259,3 +285,17 @@ class EventDataLayer(DataLayer):
             if event.tags == None:
                 return []
             return event.tags
+
+    def update_image(self, event_id, image):
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if image is not None:
+                try:
+                    # make sure the image can be opened (given in correct format)
+                    Image.open(io.BytesIO(image))
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
+            event.image = image
+            db.session.commit()
