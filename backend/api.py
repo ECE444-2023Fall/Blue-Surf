@@ -1,4 +1,6 @@
-from flask import jsonify, request
+import base64
+import io
+from flask import jsonify, request, send_file, Response
 import re
 
 from datetime import datetime, timedelta, timezone
@@ -302,6 +304,32 @@ def setup_routes(app):
             return (
                 jsonify(
                     {"error": "Failed to get event", "error message": error_message}
+                ),
+                500,
+            )
+
+    @app.route("/api/<int:event_id>/image", methods=["GET"])
+    def get_event_image(event_id):
+        from datalayer_event import EventDataLayer
+
+        try:
+            event_data = EventDataLayer()
+            event = event_data.get_event_by_id(event_id)
+
+            if event.image:
+                # Assuming event.image is the binary image data
+                return Response(event.image, mimetype='image/png')
+
+            else:
+                return jsonify({"error": "Image not found"})
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to get event image",
+                        "error message": error_message,
+                    }
                 ),
                 500,
             )

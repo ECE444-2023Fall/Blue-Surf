@@ -7,7 +7,7 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-const postImage = require("../assets/post1.jpeg");
+const postImage = require("../assets/surf-emoji.png");
 
 const EXTENTDED_DESCRIPTION =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -33,7 +33,7 @@ const PostDetailsPage: React.FC = () => {
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
-  const [imageSrc, setImageSrc] = useState(postImage);
+  const [imageSrc, setImageSrc] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -70,8 +70,28 @@ const PostDetailsPage: React.FC = () => {
         const data = await response.json();
         setPost(data);
         setEditedPost(data);
+
+        const postImageResponse = await fetch(`/api/${postId}/image`);
+        if (!postImageResponse || !postImageResponse.ok) {
+          throw new Error("Cannot fetch post image.");
+        }
+
+        // Get the image data as a Blob
+        const imageBlob = await postImageResponse.blob();
+
+        console.log("blob", imageBlob);
+
+        // Create a File object with the image data
+        const imageFile = new File([imageBlob], `image_${postId}.png`, {
+          type: "image/png", // Adjust the type based on your image format
+        });
+
+        console.log("file", imageFile);
+
+        // Set the image file in state
+        setImageFile(imageFile);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        console.error("Error fetching post:", error);
       }
     };
 
@@ -227,7 +247,7 @@ const PostDetailsPage: React.FC = () => {
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile) : postImage}
               className="card-img-top rounded-edge"
               alt="..."
             />
