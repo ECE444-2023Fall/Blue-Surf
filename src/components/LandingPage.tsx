@@ -5,8 +5,7 @@ import PostCard from "./PostCard";
 import FilterField from "./FilterField";
 import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
-
-const API_URL = "https://bluesurf.onrender.com"
+import API_URL from '../config';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {

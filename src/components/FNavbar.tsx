@@ -2,8 +2,8 @@ import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import API_URL from '../config';
 
-const API_URL = "https://bluesurf.onrender.com"
 console.log(API_URL);
 
 interface User {

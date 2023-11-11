@@ -7,10 +7,8 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
-
-const API_URL = "https://bluesurf.onrender.com"
-
 
 interface Post {
   title: string;
@@ -59,7 +57,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -72,7 +70,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("/api/favourites", {
+      const response = await fetch("${API_URL}/api/favourites", {
         headers: {
           Authorization: "Bearer " + token,
         },

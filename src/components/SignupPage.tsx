@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../styles/SignupPage.css";
+import API_URL from '../config';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
-
-const API_URL = "https://bluesurf.onrender.com"
 
 const SignupPage: React.FC = () => {
   const [registerForm, setRegisterForm] = useState({

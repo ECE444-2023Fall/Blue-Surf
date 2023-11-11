@@ -8,8 +8,8 @@ import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from '../config';
 const imageTemplate = require("../assets/post-template.jpg");
-const API_URL = "https://bluesurf.onrender.com"
 
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
@@ -51,7 +51,7 @@ const PostCreatePage: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);

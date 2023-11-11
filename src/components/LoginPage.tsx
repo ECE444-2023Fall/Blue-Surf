@@ -5,8 +5,6 @@ import "../styles/LoginPage.css";
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
-const API_URL = "https://bluesurf.onrender.com"
-
 interface User {
   userId: string;
   username: string;

@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
+import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
+
 
 interface User {
   userId: string;
@@ -98,7 +100,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("/api/favourites", {
+      const response = await fetch(`${API_URL}/api/favourites`, {
         headers: {
           Authorization: "Bearer " + PostCardProps.token,
         },

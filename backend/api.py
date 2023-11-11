@@ -191,7 +191,7 @@ def setup_routes(app):
             # Read the image file data
             image_data = uploaded_file.read()
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_data.update_image(event_id=post_id, image=image_data)
@@ -315,7 +315,7 @@ def setup_routes(app):
 
     @app.route("/api/<int:event_id>/image", methods=["GET"])
     def get_event_image(event_id):
-        from datalayer_event import EventDataLayer
+        from .datalayer.event import EventDataLayer
 
         try:
             event_data = EventDataLayer()
@@ -480,7 +480,7 @@ def setup_routes(app):
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
             print("userid: " + str(userid))
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             events = event_data.get_authored_events(userid)
@@ -505,7 +505,7 @@ def setup_routes(app):
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
             print("userid: " + str(userid))
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_data = LikeDataLayer()
             favourite_events = like_data.get_liked_events(user_id=userid)
@@ -530,7 +530,7 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_layer = LikeDataLayer()
             like_layer.like_by_id(user_id, event_id)
@@ -551,7 +551,7 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_layer = LikeDataLayer()
             like_layer.unlike_by_id(user_id, event_id)

@@ -35,12 +35,9 @@ def setup(test_client):
             image=None,
             tags=["Tag 1"],
         )
-    except ValueError as value_error:
-        logging.debug(f"Error: {value_error}")
-        assert value_error == None
-    except TypeError as type_error:
-        logging.debug(f"Error: {type_error}")
-        assert type_error == None
+    except (ValueError, TypeError) as e:
+        logging.debug(f"Error: {e}")
+        assert e is None
 
 
 def tear_down(test_client):
@@ -52,12 +49,9 @@ def tear_down(test_client):
         user.delete_user_by_username("testuser1")
         event.delete_event_by_id(1)
         tag.delete_tag("Tag 1")
-    except ValueError as value_error:
-        logging.debug(f"Error: {value_error}")
-        assert value_error == None
-    except TypeError as type_error:
-        logging.debug(f"Error: {type_error}")
-        assert type_error == None
+    except (ValueError, TypeError) as e:
+        logging.debug(f"Error: {e}")
+        assert e is None
 
 
 def test_api_landing_page(test_client):
