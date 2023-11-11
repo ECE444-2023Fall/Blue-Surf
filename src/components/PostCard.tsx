@@ -27,7 +27,12 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
-  const [isLiked, setIsLiked] = React.useState(false);
+  const [isLiked, setIsLiked] = React.useState<boolean>(false);
+
+  const checkIfLiked = (data: any, eventId: number) => {
+    setIsLiked(data.some((event: any) => event.id === eventId));
+  };
+
   const isAuthor =
     PostCardProps.user &&
     parseInt(PostCardProps.user.userId) === PostCardProps.author_id;
@@ -45,10 +50,12 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
         },
       });
 
+      const data = await response.json();
       if (response.ok) {
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
         setIsLiked(!isLiked);
       } else {
-        const data = await response.json();
         throw new Error(data["error message"]);
       }
     } catch (error) {
@@ -56,10 +63,48 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     }
   };
 
+  const fetchFavouritedEvents = async () => {
+    try {
+      const response = await fetch("/api/favourites", {
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
+        return data;
+      } else {
+        console.error("Failed to fetch favourited events");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching favourited events",
+        error
+      );
+    }
+  };
+
   const handleDelete = () => {
     // TODO: display pop up and perform delete upon confirmation
     console.log("Post deleted!");
   };
+
+  React.useEffect(() => {
+    if (
+      PostCardProps.token &&
+      PostCardProps.token !== "" &&
+      PostCardProps.token !== undefined
+    ) {
+      const fetchData = async () => {
+        const data = await fetchFavouritedEvents();
+        checkIfLiked(data, PostCardProps.id);
+      };
+
+      fetchData();
+    }
+  }, [PostCardProps.id]);
 
   return (
     <div className="col" data-testid="post-card">
@@ -103,13 +148,17 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>
-                  <button
-                    className={`like-button ${isLiked ? "liked" : ""}`}
-                    onClick={toggleLike}
-                    data-testid="like-button"
-                  >
-                    <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
-                  </button>
+                  {PostCardProps.token &&
+                    PostCardProps.token !== "" &&
+                    PostCardProps.token !== undefined && (
+                      <button
+                        className={`like-button ${isLiked ? "liked" : ""}`}
+                        onClick={toggleLike}
+                        data-testid="like-button"
+                      >
+                        <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                      </button>
+                    )}
                   {isAuthor && (
                     <button className="trash-button" onClick={handleDelete}>
                       <i className="fa fa-trash-o trash-icon-custom-size" />
