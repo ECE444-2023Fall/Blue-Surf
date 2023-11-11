@@ -464,6 +464,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, title: value })
                     }
+                    placeholderWord="[enter title here]"
                   />
                 ) : (
                   editedPost.title
@@ -481,6 +482,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, description: value })
                     }
+                    placeholderWord="[enter description here]"
                   />
                 ) : (
                   editedPost.description
@@ -557,6 +559,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         extended_description: value,
                       })
                     }
+                    placeholderWord="[enter extended description here]"
                   />
                 ) : (
                   editedPost.extended_description
@@ -590,6 +593,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, location: value })
                     }
+                    placeholderWord="[enter location here]"
                   />
                 ) : (
                   editedPost.location
@@ -607,6 +611,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         onChange={(value) =>
                           setEditedPost({ ...editedPost, club: value })
                         }
+                        placeholderWord="[enter club name here if applicable]"
                       />
                     ) : (
                       editedPost.club

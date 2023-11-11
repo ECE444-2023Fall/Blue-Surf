@@ -53,7 +53,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [loading, setLoading] = useState(true);
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
   const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
-  const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>()
+  const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
   const navigate = useNavigate();
 
   const getTagNames = async (): Promise<any[] | null> => {
@@ -121,7 +121,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
         if (response.ok) {
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
-          navigate(-1);
+          fetchEvents();
         } else {
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");
@@ -167,12 +167,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
               <p>Loading...</p>
             ) : (
               searchResults.map((event: any, index: number) => (
-                <PostCard key={index} token={token} user={user} setAuth={setAuth} showDeletePopUp={setUpDelete} {...event} />
+                <PostCard
+                  key={index}
+                  token={token}
+                  user={user}
+                  setAuth={setAuth}
+                  showDeletePopUp={setUpDelete}
+                  {...event}
+                />
               ))
             )}
           </div>
         </div>
-        {showDeletePopUp && posTitleToBeDeleted && <DeletePopUp postTitle={posTitleToBeDeleted} handleDelete={handleDelete} />}
+        {showDeletePopUp && posTitleToBeDeleted && (
+          <DeletePopUp
+            postTitle={posTitleToBeDeleted}
+            handleDelete={handleDelete}
+          />
+        )}
       </div>
     </div>
   );
