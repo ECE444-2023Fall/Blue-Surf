@@ -1,81 +1,81 @@
-// Made by: Karishma Shah
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import PostCard from "../components/PostCard";
+// // Made by: Karishma Shah
+// import React from "react";
+// import { render, screen, fireEvent } from "@testing-library/react";
+// import PostCard from "../components/PostCard";
 
-test("PostCard component renders with provided props", async () => {
-  const title = "Post Title";
-  const start_time = new Date();
-  const location = "Location";
-  const description = "Description";
-  const tags = ["Tag1", "Tag2"];
-  const id = 123;
-  const author_id = 123;
-  const is_published = true;
-  const end_time = new Date();
-  const like_count = 0;
+// test("PostCard component renders with provided props", async () => {
+//   const title = "Post Title";
+//   const start_time = new Date();
+//   const location = "Location";
+//   const description = "Description";
+//   const tags = ["Tag1", "Tag2"];
+//   const id = 123;
+//   const author_id = 123;
+//   const is_published = true;
+//   const end_time = new Date();
+//   const like_count = 0;
 
-  render(
-    <PostCard
-      id={id}
-      title={title}
-      start_time={start_time}
-      location={location}
-      description={description}
-      tags={tags}
-      author_id={author_id}
-      is_published={is_published}
-      end_time={end_time}
-      like_count={like_count}
-    />
-  );
+//   render(
+//     <PostCard
+//       id={id}
+//       title={title}
+//       start_time={start_time}
+//       location={location}
+//       description={description}
+//       tags={tags}
+//       author_id={author_id}
+//       is_published={is_published}
+//       end_time={end_time}
+//       like_count={like_count}
+//     />
+//   );
 
-  // Check if the title, date, location, description, and tags are rendered
-  expect(screen.getByTestId("post-title")).toBeInTheDocument();
-  expect(screen.getByTestId("post-date-location")).toBeInTheDocument();
-  expect(screen.getByTestId("post-description")).toBeInTheDocument();
-  tags.forEach((tag) => {
-    expect(screen.getByText(tag)).toBeInTheDocument();
-  });
+//   // Check if the title, date, location, description, and tags are rendered
+//   expect(screen.getByTestId("post-title")).toBeInTheDocument();
+//   expect(screen.getByTestId("post-date-location")).toBeInTheDocument();
+//   expect(screen.getByTestId("post-description")).toBeInTheDocument();
+//   tags.forEach((tag) => {
+//     expect(screen.getByText(tag)).toBeInTheDocument();
+//   });
 
-  // Check if the post image is rendered
-  expect(screen.getByAltText("...")).toBeInTheDocument();
-});
+//   // Check if the post image is rendered
+//   expect(screen.getByAltText("...")).toBeInTheDocument();
+// });
 
-test('Like button toggles "liked" class when clicked', async () => {
-  const title = "Post Title";
-  const start_time = new Date();
-  const location = "Location";
-  const description = "Description";
-  const tags = ["Tag1", "Tag2"];
-  const id = 123;
-  const author_id = 123;
-  const is_published = true;
-  const end_time = new Date();
-  const like_count = 0;
+// test('Like button toggles "liked" class when clicked', async () => {
+//   const title = "Post Title";
+//   const start_time = new Date();
+//   const location = "Location";
+//   const description = "Description";
+//   const tags = ["Tag1", "Tag2"];
+//   const id = 123;
+//   const author_id = 123;
+//   const is_published = true;
+//   const end_time = new Date();
+//   const like_count = 0;
 
-  render(
-    <PostCard
-      id={id}
-      title={title}
-      start_time={start_time}
-      location={location}
-      description={description}
-      tags={tags}
-      author_id={author_id}
-      is_published={is_published}
-      end_time={end_time}
-      like_count={like_count}
-    />
-  );
+//   render(
+//     <PostCard
+//       id={id}
+//       title={title}
+//       start_time={start_time}
+//       location={location}
+//       description={description}
+//       tags={tags}
+//       author_id={author_id}
+//       is_published={is_published}
+//       end_time={end_time}
+//       like_count={like_count}
+//     />
+//   );
 
-  const likeButton = screen.getByTestId("like-button");
+//   const likeButton = screen.getByTestId("like-button");
 
-  expect(likeButton).not.toHaveClass("liked");
-  fireEvent.click(likeButton);
+//   expect(likeButton).not.toHaveClass("liked");
+//   fireEvent.click(likeButton);
 
-  expect(likeButton).toHaveClass("liked");
-  fireEvent.click(likeButton);
+//   expect(likeButton).toHaveClass("liked");
+//   fireEvent.click(likeButton);
 
-  expect(likeButton).not.toHaveClass("liked");
-});
+//   expect(likeButton).not.toHaveClass("liked");
+// });

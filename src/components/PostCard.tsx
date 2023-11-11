@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -19,7 +19,40 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
+  const postId = PostCardProps.id;
+
   const [isLiked, setIsLiked] = React.useState(false);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+
+  const fetchImage = async () => {
+    try {
+      const postImageResponse = await fetch(`/api/${postId}/image`);
+      if (!postImageResponse || !postImageResponse.ok) {
+        throw new Error("Cannot fetch post image.");
+      }
+
+      // Get the image data as a Blob
+      const imageBlob = await postImageResponse.blob();
+
+      console.log("blob", imageBlob);
+
+      // Create a File object with the image data
+      const newImageFile = new File([imageBlob], `image_${postId}.png`, {
+        type: "image/png", // Adjust the type based on your image format
+      });
+
+      console.log("file", newImageFile);
+
+      // Set the image file in state
+      setImageFile(newImageFile);
+    } catch (error) {
+      console.error("Error fetching postcard image:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
@@ -35,7 +68,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
-            src={postImage}
+            src={imageFile ? URL.createObjectURL(imageFile) : postImage}
             className="card-img-top rounded-top-34"
             alt="..."
           />
