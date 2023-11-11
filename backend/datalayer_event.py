@@ -41,6 +41,10 @@ class EventDataLayer(DataLayer):
         image=None,
         tags=None,
     ):
+        """
+        Creates an event with the given parameters and adds it to the database.
+        Returns the id of the event.
+        """
         event = Event()
 
         if title is None or len(title) == 0:
@@ -129,6 +133,7 @@ class EventDataLayer(DataLayer):
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            return event.id
 
     def get_search_results_by_keyword(self, keyword):
         keyword_word_pattern = "% {}%".format(keyword)

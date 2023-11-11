@@ -181,7 +181,7 @@ def setup_routes(app):
             from datalayer_event import EventDataLayer
 
             event_data = EventDataLayer()
-            event_data.create_event(
+            event_id = event_data.create_event(
                 title=new_post["title"],
                 description=new_post["description"],
                 extended_description=new_post["extended_description"],
@@ -194,7 +194,7 @@ def setup_routes(app):
                 tags=new_post["tags"],
             )
 
-            return jsonify({"message": "Post created successfully"})
+            return jsonify({"message": "Post created successfully", "id": event_id})
         except TypeError as e:
             error_message = str(e)
             return (
@@ -318,7 +318,7 @@ def setup_routes(app):
 
             if event.image:
                 # Assuming event.image is the binary image data
-                return Response(event.image, mimetype='image/png')
+                return Response(event.image, mimetype="image/png")
 
             else:
                 return jsonify({"error": "Image not found"})
