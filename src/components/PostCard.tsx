@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
-const postImage = require("../assets/post1.jpeg");
+const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface PostCardProps {
   title: string;
@@ -68,7 +68,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
-            src={imageFile ? URL.createObjectURL(imageFile) : postImage}
+            src={imageFile ? URL.createObjectURL(imageFile) : defaultImage}
             className="card-img-top rounded-top-34"
             alt="..."
           />
