@@ -5,6 +5,11 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
 const postImage = require("../assets/post1.jpeg");
 
+interface User {
+  userId: string;
+  username: string;
+}
+
 interface PostCardProps {
   title: string;
   start_time: Date;
@@ -16,13 +21,39 @@ interface PostCardProps {
   is_published: boolean;
   end_time: Date;
   like_count: number;
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
   const [isLiked, setIsLiked] = React.useState(false);
+  const isAuthor =
+    PostCardProps.user &&
+    parseInt(PostCardProps.user.userId) === PostCardProps.author_id;
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${PostCardProps.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        const data = await response.json();
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
   };
 
   const handleDelete = () => {
@@ -79,9 +110,11 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
                   </button>
-                  <button className="trash-button" onClick={handleDelete}>
-                    <i className="fa fa-trash-o trash-icon-custom-size" />
-                  </button>
+                  {isAuthor && (
+                    <button className="trash-button" onClick={handleDelete}>
+                      <i className="fa fa-trash-o trash-icon-custom-size" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

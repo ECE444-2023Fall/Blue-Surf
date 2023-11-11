@@ -26,7 +26,22 @@ interface Post {
   club?: string;
 }
 
-const PostDetailsPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface PostDetailsProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PostDetailsPage: React.FC<PostDetailsProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const { postId } = useParams();
 
   const [post, setPost] = useState<Post>();
@@ -34,6 +49,7 @@ const PostDetailsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
   const [tags, setTags] = useState<string[]>([]);
+  const [isLiked, setIsLiked] = React.useState(false);
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -155,6 +171,30 @@ const PostDetailsPage: React.FC = () => {
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
     });
+  };
+
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${postId}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        const data = await response.json();
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
   };
 
   return (
@@ -357,7 +397,15 @@ const PostDetailsPage: React.FC = () => {
                 </div>
               )}
               <div className="row g-5 m-2 d-flex justify-content-center">
-                <button className="favourite-button">Favourite?</button>
+                <button
+                  className={`like-button-details ${
+                    isLiked ? "liked-details" : ""
+                  }`}
+                  onClick={toggleLike}
+                  data-testid="like-button"
+                >
+                  <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                </button>
               </div>
             </div>
           </div>
