@@ -8,9 +8,6 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const defaultImage = require("../assets/image_placeholder.jpeg");
-
-const EXTENTDED_DESCRIPTION =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 interface Post {
   title: string;
   start_time: Date;
@@ -27,7 +24,22 @@ interface Post {
   image: string;
 }
 
-const PostDetailsPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface PostDetailsProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PostDetailsPage: React.FC<PostDetailsProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const { postId } = useParams();
 
   const [post, setPost] = useState<Post>();
@@ -36,6 +48,11 @@ const PostDetailsPage: React.FC = () => {
   const [imageSrc, setImageSrc] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  const checkIfLiked = (data: any, eventId: string) => {
+    setIsLiked(data && data.some((event: any) => event.id === parseInt(eventId)));
+  };
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -46,6 +63,28 @@ const PostDetailsPage: React.FC = () => {
     } else {
       console.error("Failed to fetch all tag names");
       return null;
+    }
+  };
+
+  const fetchFavouritedEvents = async () => {
+    try {
+      const response = await fetch("/api/favourites", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        data.access_token && setAuth(data.access_token, user);
+        return data;
+      } else {
+        console.error("Failed to fetch favourited events");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching favourited events",
+        error
+      );
     }
   };
 
@@ -96,6 +135,17 @@ const PostDetailsPage: React.FC = () => {
     };
 
     fetchData();
+  }, [postId]);
+
+  useEffect(() => {
+    if (token && token !== "" && token !== undefined) {
+      const fetchData = async () => {
+        const data = await fetchFavouritedEvents();
+        postId && checkIfLiked(data, postId);
+      };
+
+      fetchData();
+    }
   }, [postId]);
 
   // Post data is not yet available
@@ -210,6 +260,30 @@ const PostDetailsPage: React.FC = () => {
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
     });
+  };
+
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${postId}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        const data = await response.json();
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
   };
 
   return (
@@ -412,7 +486,17 @@ const PostDetailsPage: React.FC = () => {
                 </div>
               )}
               <div className="row g-5 m-2 d-flex justify-content-center">
-                <button className="favourite-button">Favourite?</button>
+                {token && token !== "" && token !== undefined && (
+                  <button
+                    className={`like-button-details ${
+                      isLiked ? "liked-details" : ""
+                    }`}
+                    onClick={toggleLike}
+                    data-testid="like-button"
+                  >
+                    <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                  </button>
+                )}
               </div>
             </div>
           </div>

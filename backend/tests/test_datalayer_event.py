@@ -718,18 +718,17 @@ def test_update_image(test_client):
 
     try:
         event.create_event(
-            title="Event 1",
-            description="Kickoff event 1 for club 1",
-            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
-            location="Toronto",
-            start_time="2023-10-03 3:30:00",
-            end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
-            club="Club 1",
-            is_published=True,
-            image=None,
-            tags=["Tag 1"],
-        )
+        title="Event 1",
+        description="Kickoff for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser1",
+        club="club 1",
+        is_published=True,
+        image=None,
+    )
     except ValueError as value_error:
         logging.debug(f"Error: {value_error}")
         assert value_error == None
@@ -762,3 +761,51 @@ def test_update_image(test_client):
         output_image_path = output_directory / "update_image.png"
         # Save the image to a file
         image.save(output_image_path)
+def test_get_authored_events(test_client):
+    user = UserDataLayer()
+    event = EventDataLayer()
+    try:
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+
+        event.create_event(
+            title="Event 2",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+        with app.app_context():
+            user_id = User.query.filter_by(username="testuser1").first().id
+
+        events_authored = event.get_authored_events(author_id=user_id)
+
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events_authored) == 2
+    assert events_authored[0].title == "Event 1"
+    assert events_authored[1].title == "Event 2"
