@@ -389,7 +389,7 @@ def setup_routes(app):
                 500,
             )
 
-    @app.route("/api/dashboard")
+    @app.route("/api/dashboard", methods=["GET"])
     @jwt_required()  # new line
     def my_profile():
         try:
@@ -414,15 +414,41 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/api/favourites", methods=["GET"])
+    @jwt_required()  # new line
+    def my_favourites():
+        try:
+            # Call get_jwt_identity() to fetch userid for the logged-in user
+            userid = get_jwt_identity()
+            print("userid: " + str(userid))
+            from datalayer_like import LikeDataLayer
+
+            like_data = LikeDataLayer()
+            favourite_events = like_data.get_liked_events(user_id=userid)
+
+            return jsonify_event_list(favourite_events)
+
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to get favourite posts",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
     @app.route("/api/like/<int:event_id>", methods=["POST"])
     @jwt_required()
     def like_post(event_id):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeLayer
+            from datalayer_like import LikeDataLayer
 
-            like_layer = LikeLayer()
+            like_layer = LikeDataLayer()
             like_layer.like_by_id(user_id, event_id)
 
             return jsonify({"message": "Post liked successfully"})
@@ -441,9 +467,9 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeLayer
+            from datalayer_like import LikeDataLayer
 
-            like_layer = LikeLayer()
+            like_layer = LikeDataLayer()
             like_layer.unlike_by_id(user_id, event_id)
 
             return jsonify({"message": "Post unliked successfully"})

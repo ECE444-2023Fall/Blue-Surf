@@ -5,6 +5,11 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
 const postImage = require("../assets/post1.jpeg");
 
+interface User {
+  userId: string;
+  username: string;
+}
+
 interface PostCardProps {
   title: string;
   start_time: Date;
@@ -16,19 +21,90 @@ interface PostCardProps {
   is_published: boolean;
   end_time: Date;
   like_count: number;
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
-  const [isLiked, setIsLiked] = React.useState(false);
+  const [isLiked, setIsLiked] = React.useState<boolean>(false);
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
+  const checkIfLiked = (data: any, eventId: number) => {
+    setIsLiked(data.some((event: any) => event.id === eventId));
+  };
+
+  const isAuthor =
+    PostCardProps.user &&
+    parseInt(PostCardProps.user.userId) === PostCardProps.author_id;
+
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${PostCardProps.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
+        setIsLiked(!isLiked);
+      } else {
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
+  };
+
+  const fetchFavouritedEvents = async () => {
+    try {
+      const response = await fetch("/api/favourites", {
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
+        return data;
+      } else {
+        console.error("Failed to fetch favourited events");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching favourited events",
+        error
+      );
+    }
   };
 
   const handleDelete = () => {
     // TODO: display pop up and perform delete upon confirmation
     console.log("Post deleted!");
   };
+
+  React.useEffect(() => {
+    if (
+      PostCardProps.token &&
+      PostCardProps.token !== "" &&
+      PostCardProps.token !== undefined
+    ) {
+      const fetchData = async () => {
+        const data = await fetchFavouritedEvents();
+        checkIfLiked(data, PostCardProps.id);
+      };
+
+      fetchData();
+    }
+  }, [PostCardProps.id]);
 
   return (
     <div className="col" data-testid="post-card">
@@ -72,16 +148,22 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>
-                  <button
-                    className={`like-button ${isLiked ? "liked" : ""}`}
-                    onClick={toggleLike}
-                    data-testid="like-button"
-                  >
-                    <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
-                  </button>
-                  <button className="trash-button" onClick={handleDelete}>
-                    <i className="fa fa-trash-o trash-icon-custom-size" />
-                  </button>
+                  {PostCardProps.token &&
+                    PostCardProps.token !== "" &&
+                    PostCardProps.token !== undefined && (
+                      <button
+                        className={`like-button ${isLiked ? "liked" : ""}`}
+                        onClick={toggleLike}
+                        data-testid="like-button"
+                      >
+                        <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                      </button>
+                    )}
+                  {isAuthor && (
+                    <button className="trash-button" onClick={handleDelete}>
+                      <i className="fa fa-trash-o trash-icon-custom-size" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
