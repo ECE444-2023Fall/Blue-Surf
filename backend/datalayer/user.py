@@ -15,11 +15,11 @@ class User(db.Model):
     # Define a one-to-many relationship with events authored by the user
     events_authored = db.relationship("Event", backref="author", lazy=True)
 
-    # Define a many-to-many relationship with events the user is interested in
-    events_interested = db.relationship(
+    # Define a many-to-many relationship with events the user liked
+    events_liked = db.relationship(
         "Event",
-        secondary="user_interested_event",
-        backref="interested_users",
+        secondary="like",
+        backref="liked_users",
         lazy=True,
     )
 '''

@@ -572,7 +572,7 @@ def test_get_tag_ids_for_event(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
-    
+
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
 
@@ -664,3 +664,53 @@ def test_search_by_keyword(test_client):
         assert len(query_results) == 2
         assert query_results[0].title == "Event 1"
         assert query_results[1].club == "Faculty Event Planning"
+
+
+def test_get_authored_events(test_client):
+    user = UserDataLayer()
+    event = EventDataLayer()
+    try:
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+
+        event.create_event(
+            title="Event 2",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+        with app.app_context():
+            user_id = User.query.filter_by(username="testuser1").first().id
+
+        events_authored = event.get_authored_events(author_id=user_id)
+
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events_authored) == 2
+    assert events_authored[0].title == "Event 1"
+    assert events_authored[1].title == "Event 2"
