@@ -24,6 +24,7 @@ interface Post {
   end_time: Date;
   like_count: number;
   club?: string;
+  image: string;
 }
 
 const PostDetailsPage: React.FC = () => {
@@ -34,6 +35,7 @@ const PostDetailsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(postImage);
   const [tags, setTags] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -101,6 +103,36 @@ const PostDetailsPage: React.FC = () => {
         body: JSON.stringify(editedPost),
       });
 
+      console.log("content", JSON.stringify(editedPost));
+
+      if (response.ok) {
+        console.log("Post updated successfully!");
+        setIsEditing(false);
+        setPost({ ...editedPost });
+      } else {
+        console.error("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    // Append the image data to the FormData
+    const formData = new FormData();
+    formData.append("image", imageFile!);
+
+    console.log("FormData:");
+
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      // Send a POST request to the backend to update the post
+      const response = await fetch(`/api/update-post-image/${postId}`, {
+        method: "POST",
+        body: formData,
+      });
+
       if (response.ok) {
         console.log("Post updated successfully!");
         setIsEditing(false);
@@ -118,13 +150,16 @@ const PostDetailsPage: React.FC = () => {
     setIsEditing(false);
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
