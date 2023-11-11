@@ -37,7 +37,18 @@ const filterOptionValuesByAPI = [
   },
 ];
 
-const LandingPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface LandingPageProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -110,21 +121,26 @@ const LandingPage: React.FC = () => {
             <div className="col-12">
               <SearchBar onDataReceived={handleSearchData} />
             </div>
-
-            <div className="row">
-              <div className="col-12">
-                <SortBy options={["Sort Option 1", "Sort Option 2"]} />
-              </div>
+          </div>
+          <div className="row">
+            <div className="col-12">
+              <SortBy options={["Sort Option 1", "Sort Option 2"]} />
             </div>
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                searchResults.map((event: any, index: number) => (
-                  <PostCard key={index} {...event} />
-                ))
-              )}
-            </div>
+          </div>
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              searchResults.map((event: any, index: number) => (
+                <PostCard
+                  key={index}
+                  token={token}
+                  user={user}
+                  setAuth={setAuth}
+                  {...event}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

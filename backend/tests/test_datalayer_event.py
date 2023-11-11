@@ -1,4 +1,7 @@
 import logging
+from PIL import Image
+import io
+from pathlib import Path
 
 from .test_datalayer import test_client
 
@@ -22,6 +25,12 @@ def test_event_creation(test_client):
     tag.add_tag("Tag 1")
 
     event = EventDataLayer()
+
+    # Read the image file
+    image_file_path = os.path.join("../../images", "logo.png")
+    with open(image_file_path, "rb") as image_file:
+        image_data = image_file.read()
+
     try:
         event.create_event(
             title="Event 1",
@@ -33,7 +42,7 @@ def test_event_creation(test_client):
             author_name="testuser1",
             club="Club 1",
             is_published=True,
-            image=None,
+            image=image_data,
             tags=["Tag 1"],
         )
     except ValueError as value_error:
@@ -359,6 +368,11 @@ def test_event_update(test_client):
         image=None,
     )
     try:
+        # Read the image file
+        image_file_path = os.path.join("../../images", "logo.png")
+        with open(image_file_path, "rb") as image_file:
+            image_data = image_file.read()
+
         with app.app_context():
             event_id = Event.query.filter_by(title="Event 1").first().id
         event.update_event(
@@ -368,6 +382,7 @@ def test_event_update(test_client):
             extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
             location="Toronto",
             tags=["Tag 1"],
+            image=image_data,
         )
 
     except ValueError as value_error:
@@ -383,6 +398,18 @@ def test_event_update(test_client):
         assert new_event.title == "Event 1 - CHANGED"
         assert len(new_event.tags) == 1
         assert new_event.tags[0].name == "Tag 1"
+
+        image_data = new_event.image
+        image = Image.open(io.BytesIO(image_data))
+
+        subdirectory_name = "output_images"
+
+        # Create the subdirectory if it doesn't exist
+        output_directory = Path.cwd() / subdirectory_name
+        output_directory.mkdir(parents=True, exist_ok=True)
+        output_image_path = output_directory / "retrieved_image.png"
+        # Save the image to a file
+        image.save(output_image_path)
 
 
 def test_event_update_delete_tag(test_client):
@@ -664,6 +691,138 @@ def test_search_by_keyword(test_client):
         assert len(query_results) == 2
         assert query_results[0].title == "Event 1"
         assert query_results[1].club == "Faculty Event Planning"
+
+
+def test_update_image(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
+    event = EventDataLayer()
+
+    # Read the image file
+    image_file_path = os.path.join("../../images", "logo.png")
+    with open(image_file_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    try:
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        event_created = Event.query.filter_by(title="Event 1").first()
+        assert event != None
+
+    try:
+        event.update_image(event_id=event_created.id, image=image_data)
+    except ValueError as value_error:
+        assert value_error == None
+
+    with app.app_context():
+        event = Event.query.filter_by(title="Event 1").first()
+        assert event is not None
+        assert event.image is not None
+
+        image_data = event.image
+        image = Image.open(io.BytesIO(image_data))
+
+        subdirectory_name = "output_images"
+        # Create the subdirectory if it doesn't exist
+        output_directory = Path.cwd() / subdirectory_name
+        output_directory.mkdir(parents=True, exist_ok=True)
+
+        output_image_path = output_directory / "update_image.png"
+        # Save the image to a file
+        image.save(output_image_path)
+
+
+def test_update_image(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
+    event = EventDataLayer()
+
+    # Read the image file
+    image_file_path = os.path.join("../../images", "logo.png")
+    with open(image_file_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    try:
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        event_created = Event.query.filter_by(title="Event 1").first()
+        assert event != None
+
+    try:
+        event.update_image(event_id=event_created.id, image=image_data)
+    except ValueError as value_error:
+        assert value_error == None
+
+    with app.app_context():
+        event = Event.query.filter_by(title="Event 1").first()
+        assert event is not None
+        assert event.image is not None
+
+        image_data = event.image
+        image = Image.open(io.BytesIO(image_data))
+
+        subdirectory_name = "output_images"
+        # Create the subdirectory if it doesn't exist
+        output_directory = Path.cwd() / subdirectory_name
+        output_directory.mkdir(parents=True, exist_ok=True)
+
+        output_image_path = output_directory / "update_image.png"
+        # Save the image to a file
+        image.save(output_image_path)
 
 
 def test_get_authored_events(test_client):

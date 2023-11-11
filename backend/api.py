@@ -1,4 +1,8 @@
-from flask import jsonify, request
+import base64
+import io
+from flask import jsonify, request, send_file, Response
+import re
+
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import (
     create_access_token,
@@ -174,6 +178,51 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/api/update-post-image/<int:post_id>", methods=["POST"])
+    def update_post_image(post_id):
+        try:
+            # Check if the request contains a file in the 'image' field
+            if "image" not in request.files:
+                return jsonify({"error": "No image file provided"}), 400
+
+            # Retrieve the image file from the request
+            uploaded_file = request.files["image"]
+
+            # Read the image file data
+            image_data = uploaded_file.read()
+
+            from datalayer_event import EventDataLayer
+
+            event_data = EventDataLayer()
+            event_data.update_image(event_id=post_id, image=image_data)
+
+            # THIS IS FOR TESTING PURPOSES ONLY
+            # import io
+            # from pathlib import Path
+            # from PIL import Image
+
+            # # Process the image data
+            # image = Image.open(io.BytesIO(image_data))
+
+            # # Save the received image for testing purposes
+            # subdirectory_name = "output_images"
+            # output_directory = Path.cwd() / subdirectory_name
+            # output_directory.mkdir(parents=True, exist_ok=True)
+
+            # output_image_path = output_directory / "received_image.png"
+            # image.save(output_image_path)
+
+            return jsonify({"message": "Image updated successfully"})
+
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to update image", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/create-post", methods=["POST"])
     def create_post():
         try:
@@ -183,7 +232,7 @@ def setup_routes(app):
             from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
-            event_data.create_event(
+            event_id = event_data.create_event(
                 title=new_post["title"],
                 description=new_post["description"],
                 extended_description=new_post["extended_description"],
@@ -193,11 +242,10 @@ def setup_routes(app):
                 author_name="Sarah Hudson",  # TODO: Needs to be changed to actual author
                 is_published=True,
                 club=new_post["club"],
-                image=None,
                 tags=new_post["tags"],
             )
 
-            return jsonify({"message": "Post created successfully"})
+            return jsonify({"message": "Post created successfully", "id": event_id})
         except TypeError as e:
             error_message = str(e)
             return (
@@ -261,6 +309,32 @@ def setup_routes(app):
             return (
                 jsonify(
                     {"error": "Failed to get event", "error message": error_message}
+                ),
+                500,
+            )
+
+    @app.route("/api/<int:event_id>/image", methods=["GET"])
+    def get_event_image(event_id):
+        from datalayer_event import EventDataLayer
+
+        try:
+            event_data = EventDataLayer()
+            event = event_data.get_event_by_id(event_id)
+
+            if event.image:
+                # Assuming event.image is the binary image data
+                return Response(event.image, mimetype="image/png")
+
+            else:
+                return jsonify({"error": "Image not found"})
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to get event image",
+                        "error message": error_message,
+                    }
                 ),
                 500,
             )
@@ -399,7 +473,7 @@ def setup_routes(app):
                 500,
             )
 
-    @app.route("/api/dashboard")
+    @app.route("/api/dashboard", methods=["GET"])
     @jwt_required()  # new line
     def my_profile():
         try:
@@ -424,15 +498,41 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/api/favourites", methods=["GET"])
+    @jwt_required()  # new line
+    def my_favourites():
+        try:
+            # Call get_jwt_identity() to fetch userid for the logged-in user
+            userid = get_jwt_identity()
+            print("userid: " + str(userid))
+            from datalayer_like import LikeDataLayer
+
+            like_data = LikeDataLayer()
+            favourite_events = like_data.get_liked_events(user_id=userid)
+
+            return jsonify_event_list(favourite_events)
+
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to get favourite posts",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
     @app.route("/api/like/<int:event_id>", methods=["POST"])
     @jwt_required()
     def like_post(event_id):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeLayer
+            from datalayer_like import LikeDataLayer
 
-            like_layer = LikeLayer()
+            like_layer = LikeDataLayer()
             like_layer.like_by_id(user_id, event_id)
 
             return jsonify({"message": "Post liked successfully"})
@@ -451,9 +551,9 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeLayer
+            from datalayer_like import LikeDataLayer
 
-            like_layer = LikeLayer()
+            like_layer = LikeDataLayer()
             like_layer.unlike_by_id(user_id, event_id)
 
             return jsonify({"message": "Post unliked successfully"})

@@ -20,7 +20,11 @@ interface DashboardProps {
   setAuth: (token: string | null, user: User | null) => void;
 }
 
-const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => {
+const PersonalDashboard: React.FC<DashboardProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedButton, setSelectedButton] = useState("Favourites");
   const navigate = useNavigate();
@@ -28,13 +32,13 @@ const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => 
 
   const fetchEvents = async (buttonName: string) => {
     try {
-      let route = "/api/dashboard"
-      if (buttonName==="Favourites") {
-        route = "/api/" //Change to /like/<event_id
+      let route = "/api/dashboard";
+      if (buttonName === "Favourites") {
+        route = "/api/favourites";
       }
       const response = await fetch(`${route}`, {
         headers: {
-          Authorization: 'Bearer ' + token,
+          Authorization: "Bearer " + token,
         },
       });
 
@@ -69,7 +73,6 @@ const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => 
     navigate("/create");
   };
 
-
   return (
     <div className="container dashboard-wrapper">
       <div className="custom-container">
@@ -85,8 +88,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => 
               <div className="row">
                 <div className="col-12 my-3">
                   <div className="d-flex dashboard-buttons">
-                    <div className="fill-space">
-                    </div>
+                    <div className="fill-space"></div>
                     <div className="background-select">
                       <button
                         className={`twobutton-${
@@ -125,14 +127,20 @@ const PersonalDashboard: React.FC<DashboardProps> = ({token, user, setAuth}) => 
           </div>
         </div>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              searchResults.map((event: any, index: number) => (
-                <PostCard key={index} {...event} />
-              ))
-            )}
-          </div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            searchResults.map((event: any, index: number) => (
+              <PostCard
+                key={index}
+                token={token}
+                user={user}
+                setAuth={setAuth}
+                {...event}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

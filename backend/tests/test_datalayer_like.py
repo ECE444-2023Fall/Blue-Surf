@@ -4,7 +4,7 @@ import logging
 from .test_datalayer import test_client
 
 from ..app import app
-from ..datalayer.like import LikeLayer
+from ..datalayer.like import LikeDataLayer
 from ..datalayer.tag import TagDataLayer
 from ..datalayer.event import EventDataLayer
 from ..datalayer.user import UserDataLayer
@@ -50,7 +50,7 @@ def test_user_liked_event(test_client):
         user_exists = User.query.filter_by(username="testuser1").first()
         assert user_exists is not None
 
-    user_liked_event = LikeLayer()
+    user_liked_event = LikeDataLayer()
     try:
         user_liked_event.like_by_id(user_id=user_exists.id, event_id=event_exists.id)
     except ValueError as value_error:
@@ -95,7 +95,7 @@ def test_event_not_exist(test_client):
         user_exists = User.query.filter_by(username="testuser1").first()
         assert user_exists is not None
 
-    user_liked_event = LikeLayer()
+    user_liked_event = LikeDataLayer()
     try:
         user_liked_event.like_by_id(user_id=user_exists.id, event_id=2)
     except ValueError as value_error:
@@ -148,7 +148,7 @@ def test_user_not_exist(test_client):
         user_exists = User.query.filter_by(id=2).first()
         assert user_exists is None
 
-    user_liked_event = LikeLayer()
+    user_liked_event = LikeDataLayer()
     try:
         user_liked_event.like_by_id(user_id=2, event_id=event_exists.id)
     except ValueError as value_error:
@@ -201,7 +201,7 @@ def test_user_liked_event_delete(test_client):
         user_exists = User.query.filter_by(username="testuser1").first()
         assert user_exists is not None
 
-    user_liked_event = LikeLayer()
+    user_liked_event = LikeDataLayer()
     try:
         user_liked_event.like_by_id(user_id=user_exists.id, event_id=event_exists.id)
     except ValueError as value_error:
@@ -259,3 +259,99 @@ def test_user_liked_event_delete(test_client):
         )
         event_exists = Event.query.filter_by(title="Event 1").first()
         assert event_exists.like_count == 0
+
+
+def test_user_liked_events(test_client):
+    user = UserDataLayer()
+    event = EventDataLayer()
+    tag = TagDataLayer()
+
+    try:
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+        user.create_user(
+            username="testuser2",
+            email="testuser2@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+        tag.add_tag("Tag 1")
+        event.create_event(
+            title="Event 1",
+            description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser2",
+            club="Club 1",
+            is_published=True,
+            image=None,
+            tags=["Tag 1"],
+        )
+        event.create_event(
+            title="Event 2",
+            description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="Club 1",
+            is_published=True,
+            image=None,
+            tags=["Tag 1"],
+        )
+        event.create_event(
+            title="Event 3",
+            description="Kickoff event 1 for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_name="testuser1",
+            club="Club 1",
+            is_published=True,
+            image=None,
+            tags=["Tag 1"],
+        )
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    with app.app_context():
+        event1 = Event.query.filter_by(title="Event 1").first()
+        event2 = Event.query.filter_by(title="Event 2").first()
+        event3 = Event.query.filter_by(title="Event 3").first()
+        assert event1 is not None
+        user1 = User.query.filter_by(username="testuser1").first()
+        assert user1 is not None
+
+    user_liked_event = LikeDataLayer()
+    try:
+        # testuser1 likes event1
+        user_liked_event.like_by_id(user_id=user1.id, event_id=event1.id)
+        # get the events that testuser1 likes
+        liked_events = user_liked_event.get_liked_events(user_id=user1.id)
+
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(liked_events) == 1
+    assert liked_events[0].title == "Event 1"
+
+    try:
+        user_liked_event.like_by_id(user_id=user1.id, event_id=event2.id)
+        liked_events = user_liked_event.get_liked_events(user_id=user1.id)
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(liked_events) == 2
+    assert liked_events[0].title == "Event 1"
+    assert liked_events[1].title == "Event 2"
