@@ -48,6 +48,7 @@ const PostCreatePage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [dateMessage, setDateMessage] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -124,7 +125,30 @@ const PostCreatePage: React.FC = () => {
         body: JSON.stringify(postData),
       });
 
-      if (response.ok) {
+      // get the id of the post
+      const data = await response.json();
+      const postId = data.id;
+
+      // upload the image
+      const formData = new FormData();
+      formData.append("image", imageFile!);
+
+      console.log("FormData:");
+
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      // Send a POST request to the backend to update the post
+      const postImageResponse = await fetch(
+        `/api/update-post-image/${postId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (postImageResponse.ok) {
         navigate("/dashboard");
       } else {
         const data = await response.json();
@@ -135,13 +159,16 @@ const PostCreatePage: React.FC = () => {
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -202,7 +229,7 @@ const PostCreatePage: React.FC = () => {
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile): imageTemplate}
               className="card-img-top rounded-edge"
               alt="..."
             />

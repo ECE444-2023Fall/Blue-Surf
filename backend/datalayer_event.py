@@ -1,11 +1,14 @@
 from app import app, db
-from models import User, Event, Tag, event_tags
+from models import User, Event, Tag
 from datetime import datetime
 from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
 from sqlalchemy import or_
+import base64
+from PIL import Image
+import io
 
 """
 class Event(db.Model):
@@ -38,6 +41,10 @@ class EventDataLayer(DataLayer):
         image=None,
         tags=None,
     ):
+        """
+        Creates an event with the given parameters and adds it to the database.
+        Returns the id of the event.
+        """
         event = Event()
 
         if title is None or len(title) == 0:
@@ -48,6 +55,7 @@ class EventDataLayer(DataLayer):
             raise ValueError(f"Title {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
         event.title = title
 
+        # TODO: Implement some checks for description?
         # TODO: Implement some checks for description?
         event.description = description
 
@@ -101,6 +109,15 @@ class EventDataLayer(DataLayer):
                 raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
             event.is_published = is_published
 
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             # Add the event to the database
             db.session.add(event)
             db.session.commit()
@@ -117,6 +134,7 @@ class EventDataLayer(DataLayer):
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            return event.id
 
     def get_search_results_by_keyword(self, keyword):
         keyword_word_pattern = "% {}%".format(keyword)
@@ -181,6 +199,15 @@ class EventDataLayer(DataLayer):
                     if tag is not None:
                         event.tags.append(tag)
 
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             db.session.commit()
 
         # if start_time is None:
@@ -220,17 +247,34 @@ class EventDataLayer(DataLayer):
         # event.is_published = is_published
 
     def get_all_events(self):
+        """
+        Returns all events.
+        """
         with app.app_context():
             events = Event.query.all()
             return events
 
     def get_event_by_id(self, id):
+        """
+        Returns the event with the given id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=id).first()
             if event is None:
-                logging.info(f"Event with id {id} does not exist")
-                raise ValueError(f"Event with id {id} does not exist")
+                logging.info(f"Event with id {id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {id} {self.DOES_NOT_EXIST}")
             return event
+
+    def get_authored_events(self, author_id):
+        """
+        Returns all events authored by the given author_id.
+        """
+        with app.app_context():
+            events = Event.query.filter_by(author_id=author_id).all()
+            if events is None:
+                logging.info(f"Event with author_id {author_id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {author_id} {self.DOES_NOT_EXIST}")
+            return events
 
     def get_tags_for_event(self, event_id):
         """
@@ -241,3 +285,17 @@ class EventDataLayer(DataLayer):
             if event.tags == None:
                 return []
             return event.tags
+
+    def update_image(self, event_id, image):
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if image is not None:
+                try:
+                    # make sure the image can be opened (given in correct format)
+                    Image.open(io.BytesIO(image))
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
+            event.image = image
+            db.session.commit()
