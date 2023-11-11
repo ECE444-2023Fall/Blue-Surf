@@ -43,7 +43,9 @@ def create_mock_events():
     end_time = datetime.strptime("2023-10-28 11:00:00", "%Y-%m-%d %H:%M:%S")
 
     # Read the image file
-    image_file_path = os.path.join("../images", "logo.png")
+    current_directory = os.path.dirname(__file__)
+    image_directory = current_directory + "/../images"
+    image_file_path = os.path.join(image_directory, "logo.png")
     with open(image_file_path, "rb") as image_file:
         image_data = image_file.read()
 
