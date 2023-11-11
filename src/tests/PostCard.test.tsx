@@ -69,4 +69,14 @@ test('Like button toggles "liked" class when clicked', async () => {
       setAuth={setAuth}
     />
   );
+
+  const likeButton = screen.getByTestId("like-button");
+
+  expect(likeButton).not.toHaveClass("liked");
+  fireEvent.click(likeButton);
+
+  expect(likeButton).toHaveClass("liked");
+  fireEvent.click(likeButton);
+
+  expect(likeButton).not.toHaveClass("liked");
 });
