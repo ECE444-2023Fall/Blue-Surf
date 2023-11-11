@@ -27,54 +27,78 @@ describe("PostCard Component", () => {
     showDeletePopUp = jest.fn();
   });
 
-  test("PostCard component renders with provided props", async () => {
-    render(
-      <PostCard
-        id={id}
-        title={title}
-        start_time={start_time}
-        location={location}
-        description={description}
-        tags={tags}
-        author_id={author_id}
-        is_published={is_published}
-        end_time={end_time}
-        like_count={like_count}
-        token={token}
-        user={user}
-        setAuth={setAuth}
-        showDeletePopUp={showDeletePopUp}
-      />
-    );
-    expect(screen.getByTestId("post-title")).toBeInTheDocument();
-    expect(screen.getByTestId("post-date-location")).toBeInTheDocument();
-    expect(screen.getByTestId("post-description")).toBeInTheDocument();
-    tags.forEach((tag) => {
-      expect(screen.getByText(tag)).toBeInTheDocument();
-    });
-    expect(screen.getByAltText("...")).toBeInTheDocument(); // Assuming the image alt text is '...'
+  beforeEach(() => {
+    title = "Post Title";
+    start_time = new Date();
+    location = "Location";
+    description = "Description";
+    tags = ["Tag1", "Tag2"];
+    id = 123;
+    author_id = 123;
+    is_published = true;
+    end_time = new Date();
+    like_count = 0;
+    token = "123";
+    user = { userId: '123', username: 'author' };
+    setAuth = jest.fn();
+    showDeletePopUp = jest.fn();
   });
 
-  test('Like button toggles "liked" class when clicked', async () => {
-    render(
-      <PostCard
-        id={id}
-        title={title}
-        start_time={start_time}
-        location={location}
-        description={description}
-        tags={tags}
-        author_id={author_id}
-        is_published={is_published}
-        end_time={end_time}
-        like_count={like_count}
-        token={token}
-        user={user}
-        setAuth={setAuth}
-        showDeletePopUp={showDeletePopUp}
-      />
-    );
-    const likeButton = screen.getByTestId("like-button");
+test("PostCard component renders with provided props", async () => {
+
+  render(
+    <PostCard
+      id={id}
+      title={title}
+      start_time={start_time}
+      location={location}
+      description={description}
+      tags={tags}
+      author_id={author_id}
+      is_published={is_published}
+      end_time={end_time}
+      like_count={like_count}
+      token={token}
+      user={user}
+      setAuth={setAuth}
+      showDeletePopUp={showDeletePopUp}
+    />
+  );
+
+  // Check if the title, date, location, description, and tags are rendered
+  expect(screen.getByTestId("post-title")).toBeInTheDocument();
+  expect(screen.getByTestId("post-date-location")).toBeInTheDocument();
+  expect(screen.getByTestId("post-description")).toBeInTheDocument();
+  tags.forEach((tag) => {
+    expect(screen.getByText(tag)).toBeInTheDocument();
+  });
+
+  // Check if the post image is rendered
+  expect(screen.getByAltText("...")).toBeInTheDocument();
+});
+
+test('Like button toggles "liked" class when clicked', async () => {
+
+  render(
+    <PostCard
+      id={id}
+      title={title}
+      start_time={start_time}
+      location={location}
+      description={description}
+      tags={tags}
+      author_id={author_id}
+      is_published={is_published}
+      end_time={end_time}
+      like_count={like_count}
+      token={token}
+      user={user}
+      setAuth={setAuth}
+      showDeletePopUp={showDeletePopUp}
+    />
+  );
+
+  const likeButton = screen.getByTestId("like-button");
 
     expect(likeButton).not.toHaveClass("liked");
     fireEvent.click(likeButton);

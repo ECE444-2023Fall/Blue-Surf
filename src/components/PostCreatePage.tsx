@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const imageTemplate = require("../assets/post-template.jpg");
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
@@ -57,6 +60,31 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
   });
   const [imageSrc, setImageSrc] = useState(imageTemplate);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const getTagNames = async (): Promise<any[] | null> => {
+    const response = await fetch("/api/get-all-tags");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      console.error("Failed to fetch all tag names");
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const tags = await getTagNames();
+      if (tags) {
+        setTags(tags);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -96,7 +124,30 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         body: JSON.stringify(postData),
       });
 
-      if (response.ok) {
+      // get the id of the post
+      const data = await response.json();
+      const postId = data.id;
+
+      // upload the image
+      const formData = new FormData();
+      formData.append("image", imageFile!);
+
+      console.log("FormData:");
+
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      // Send a POST request to the backend to update the post
+      const postImageResponse = await fetch(
+        `/api/update-post-image/${postId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (postImageResponse.ok) {
         navigate("/dashboard");
       } else {
         const data = await response.json();
@@ -107,18 +158,44 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
       reader.readAsDataURL(selectedFile);
     }
+  };
+
+  const calculatePillsWidth = () => {
+    const pillTags = document.querySelectorAll(".pill-tag");
+    let totalWidth = 0;
+    pillTags.forEach((pillTag) => {
+      totalWidth += pillTag.clientWidth;
+    });
+    return totalWidth;
+  };
+
+  const handleTagAddition = (selectedTag: string) => {
+    setEditedPost({
+      ...editedPost,
+      tags: [...editedPost.tags, selectedTag],
+    });
+  };
+
+  const handleTagRemoval = (selectedTag: string) => {
+    setEditedPost({
+      ...editedPost,
+      tags: editedPost.tags.filter((tag) => tag !== selectedTag),
+    });
   };
 
   return (
@@ -151,7 +228,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile): imageTemplate}
               className="card-img-top rounded-edge"
               alt="..."
             />
@@ -191,13 +268,58 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
                   placeholderWord="[enter description here]"
                 />
               </div>
-              {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
-                </span>
-              ))}
-            </span> */}
+              <div className="subtitle">Tags</div>
+              <div className="row align-items-center">
+                <div
+                  className="col d-flex"
+                  style={{ marginRight: calculatePillsWidth() }}
+                >
+                  <div className="selected-tags-container">
+                    {editedPost.tags.length > 0 &&
+                      editedPost.tags.map((tag: string, index: number) => (
+                        <span className="pill" key={index}>
+                          <span className="pill-tag">
+                            {tag}
+                            <button
+                              className="remove-tag-button"
+                              onClick={() => handleTagRemoval(tag)}
+                            >
+                              <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                          </span>
+                        </span>
+                      ))}
+                    {
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          className="plus-icon"
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {tags.map(
+                            (tag: string) =>
+                              // Only show tags not already in the post
+                              !editedPost.tags.includes(tag) && (
+                                <Dropdown.Item
+                                  key={tag}
+                                  onClick={() => handleTagAddition(tag)}
+                                  className="dropdown-item-tag"
+                                >
+                                  <span className="pill">
+                                    <span className="pill-tag"></span>
+                                    {tag}
+                                  </span>
+                                </Dropdown.Item>
+                              )
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    }
+                  </div>
+                </div>
+              </div>
               <div className="subtitle">About</div>
               <div className="details">
                 {/* TODO: replace with extendedDescription field */}

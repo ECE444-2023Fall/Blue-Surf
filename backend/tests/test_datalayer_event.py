@@ -1,6 +1,10 @@
 import sys
+import os
 import pytest
 import logging
+from PIL import Image
+import io
+from pathlib import Path
 
 from .test_datalayer import test_client
 
@@ -25,6 +29,12 @@ def test_event_creation(test_client):
     tag.add_tag("Tag 1")
 
     event = EventDataLayer()
+
+    # Read the image file
+    image_file_path = os.path.join("../../images", "logo.png")
+    with open(image_file_path, "rb") as image_file:
+        image_data = image_file.read()
+
     try:
         event.create_event(
             title="Event 1",
@@ -36,7 +46,7 @@ def test_event_creation(test_client):
             author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
-            image=None,
+            image=image_data,
             tags=["Tag 1"],
         )
     except ValueError as value_error:
@@ -356,6 +366,9 @@ def test_event_update(test_client):
     )
     retrievedUser = user.get_user(user_identifier="testuser10")
 
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
     event = EventDataLayer()
     event.create_event(
         title="Event 1",
@@ -370,6 +383,11 @@ def test_event_update(test_client):
         image=None,
     )
     try:
+        # Read the image file
+        image_file_path = os.path.join("../../images", "logo.png")
+        with open(image_file_path, "rb") as image_file:
+            image_data = image_file.read()
+
         with app.app_context():
             event_id = Event.query.filter_by(title="Event 1").first().id
         event.update_event(
@@ -378,6 +396,8 @@ def test_event_update(test_client):
             description="Kickoff event CHANGED for club 1",
             extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
             location="Toronto",
+            tags=["Tag 1"],
+            image=image_data,
         )
 
     except ValueError as value_error:
@@ -391,6 +411,74 @@ def test_event_update(test_client):
         new_event = Event.query.filter_by(id=event_id).first()
         assert new_event is not None
         assert new_event.title == "Event 1 - CHANGED"
+        assert len(new_event.tags) == 1
+        assert new_event.tags[0].name == "Tag 1"
+
+        image_data = new_event.image
+        image = Image.open(io.BytesIO(image_data))
+
+        subdirectory_name = "output_images"
+
+        # Create the subdirectory if it doesn't exist
+        output_directory = Path.cwd() / subdirectory_name
+        output_directory.mkdir(parents=True, exist_ok=True)
+        output_image_path = output_directory / "retrieved_image.png"
+        # Save the image to a file
+        image.save(output_image_path)
+
+
+def test_event_update_delete_tag(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser10",
+        email="testuser10@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    retrievedUser = user.get_user(user_identifier="testuser10")
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=retrievedUser.id,
+        club="club 1",
+        is_published=True,
+        image=None,
+        tags=["Tag 1"],
+    )
+    try:
+        with app.app_context():
+            event_id = Event.query.filter_by(title="Event 1").first().id
+        event.update_event(
+            event_id=event_id,
+            title="Event 1 - CHANGED",
+            description="Kickoff event CHANGED for club 1",
+            extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
+            location="Toronto",
+            tags=[],
+        )
+
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        new_event = Event.query.filter_by(id=event_id).first()
+        assert new_event is not None
+        assert new_event.title == "Event 1 - CHANGED"
+        assert len(new_event.tags) == 0
 
 
 def test_get_all_events(test_client):
@@ -430,6 +518,7 @@ def test_get_all_events(test_client):
     )
     try:
         events = event.get_all_events()
+
     except ValueError as value_error:
         logging.debug(f"Error: {value_error}")
         assert value_error == None
@@ -470,6 +559,7 @@ def test_event_by_id(test_client):
         with app.app_context():
             event_id = Event.query.filter_by(title="Event 1").first().id
         event = event.get_event_by_id(event_id)
+
     except ValueError as value_error:
         logging.debug(f"Error: {value_error}")
         assert value_error == None
@@ -578,3 +668,229 @@ def test_delete_event_by_id(test_client):
     with app.app_context():
         deleted_event = Event.query.filter_by(title="Event 1").first()
         assert deleted_event is None
+
+
+def test_get_tag_ids_for_event(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
+    event = EventDataLayer()
+    try:
+        event.create_event(
+            title="Event 1",
+            description="Kickoff event 1 for club 1",
+            club=None,
+            is_published=True,
+            image=None,
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_id=retrievedUser.id,
+            tags=["Tag 1"],
+        )
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        event_inserted = Event.query.filter_by(title="Event 1").first()
+        assert event_inserted != None
+
+    try:
+        tags = event.get_tags_for_event(event_inserted.id)
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        assert len(tags) == 1
+        assert tags[0].name == "Tag 1"
+
+
+def test_search_by_keyword(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=retrievedUser.id,
+        club="club 1",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Faculty party planning",
+        description="Join us at our meeting",
+        extended_description="Extended decription for faculty party planning, longer than the description",
+        location="UC college",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=retrievedUser.id,
+        club="Faculty Event Planning",
+        is_published=True,
+        image=None,
+    )
+
+    try:
+        query_results = event.get_search_results_by_keyword(keyword="Ev")
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        assert len(query_results) == 2
+        assert query_results[0].title == "Event 1"
+        assert query_results[1].club == "Faculty Event Planning"
+
+
+def test_update_image(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+
+    event = EventDataLayer()
+
+    # Read the image file
+    image_file_path = os.path.join("../../images", "logo.png")
+    with open(image_file_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    try:
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_id=retrievedUser.id,
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        event_created = Event.query.filter_by(title="Event 1").first()
+        assert event != None
+
+    try:
+        event.update_image(event_id=event_created.id, image=image_data)
+    except ValueError as value_error:
+        assert value_error == None
+
+    with app.app_context():
+        event = Event.query.filter_by(title="Event 1").first()
+        assert event is not None
+        assert event.image is not None
+
+        image_data = event.image
+        image = Image.open(io.BytesIO(image_data))
+
+        subdirectory_name = "output_images"
+        # Create the subdirectory if it doesn't exist
+        output_directory = Path.cwd() / subdirectory_name
+        output_directory.mkdir(parents=True, exist_ok=True)
+
+        output_image_path = output_directory / "update_image.png"
+        # Save the image to a file
+        image.save(output_image_path)
+
+
+def test_get_authored_events(test_client):
+    user = UserDataLayer()
+    event = EventDataLayer()
+    try:
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+
+        retrievedUser = user.get_user(user_identifier="testuser1")
+
+        event.create_event(
+            title="Event 1",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_id=retrievedUser.id,
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+
+        event.create_event(
+            title="Event 2",
+            description="Kickoff for club 1",
+            extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+            location="Toronto",
+            start_time="2023-10-03 3:30:00",
+            end_time="2023-10-03 4:00:00",
+            author_id=retrievedUser.id,
+            club="club 1",
+            is_published=True,
+            image=None,
+        )
+        with app.app_context():
+            user_id = User.query.filter_by(username="testuser1").first().id
+
+        events_authored = event.get_authored_events(author_id=user_id)
+
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events_authored) == 2
+    assert events_authored[0].title == "Event 1"
+    assert events_authored[1].title == "Event 2"

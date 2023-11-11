@@ -5,6 +5,10 @@ from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
+from sqlalchemy import or_
+import base64
+from PIL import Image
+import io
 
 """
 class Event(db.Model):
@@ -37,6 +41,10 @@ class EventDataLayer(DataLayer):
         image=None,
         tags=None,
     ):
+        """
+        Creates an event with the given parameters and adds it to the database.
+        Returns the id of the event.
+        """
         event = Event()
 
         if title is None or len(title) == 0:
@@ -100,12 +108,23 @@ class EventDataLayer(DataLayer):
                 raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
             event.is_published = is_published
 
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             # Add the event to the database
             db.session.add(event)
             db.session.commit()
 
             # Associate tags with the event
             logging.warning(f"Tags is {tags}")
+
+            event.tags = []
             if tags:
                 for tag_name in tags:
                     tag = Tag.query.filter_by(name=tag_name).first()
@@ -114,6 +133,22 @@ class EventDataLayer(DataLayer):
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            return event.id
+
+    def get_search_results_by_keyword(self, keyword):
+        keyword_word_pattern = "% {}%".format(keyword)
+        keyword_start_pattern = "{}%".format(keyword)
+        with app.app_context():
+            query = Event.query.filter(
+                or_(
+                    Event.title.ilike(keyword_word_pattern),
+                    Event.club.ilike(keyword_word_pattern),
+                    Event.title.ilike(keyword_start_pattern),
+                    Event.club.ilike(keyword_start_pattern),
+                )
+            )
+            results = query.all()
+            return results
 
     def update_event(
         self,
@@ -122,6 +157,7 @@ class EventDataLayer(DataLayer):
         description,
         extended_description,
         location,
+        tags=[],
         image=None,
         is_published=True,
         start_time=None,
@@ -154,6 +190,22 @@ class EventDataLayer(DataLayer):
                 logging.info("Location should be under 255 characters")
                 raise ValueError("Location should be under 255 characters")
             event.location = location
+
+            event.tags = []
+            if tags:
+                for tag_name in tags:
+                    tag = Tag.query.filter_by(name=tag_name).first()
+                    if tag is not None:
+                        event.tags.append(tag)
+
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
 
             db.session.commit()
 
@@ -194,16 +246,22 @@ class EventDataLayer(DataLayer):
         # event.is_published = is_published
 
     def get_all_events(self):
+        """
+        Returns all events.
+        """
         with app.app_context():
             events = Event.query.all()
             return events
 
     def get_event_by_id(self, id):
+        """
+        Returns the event with the given id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=id).first()
             if event is None:
-                logging.info(f"Event with id {id} does not exist")
-                raise ValueError(f"Event with id {id} does not exist")
+                logging.info(f"Event with id {id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {id} {self.DOES_NOT_EXIST}")
             return event
 
     def delete_event_by_id(self, id):
@@ -215,4 +273,39 @@ class EventDataLayer(DataLayer):
                     f"Event with id {id} does not exist and cannot be deleted"
                 )
             db.session.delete(event)
+            db.session.commit()
+
+    def get_authored_events(self, author_id):
+        """
+        Returns all events authored by the given author_id.
+        """
+        with app.app_context():
+            events = Event.query.filter_by(author_id=author_id).all()
+            if events is None:
+                logging.info(f"Event with author_id {author_id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {author_id} {self.DOES_NOT_EXIST}")
+            return events
+
+    def get_tags_for_event(self, event_id):
+        """
+        Returns a list of Tag objects that are associated with the given event id.
+        """
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if event.tags == None:
+                return []
+            return event.tags
+
+    def update_image(self, event_id, image):
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if image is not None:
+                try:
+                    # make sure the image can be opened (given in correct format)
+                    Image.open(io.BytesIO(image))
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
+            event.image = image
             db.session.commit()

@@ -18,16 +18,10 @@ const postCardData = {
   tags: ["Professional Development"],
 };
 
-const filterOptions = [
+const filterOptionValuesByAPI = [
   {
     title: "Tag",
-    values: [
-      "All",
-      "Professional Development",
-      "Dance",
-      "Design Club",
-      "Sport",
-    ],
+    values: ["All"],
   },
   {
     title: "Location",
@@ -54,7 +48,7 @@ interface LandingPageProps {
   setAuth: (token: string | null, user: User | null) => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
+const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
@@ -62,10 +56,35 @@ const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
   const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>()
   const navigate = useNavigate();
 
+  const getTagNames = async (): Promise<any[] | null> => {
+    const response = await fetch("/api/get-all-tags");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      console.error("Failed to fetch all tag names");
+      return null;
+    }
+  };
+
+  const fetchDataAndInitializeTags = async () => {
+    const data = await getTagNames();
+    if (data) {
+      const tagEntry = filterOptionValuesByAPI.find(
+        (entry) => entry.title === "Tag"
+      );
+      if (tagEntry) {
+        tagEntry.values = ["All", ...data];
+      } else {
+        filterOptionValuesByAPI.push({ title: "Tag", values: data });
+      }
+    }
+  };
+
   const fetchEvents = async () => {
     try {
       const response = await fetch("/api/"); // Change this to the actual API endpoint
-      console.log(response);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);
@@ -82,6 +101,7 @@ const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
 
   useEffect(() => {
     fetchEvents();
+    fetchDataAndInitializeTags();
   }, []);
 
   const handleSearchData = (data: any) => {
@@ -123,7 +143,7 @@ const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
     <div className="landing-page-wrapper">
       <div className="row">
         <div className="custom-col-md-3">
-          {filterOptions.map((option, index) => (
+          {filterOptionValuesByAPI.map((option, index) => (
             <FilterField
               key={index}
               title={option.title}
@@ -147,7 +167,7 @@ const LandingPage: React.FC<LandingPageProps> = ({token, user, setAuth}) => {
               <p>Loading...</p>
             ) : (
               searchResults.map((event: any, index: number) => (
-                <PostCard key={index} token={token} user={user} setAuth={setAuth} showDeletePopUp={setUpDelete}{...event} />
+                <PostCard key={index} token={token} user={user} setAuth={setAuth} showDeletePopUp={setUpDelete} {...event} />
               ))
             )}
           </div>
