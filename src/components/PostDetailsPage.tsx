@@ -70,7 +70,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("${API_URL}/api/favourites", {
+      const response = await fetch(`${API_URL}/api/favourites`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -266,9 +266,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const toggleLike = async () => {
     try {
-      let route = "/api/like";
+      let route = `${API_URL}/api/like`;
       if (isLiked) {
-        route = "/api/unlike";
+        route = `${API_URL}/api/unlike`;
       }
       const response = await fetch(`${route}/${postId}`, {
         method: "POST",
