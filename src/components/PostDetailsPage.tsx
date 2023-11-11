@@ -104,7 +104,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${postId}`);
+        const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
           throw new Error("Cannot fetch post.");
         }
@@ -112,7 +112,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setPost(data);
         setEditedPost(data);
 
-        const postImageResponse = await fetch(`/api/${postId}/image`);
+        const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
           throw new Error("Cannot fetch post image.");
         }
@@ -167,7 +167,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     console.log(editedPost);
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +200,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post-image/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post-image/${postId}`, {
         method: "POST",
         body: formData,
       });
