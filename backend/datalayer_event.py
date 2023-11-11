@@ -5,8 +5,12 @@ from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
+from sqlalchemy import or_
+import base64
+from PIL import Image
+import io
 
-'''
+"""
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -19,10 +23,28 @@ class Event(db.Model):
     like_count = db.Column(db.Integer, default=0)
     image = db.Column(db.LargeBinary, nullable=True)
     club = db.Column(db.Text)
-'''
+"""
+
 
 class EventDataLayer(DataLayer):
-    def create_event(self, title, description, extended_description, location, start_time, end_time, author_name, is_published, club, image=None, tags=None):
+    def create_event(
+        self,
+        title,
+        description,
+        extended_description,
+        location,
+        start_time,
+        end_time,
+        author_name,
+        is_published,
+        club,
+        image=None,
+        tags=None,
+    ):
+        """
+        Creates an event with the given parameters and adds it to the database.
+        Returns the id of the event.
+        """
         event = Event()
 
         if title is None or len(title) == 0:
@@ -33,10 +55,11 @@ class EventDataLayer(DataLayer):
             raise ValueError(f"Title {self.SHOULD_BE_LESS_THAN_255_CHARACTERS}")
         event.title = title
 
-        #TODO: Implement some checks for description?
+        # TODO: Implement some checks for description?
+        # TODO: Implement some checks for description?
         event.description = description
-        
-        #TODO: Implement some checks for extended description?
+
+        # TODO: Implement some checks for extended description?
         event.extended_description = extended_description
 
         if location is None or len(location) == 0:
@@ -50,7 +73,7 @@ class EventDataLayer(DataLayer):
         if start_time is None:
             logging.info(f"Start time {self.SHOULD_NOT_BE_EMPTY}")
             raise TypeError(f"Start time {self.SHOULD_NOT_BE_EMPTY}")
-        try: 
+        try:
             temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             logging.info(f"Start time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
@@ -59,7 +82,7 @@ class EventDataLayer(DataLayer):
         if end_time is None:
             logging.info(f"End time {self.SHOULD_NOT_BE_EMPTY}")
             raise TypeError(f"End time {self.SHOULD_NOT_BE_EMPTY}")
-        try: 
+        try:
             temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             logging.info(f"End time {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
@@ -70,8 +93,8 @@ class EventDataLayer(DataLayer):
             raise ValueError("Start time should be after end time")
         event.start_time = temp_start_datetime
         event.end_time = temp_end_datetime
-        
-        #TODO: Implement some checks for club?
+
+        # TODO: Implement some checks for club?
         event.club = club
 
         with app.app_context():
@@ -86,30 +109,68 @@ class EventDataLayer(DataLayer):
                 raise TypeError(f"Event {self.WAS_NOT_PUBLISHED}")
             event.is_published = is_published
 
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             # Add the event to the database
             db.session.add(event)
             db.session.commit()
 
             # Associate tags with the event
             logging.warning(f"Tags is {tags}")
+
+            event.tags = []
             if tags:
                 for tag_name in tags:
                     tag = Tag.query.filter_by(name=tag_name).first()
                     if tag is not None:
-                        event.tags.append(tag) 
+                        event.tags.append(tag)
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            return event.id
 
+    def get_search_results_by_keyword(self, keyword):
+        keyword_word_pattern = "% {}%".format(keyword)
+        keyword_start_pattern = "{}%".format(keyword)
+        with app.app_context():
+            query = Event.query.filter(
+                or_(
+                    Event.title.ilike(keyword_word_pattern),
+                    Event.club.ilike(keyword_word_pattern),
+                    Event.title.ilike(keyword_start_pattern),
+                    Event.club.ilike(keyword_start_pattern),
+                )
+            )
+            results = query.all()
+            return results
 
-    def update_event(self, event_id, title, description, extended_description, location, image=None, is_published=True, start_time=None, end_time=None):
+    def update_event(
+        self,
+        event_id,
+        title,
+        description,
+        extended_description,
+        location,
+        tags=[],
+        image=None,
+        is_published=True,
+        start_time=None,
+        end_time=None,
+    ):
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
             if event is None:
                 logging.info(f"Event with id {event_id} does not exist")
                 raise ValueError(f"Event with id {event_id} does not exist")
-                
+
             # UPDATE event in db
             if title is None or len(title) == 0:
                 logging.info("Title should not be empty")
@@ -119,7 +180,7 @@ class EventDataLayer(DataLayer):
                 raise ValueError("Title should be under 255 characters")
             event.title = title
 
-            #TODO: Implement some checks for description?
+            # TODO: Implement some checks for description?
             event.description = description
             event.extended_description = extended_description
 
@@ -131,12 +192,28 @@ class EventDataLayer(DataLayer):
                 raise ValueError("Location should be under 255 characters")
             event.location = location
 
+            event.tags = []
+            if tags:
+                for tag_name in tags:
+                    tag = Tag.query.filter_by(name=tag_name).first()
+                    if tag is not None:
+                        event.tags.append(tag)
+
+            if image is not None:
+                try:
+                    Image.open(io.BytesIO(image))
+                    event.image = image
+
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
             db.session.commit()
 
         # if start_time is None:
         #     logging.info("Start time should not be empty")
         #     raise TypeError("Start time should not be empty")
-        # try: 
+        # try:
         #     temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
         # except ValueError:
         #     logging.info("Start time is not given in correct format")
@@ -145,7 +222,7 @@ class EventDataLayer(DataLayer):
         # if end_time is None:
         #     logging.info("End time should not be empty")
         #     raise TypeError("End time should not be empty")
-        # try: 
+        # try:
         #     temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
         # except ValueError:
         #     logging.info("End time is not given in correct format")
@@ -163,21 +240,62 @@ class EventDataLayer(DataLayer):
         #     logging.info(f"Username {author_name} unable to post")
         #     raise TypeError(f"Username {author_name} unable to post")
         # event.author_id = author.id
-        
+
         # if is_published is None:
         #     logging.info("Event was not published")
         #     raise TypeError("Event was not published")
         # event.is_published = is_published
 
     def get_all_events(self):
+        """
+        Returns all events.
+        """
         with app.app_context():
             events = Event.query.all()
             return events
-        
+
     def get_event_by_id(self, id):
+        """
+        Returns the event with the given id.
+        """
         with app.app_context():
             event = Event.query.filter_by(id=id).first()
             if event is None:
-                logging.info(f"Event with id {id} does not exist")
-                raise ValueError(f"Event with id {id} does not exist")
+                logging.info(f"Event with id {id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {id} {self.DOES_NOT_EXIST}")
             return event
+
+    def get_authored_events(self, author_id):
+        """
+        Returns all events authored by the given author_id.
+        """
+        with app.app_context():
+            events = Event.query.filter_by(author_id=author_id).all()
+            if events is None:
+                logging.info(f"Event with author_id {author_id} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Event with id {author_id} {self.DOES_NOT_EXIST}")
+            return events
+
+    def get_tags_for_event(self, event_id):
+        """
+        Returns a list of Tag objects that are associated with the given event id.
+        """
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if event.tags == None:
+                return []
+            return event.tags
+
+    def update_image(self, event_id, image):
+        with app.app_context():
+            event = Event.query.filter_by(id=event_id).first()
+            if image is not None:
+                try:
+                    # make sure the image can be opened (given in correct format)
+                    Image.open(io.BytesIO(image))
+                except Exception as e:
+                    logging.info(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+                    raise TypeError(f"Image {self.IS_NOT_GIVEN_IN_CORRECT_FORMAT}")
+
+            event.image = image
+            db.session.commit()

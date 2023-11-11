@@ -14,7 +14,6 @@
 .back-nav {
     display: flex;
     align-items: center;
-    width: fit-content;
 }
 
 .title {
@@ -54,6 +53,8 @@
     padding: 4px 8px;
     text-decoration: none;
     padding-bottom: 5px;
+    width: auto;
+    margin-top: 5px;
 }
 
 .pill-tag {
@@ -82,14 +83,27 @@
     height: 42px;
 }
 
-.favourite-button {
-    width: 183px;
-    height: 45px;
-    border-radius: 8px;
-    border: 3px solid #C71818;
-    background: #FBDCDC;
-    margin-top: 35px;
-    align-items: center;
+
+.like-button-details {
+    bottom: 10px;
+    left: 10px;
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+    width: fit-content;
+}
+  
+.like-button-details i {
+    font-size: 24px;
+    color: #FF0000;
+    transition: transform 0.3s;
+    transform: scale(2);
+}
+  
+.like-button-details.liked-details i {
+    transform: scale(3);
+    color: #FF0000;
 }
 
 .rounded-edge {
@@ -115,7 +129,7 @@
 }
 
 .alert {
-    padding: 5px;
+    padding: 15px;
     color: #ff0000;
     margin-bottom: 5px;
     border-radius: 4px;
@@ -138,4 +152,48 @@
     max-width: 30%;
     font-family: Outfit;
     /* transform: translate(-90%, -20%); */
+
   }
+
+.plus-icon {
+    align-items: center;
+    padding-left: 5px;
+    background: none;
+    border: none;
+    color: black;
+    background-color: transparent;
+}
+
+.plus-icon.plus-icon:hover,
+.plus-icon.plus-icon:focus,
+.plus-icon.plus-icon:active {
+    background-color: transparent;
+    color: black;
+    outline: none;
+}
+
+.plus-icon::after {
+    content: none;
+}
+  
+
+.remove-tag-button {
+    background: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+}
+
+.dropdown-item-tag:active {
+    background-color: white !important; /* Set the same background color as pills */
+    color: black !important; /* Set the same text color as pills */
+}
+
+.selected-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.selected-tags-container .pill-tag {
+    margin: 2px;
+}

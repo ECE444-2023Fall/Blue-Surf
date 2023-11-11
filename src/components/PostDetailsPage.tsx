@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
-const postImage = require("../assets/post1.jpeg");
-
-const EXTENTDED_DESCRIPTION =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+const defaultImage = require("../assets/image_placeholder.jpeg");
 interface Post {
   title: string;
   start_time: Date;
@@ -21,15 +21,35 @@ interface Post {
   end_time: Date;
   like_count: number;
   club?: string;
+  image: string;
 }
 
-const PostDetailsPage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface PostDetailsProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PostDetailsPage: React.FC<PostDetailsProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const { postId } = useParams();
 
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
-  const [imageSrc, setImageSrc] = useState(postImage);
+  const [imageSrc, setImageSrc] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
   const [alertMessage, setAlertMessage] = useState({
     titleAlert: "",
     summaryAlert: "",
@@ -37,6 +57,57 @@ const PostDetailsPage: React.FC = () => {
   const [blankMessage, setBlankMessage] = useState({
     blankErrorMessage: "",
   });
+
+  const checkIfLiked = (data: any, eventId: string) => {
+    setIsLiked(
+      data && data.some((event: any) => event.id === parseInt(eventId))
+    );
+  };
+
+  const getTagNames = async (): Promise<any[] | null> => {
+    const response = await fetch("/api/get-all-tags");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      console.error("Failed to fetch all tag names");
+      return null;
+    }
+  };
+
+  const fetchFavouritedEvents = async () => {
+    try {
+      const response = await fetch("/api/favourites", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        data.access_token && setAuth(data.access_token, user);
+        return data;
+      } else {
+        console.error("Failed to fetch favourited events");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching favourited events",
+        error
+      );
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const tags = await getTagNames();
+      if (tags) {
+        setTags(tags);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,12 +119,43 @@ const PostDetailsPage: React.FC = () => {
         const data = await response.json();
         setPost(data);
         setEditedPost(data);
+
+        const postImageResponse = await fetch(`/api/${postId}/image`);
+        if (!postImageResponse || !postImageResponse.ok) {
+          throw new Error("Cannot fetch post image.");
+        }
+
+        // Get the image data as a Blob
+        const imageBlob = await postImageResponse.blob();
+
+        console.log("blob", imageBlob);
+
+        // Create a File object with the image data
+        const imageFile = new File([imageBlob], `image_${postId}.png`, {
+          type: "image/png", // Adjust the type based on your image format
+        });
+
+        console.log("file", imageFile);
+
+        // Set the image file in state
+        setImageFile(imageFile);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        console.error("Error fetching post:", error);
       }
     };
 
     fetchData();
+  }, [postId]);
+
+  useEffect(() => {
+    if (token && token !== "" && token !== undefined) {
+      const fetchData = async () => {
+        const data = await fetchFavouritedEvents();
+        postId && checkIfLiked(data, postId);
+      };
+
+      fetchData();
+    }
   }, [postId]);
 
   // Post data is not yet available
@@ -123,6 +225,38 @@ const PostDetailsPage: React.FC = () => {
         body: JSON.stringify(editedPost),
       });
 
+      console.log("content", JSON.stringify(editedPost));
+
+      if (response.ok) {
+        console.log("Post updated successfully!");
+        setIsEditing(false);
+        setPost({ ...editedPost });
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
+        setBlankMessage({ blankErrorMessage: "" });
+      } else {
+        console.error("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    // Append the image data to the FormData
+    const formData = new FormData();
+    formData.append("image", imageFile!);
+
+    console.log("FormData:");
+
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      // Send a POST request to the backend to update the post
+      const response = await fetch(`/api/update-post-image/${postId}`, {
+        method: "POST",
+        body: formData,
+      });
+
       if (response.ok) {
         console.log("Post updated successfully!");
         setIsEditing(false);
@@ -144,13 +278,16 @@ const PostDetailsPage: React.FC = () => {
     setBlankMessage({ blankErrorMessage: "" });
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -158,16 +295,60 @@ const PostDetailsPage: React.FC = () => {
     }
   };
 
+  const calculatePillsWidth = () => {
+    const pillTags = document.querySelectorAll(".pill-tag");
+    let totalWidth = 0;
+    pillTags.forEach((pillTag) => {
+      totalWidth += pillTag.clientWidth;
+    });
+    return totalWidth;
+  };
+
+  const handleTagAddition = (selectedTag: string) => {
+    console.log("in addition");
+    setEditedPost({
+      ...editedPost,
+      tags: [...editedPost.tags, selectedTag],
+    });
+  };
+
+  const handleTagRemoval = (selectedTag: string) => {
+    console.log("in removal");
+    setEditedPost({
+      ...editedPost,
+      tags: editedPost.tags.filter((tag) => tag !== selectedTag),
+    });
+  };
+
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${postId}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        const data = await response.json();
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
+  };
+
   return (
     <div className="post-details-wrapper">
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-        <div className="row m-2">
-          {blankMessage.blankErrorMessage && (
-            <div className="alert">
-              {blankMessage.blankErrorMessage}
-            </div>
-          )}
-          <a className="navbar-brand back-nav" href="javascript:history.back()">
+        <div className="row m-2 auto d-flex justify-content-center align-items-center">
+          <a className="navbar-brand back-nav justify-content-left" href="javascript:history.back()">
             <img
               src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
               width="15"
@@ -177,6 +358,12 @@ const PostDetailsPage: React.FC = () => {
             />
             <span className="back-text">Back</span>
           </a>
+          <div className="col-md-6">
+            {blankMessage.blankErrorMessage && (
+              <div className="alert">{blankMessage.blankErrorMessage}</div>
+            )}
+          </div>
+
           <div className="row m-2 justify-content-end">
             {isEditing ? (
               <>
@@ -198,7 +385,7 @@ const PostDetailsPage: React.FC = () => {
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile) : defaultImage}
               className="card-img-top rounded-edge"
               alt="..."
             />
@@ -222,6 +409,7 @@ const PostDetailsPage: React.FC = () => {
 
           <div className="col-md-6">
             <div className="container-styling">
+              {/* TITLE */}
               <div className="title">
                 {isEditing ? (
                   <AutoSizeTextArea
@@ -237,6 +425,8 @@ const PostDetailsPage: React.FC = () => {
               {alertMessage.titleAlert && (
                 <div className="alert">{alertMessage.titleAlert}</div>
               )}
+
+              {/* SUMMARY */}
               <div className="summary">
                 {isEditing ? (
                   <AutoSizeTextArea
@@ -249,20 +439,69 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.description
                 )}
               </div>
-              {/* <span className="pill">
-              {post.tags.map((tag: string, index: number) => (
-                <span className="pill-tag" key={index}>
-                  {tag}
-                </span>
-              ))}
-            </span> */}
               {alertMessage.summaryAlert && (
                 <div className="alert">{alertMessage.summaryAlert}</div>
               )}
+
+              {/* TAGS */}
+              <div className="row align-items-center">
+                <div
+                  className="col d-flex"
+                  style={{ marginRight: calculatePillsWidth() }}
+                >
+                  <div className="selected-tags-container">
+                    {editedPost.tags.length > 0 &&
+                      editedPost.tags.map((tag: string, index: number) => (
+                        <span className="pill" key={index}>
+                          <span className="pill-tag">
+                            {tag}
+                            {isEditing && (
+                              <button
+                                className="remove-tag-button"
+                                onClick={() => handleTagRemoval(tag)}
+                              >
+                                <FontAwesomeIcon icon={faXmark} />
+                              </button>
+                            )}
+                          </span>
+                        </span>
+                      ))}
+                    {isEditing && (
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          className="plus-icon"
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {tags.map(
+                            (tag: string) =>
+                              // Only show tags not already in the post
+                              !editedPost.tags.includes(tag) && (
+                                <Dropdown.Item
+                                  key={tag}
+                                  onClick={() => handleTagAddition(tag)}
+                                  className="dropdown-item-tag"
+                                >
+                                  <span className="pill">
+                                    <span className="pill-tag"></span>
+                                    {tag}
+                                  </span>
+                                </Dropdown.Item>
+                              )
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* EXTENDED DESCRIPTION */}
               <div className="subtitle">About</div>
               <div className="details">
                 {isEditing ? (
-                  // TODO: replace with extendedDescription field
                   <AutoSizeTextArea
                     content={editedPost.extended_description}
                     onChange={(value) =>
@@ -276,6 +515,8 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.extended_description
                 )}
               </div>
+
+              {/* DATE */}
               <div className="subtitle">Date</div>
               <div className="details">
                 {isEditing ? (
@@ -292,6 +533,8 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.start_time.toLocaleString()
                 )}
               </div>
+
+              {/* LOCATION */}
               <div className="subtitle">Location</div>
               <div className="details">
                 {isEditing ? (
@@ -305,6 +548,8 @@ const PostDetailsPage: React.FC = () => {
                   editedPost.location
                 )}
               </div>
+
+              {/* CLUB */}
               {editedPost.club && (
                 <div>
                   <div className="subtitle">Club</div>
@@ -322,8 +567,20 @@ const PostDetailsPage: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* FAVOURITE */}
               <div className="row g-5 m-2 d-flex justify-content-center">
-                <button className="favourite-button">Favourite?</button>
+                {token && token !== "" && token !== undefined && (
+                  <button
+                    className={`like-button-details ${
+                      isLiked ? "liked-details" : ""
+                    }`}
+                    onClick={toggleLike}
+                    data-testid="like-button"
+                  >
+                    <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                  </button>
+                )}
               </div>
             </div>
           </div>

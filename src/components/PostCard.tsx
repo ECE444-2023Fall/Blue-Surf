@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
-const postImage = require("../assets/post1.jpeg");
+const defaultImage = require("../assets/image_placeholder.jpeg");
 
-
+interface User {
+  userId: string;
+  username: string;
+}
 
 interface PostCardProps {
   title: string;
@@ -18,13 +21,102 @@ interface PostCardProps {
   is_published: boolean;
   end_time: Date;
   like_count: number;
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
-  const [isLiked, setIsLiked] = React.useState(false);
+  const postId = PostCardProps.id;
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
+  const [isLiked, setIsLiked] = React.useState(false);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+
+  const fetchImage = async () => {
+    try {
+      const postImageResponse = await fetch(`/api/${postId}/image`);
+      if (!postImageResponse || !postImageResponse.ok) {
+        throw new Error("Cannot fetch post image.");
+      }
+
+      // Get the image data as a Blob
+      const imageBlob = await postImageResponse.blob();
+
+      console.log("blob", imageBlob);
+
+      // Create a File object with the image data
+      const newImageFile = new File([imageBlob], `image_${postId}.png`, {
+        type: "image/png", // Adjust the type based on your image format
+      });
+
+      console.log("file", newImageFile);
+
+      // Set the image file in state
+      setImageFile(newImageFile);
+    } catch (error) {
+      console.error("Error fetching postcard image:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
+
+  const checkIfLiked = (data: any, eventId: number) => {
+    setIsLiked(data && data.some((event: any) => event.id === eventId));
+  };
+
+  const isAuthor =
+    PostCardProps.user &&
+    parseInt(PostCardProps.user.userId) === PostCardProps.author_id;
+
+  const toggleLike = async () => {
+    try {
+      let route = "/api/like";
+      if (isLiked) {
+        route = "/api/unlike";
+      }
+      const response = await fetch(`${route}/${PostCardProps.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
+        setIsLiked(!isLiked);
+      } else {
+        throw new Error(data["error message"]);
+      }
+    } catch (error) {
+      console.error("Like Error:", error);
+    }
+  };
+
+  const fetchFavouritedEvents = async () => {
+    try {
+      const response = await fetch("/api/favourites", {
+        headers: {
+          Authorization: "Bearer " + PostCardProps.token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        data.access_token &&
+          PostCardProps.setAuth(data.access_token, PostCardProps.user);
+        return data;
+      } else {
+        console.error("Failed to fetch favourited events");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching favourited events",
+        error
+      );
+    }
   };
 
   const handleDelete = () => {
@@ -32,15 +124,27 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     console.log("Post deleted!");
   };
 
+  React.useEffect(() => {
+    if (
+      PostCardProps.token &&
+      PostCardProps.token !== "" &&
+      PostCardProps.token !== undefined
+    ) {
+      const fetchData = async () => {
+        const data = await fetchFavouritedEvents();
+        checkIfLiked(data, PostCardProps.id);
+      };
+
+      fetchData();
+    }
+  }, [PostCardProps.id]);
+
   return (
     <div className="col" data-testid="post-card">
-      <Link
-        to={`/post/${PostCardProps.id}`}
-        className="text-decoration-none"
-      >
+      <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
         <div className="card">
           <img
-            src={postImage}
+            src={imageFile ? URL.createObjectURL(imageFile) : defaultImage}
             className="card-img-top rounded-top-34"
             alt="..."
           />
@@ -61,26 +165,40 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
             </p>
             <div className="row">
               <div className="col">
-                {/* <span className="pill" data-testid="post-tags">
-                  {PostCardProps.tags.map((tag: string, index: number) => (
-                    <span className="pill-tag" key={index}>
-                      {tag}
-                    </span>
-                  ))}
-                </span> */}
+                <div className="tags-container">
+                  {PostCardProps.tags && PostCardProps.tags.length > 0 && (
+                    <>
+                      {PostCardProps.tags.map((tag: string, index: number) => (
+                        <span
+                          className="pill"
+                          data-testid="post-tags"
+                          key={tag}
+                        >
+                          <span className="pill-tag">{tag}</span>
+                        </span>
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
               <div className="col-auto">
                 <div onClick={(e) => e.preventDefault()}>
-                  <button
-                    className={`like-button ${isLiked ? "liked" : ""}`}
-                    onClick={toggleLike}
-                    data-testid="like-button"
-                  >
-                    <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
-                  </button>
-                  <button className="trash-button" onClick={handleDelete}>
-                    <i className="fa fa-trash-o trash-icon-custom-size" />
-                  </button>
+                  {PostCardProps.token &&
+                    PostCardProps.token !== "" &&
+                    PostCardProps.token !== undefined && (
+                      <button
+                        className={`like-button ${isLiked ? "liked" : ""}`}
+                        onClick={toggleLike}
+                        data-testid="like-button"
+                      >
+                        <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                      </button>
+                    )}
+                  {isAuthor && (
+                    <button className="trash-button" onClick={handleDelete}>
+                      <i className="fa fa-trash-o trash-icon-custom-size" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
