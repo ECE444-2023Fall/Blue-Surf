@@ -127,7 +127,7 @@ const PostCreatePage: React.FC = () => {
 
       // Send a POST request to the backend to update the post
       const postImageResponse = await fetch(
-        `/api/update-post-image/${postId}`,
+        `${API_URL}/api/update-post-image/${postId}`,
         {
           method: "POST",
           body: formData,
