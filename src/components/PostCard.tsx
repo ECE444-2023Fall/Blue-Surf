@@ -36,7 +36,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const fetchImage = async () => {
     try {
-      const postImageResponse = await fetch(`/api/${postId}/image`);
+      const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
       if (!postImageResponse || !postImageResponse.ok) {
         throw new Error("Cannot fetch post image.");
       }
@@ -74,9 +74,9 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const toggleLike = async () => {
     try {
-      let route = "/api/like";
+      let route = `${API_URL}/api/like`;
       if (isLiked) {
-        route = "/api/unlike";
+        route = `${API_URL}/api/unlike`;
       }
       const response = await fetch(`${route}/${PostCardProps.id}`, {
         method: "POST",
