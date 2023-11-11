@@ -47,6 +47,7 @@ const PostCreatePage: React.FC = () => {
   const [imageSrc, setImageSrc] = useState(imageTemplate);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const [dateMessage, setDateMessage] = useState<string>("");
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -86,6 +87,7 @@ const PostCreatePage: React.FC = () => {
         setErrorMessage("");
       }
 
+
       // const formattedStartDate = editedPost.start_time
       //   .toISOString()
       //   .slice(0, 19)
@@ -108,6 +110,11 @@ const PostCreatePage: React.FC = () => {
         start_time: formattedStartDate,
         end_time: formattedEndDate,
       };
+
+      if(editedPost.end_time < editedPost.start_time){
+        setDateMessage("Pick a valid end date");
+        return;
+      }
 
       const response = await fetch(`/api/create-post`, {
         method: "POST",
@@ -350,6 +357,9 @@ const PostCreatePage: React.FC = () => {
                     }
                   }}
                 />
+                {dateMessage && (
+                <div className="error-date">{dateMessage}</div>
+              )}
               </div>
             </div>
             <div className="subtitle">Location</div>
