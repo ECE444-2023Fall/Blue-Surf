@@ -14,7 +14,6 @@
 .back-nav {
     display: flex;
     align-items: center;
-    width: fit-content;
 }
 
 .title {
@@ -128,6 +127,33 @@
     display: inline-block;
     margin-top: 20px;
 }
+
+.alert {
+    padding: 15px;
+    color: #ff0000;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: medium;
+  
+    /* Added styles */
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+  }
+
+  .error-message {
+    /* transform: translate(-50%, -20%); */
+    padding: 20px;
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    text-align: center;
+    color: #ff0000;
+    max-width: 30%;
+    font-family: Outfit;
+    /* transform: translate(-90%, -20%); */
+
+  }
 
 .plus-icon {
     align-items: center;
