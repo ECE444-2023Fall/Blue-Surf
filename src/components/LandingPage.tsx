@@ -96,10 +96,20 @@ const LandingPage: React.FC = () => {
     filterTitle: string,
     selectedValue: string
   ) => {
-    setFilterParams((prevParams) => ({
-      ...prevParams,
-      [filterTitle.toLowerCase()]: selectedValue,
-    }));
+    if (
+      filterTitle.toLowerCase() === "end_time" &&
+      selectedValue === "no_end_time"
+    ) {
+      setFilterParams((prevParams) => {
+        const { end_time, ...restParams } = prevParams;
+        return restParams;
+      });
+    } else {
+      setFilterParams((prevParams) => ({
+        ...prevParams,
+        [filterTitle.toLowerCase()]: selectedValue,
+      }));
+    }
   };
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/FilterField.css";
 import CalanderDatePicker from "./CalanderDatePicker";
+import moment from "moment-timezone";
 
 interface FilterOptionProps {
   title: string;
@@ -14,6 +15,23 @@ const FilterField: React.FC<FilterOptionProps> = (FilterOptionProps: any) => {
     FilterOptionProps.onFilterChange(FilterOptionProps.title, selectedValue);
   };
 
+  const handleDateChange = (startDate: Date, endDate: Date | null) => {
+    const formattedStartDate = moment(startDate)
+      .tz("America/New_York")
+      .format("YYYY-MM-DD");
+
+    const formattedEndDate = moment(endDate)
+      .tz("America/New_York")
+      .format("YYYY-MM-DD");
+
+    FilterOptionProps.onFilterChange("start_time", formattedStartDate);
+    if (endDate) {
+      FilterOptionProps.onFilterChange("end_time", formattedEndDate);
+    } else {
+      FilterOptionProps.onFilterChange("end_time", "no_end_time");
+    }
+  };
+
   return (
     <div
       className="form-group mt-3 mb-3 select-container"
@@ -23,7 +41,7 @@ const FilterField: React.FC<FilterOptionProps> = (FilterOptionProps: any) => {
         {FilterOptionProps.title}{" "}
       </label>
       {FilterOptionProps.title === "Date" ? (
-        <CalanderDatePicker />
+        <CalanderDatePicker onDateChange={handleDateChange} />
       ) : (
         <select
           className="custom-select custom-border-primary"
