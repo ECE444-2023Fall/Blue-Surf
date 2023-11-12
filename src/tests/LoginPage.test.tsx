@@ -35,6 +35,7 @@ describe('LoginPage Component', () => {
     expect(usernameInput).toHaveValue('testUser');
   });
 
+  //checking if password field is updated
   it('typing in the password field updates state', () => {
     render(
       <MemoryRouter>
@@ -48,7 +49,8 @@ describe('LoginPage Component', () => {
     expect(passwordInput).toHaveValue('testPassword');
   });
 
-  it('renders error message when attempting to log in with missing fields', async () => {
+  //checks that validation is being done for missing username and password
+  it('error message when attempting to log in with missing fields', async () => { 
     render(
       <MemoryRouter>
         <LoginPage setAuth={setAuthMock} />
@@ -64,8 +66,8 @@ describe('LoginPage Component', () => {
     });
   });
 
+//failed login test 
   it('renders error message when login fails', async () => {
-    // Mock the fetch function to simulate a failed login
     jest.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
         status: 401,

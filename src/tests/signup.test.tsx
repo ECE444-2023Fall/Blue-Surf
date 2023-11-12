@@ -11,6 +11,7 @@ jest.mock('react-router-dom', () => {
   };
 });
 
+//Checks the page renders 
 describe('SignupPage Component', () => {
   it('renders SignupPage component without crashing', () => {
     render(
@@ -19,7 +20,8 @@ describe('SignupPage Component', () => {
       </MemoryRouter>
     );
   });
-
+  
+//Checks if the following fields are updated on userinput 
   it('typing in the username field updates state', () => {
     render(
       <MemoryRouter>
@@ -85,6 +87,5 @@ describe('SignupPage Component', () => {
       fireEvent.click(createAccountButton);
     });
 
-    // Add your assertions for the expected behavior after clicking the button
   });
 });
