@@ -185,6 +185,8 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     if (editedPost.end_time < editedPost.start_time) {
       setDateMessage("Pick a valid end date");
       return;
+    }else{
+      setDateMessage("");
     }
 
     if (editedPost.description.length > 180 && editedPost.title.length > 50) {
@@ -247,7 +249,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
-        setDateMessage("");
         setBlankMessage({ blankErrorMessage: "" });
       } else {
         console.error("Failed to update post.");
