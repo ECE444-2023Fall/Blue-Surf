@@ -6,8 +6,15 @@ import FilterField from "../components/FilterField";
 test("FilterField component renders with provided props and handles user interaction", () => {
   const title = "Filter Title";
   const values = ["Option 1", "Option 2"];
+  const onFilterChange = jest.fn();
 
-  render(<FilterField title={title} values={values} />);
+  render(
+    <FilterField
+      title={title}
+      values={values}
+      onFilterChange={onFilterChange}
+    />
+  );
 
   // Check if the title and options are initially rendered
   expect(screen.getByText(title)).toBeInTheDocument();

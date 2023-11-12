@@ -267,18 +267,18 @@ class EventDataLayer(DataLayer):
                 )
 
             # Add tag filter if tag_name is provided
-            if tag_name is not None:
+            if tag_name is not None and tag_name != "All":
                 tag = Tag.query.filter_by(name=tag_name).first()
                 # if a field doesn't exist, then the result will be empty
                 if tag is None:
                     return []
                 query = query.join(event_tags).join(Tag).filter(Tag.id == tag.id)
 
-            if location is not None and len(keyword) > 0:
-                query = query.filter(func.lower(Event.location) == location.lower())
+            if location is not None and len(location) > 0 and location != "All":
+                query = query.filter(Event.location.ilike("%{}%".format(location)))
 
-            if club is not None and len(keyword) > 0:
-                query = query.filter(func.lower(Event.club) == club.lower())
+            if club is not None and len(club) > 0 and club != "All":
+                query = query.filter(Event.club.ilike("%{}%".format(club)))
 
             if start_time is not None and end_time is not None:
                 if " " in str(start_time) and " " in str(end_time):

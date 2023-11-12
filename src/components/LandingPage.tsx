@@ -23,7 +23,7 @@ const filterOptionValuesByAPI = [
   },
   {
     title: "Location",
-    values: ["All", "Myhal 5th Floor", "Bahen Lobby", "Remote"],
+    values: ["All", "Myhal 5th Floor", "Bahen", "Remote"],
   },
   {
     title: "Club",
@@ -38,6 +38,9 @@ const filterOptionValuesByAPI = [
 const LandingPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterParams, setFilterParams] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -82,10 +85,40 @@ const LandingPage: React.FC = () => {
     }
   };
 
+  const handleFilterChange = async (
+    filterTitle: string,
+    selectedValue: string
+  ) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      [filterTitle.toLowerCase()]: selectedValue,
+    }));
+  };
+
   useEffect(() => {
     fetchEvents();
     fetchDataAndInitializeTags();
   }, []);
+
+  useEffect(() => {
+    // Fetch data when filter parameters change
+    const fetchData = async () => {
+      try {
+        const queryParams = new URLSearchParams(filterParams);
+        const response = await fetch(`/api/filter?${queryParams}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, [filterParams]);
 
   const handleSearchData = (data: any) => {
     setSearchResults(data);
@@ -100,6 +133,7 @@ const LandingPage: React.FC = () => {
               key={index}
               title={option.title}
               values={option.values}
+              onFilterChange={handleFilterChange}
             />
           ))}
         </div>

@@ -872,6 +872,9 @@ def test_search_filter_sort(test_client):
         assert error == None
 
     assert len(events) == 3
+    assert events[0].title == "Event 2"
+    assert events[1].title == "Event 1"
+    assert events[2].title == "alumni event"
 
     # testinng for alphabetical sorting
     try:
@@ -934,7 +937,9 @@ def test_search_filter_sort(test_client):
 
     # keyword, location and alphabetical sorting
     try:
-        events = event.search_filter_sort(keyword="Ev", location="Toronto", sort_by="alphabetical")
+        events = event.search_filter_sort(
+            keyword="Ev", location="Toronto", sort_by="alphabetical"
+        )
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
@@ -976,7 +981,9 @@ def test_search_filter_sort(test_client):
 
     # filtering by date string interval
     try:
-        events = event.search_filter_sort(start_time="2023-11-03 3:30:00", end_time="2023-11-03 4:00:00")
+        events = event.search_filter_sort(
+            start_time="2023-11-03 3:30:00", end_time="2023-11-03 4:00:00"
+        )
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
@@ -986,7 +993,9 @@ def test_search_filter_sort(test_client):
 
     # filtering by partial date string interval
     try:
-        events = event.search_filter_sort(start_time="2023-09-03", end_time="2023-10-03", sort_by="alphabetical")
+        events = event.search_filter_sort(
+            start_time="2023-09-03", end_time="2023-10-03", sort_by="alphabetical"
+        )
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
@@ -994,7 +1003,3 @@ def test_search_filter_sort(test_client):
     assert len(events) == 2
     assert events[0].title == "Event 1"
     assert events[1].title == "Event 2"
-
-
-
-
