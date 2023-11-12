@@ -129,8 +129,11 @@ const LandingPage: React.FC = () => {
     fetchData();
   }, [filterParams]);
 
-  const handleSearchData = (data: any) => {
-    setSearchResults(data);
+  const handleSearchData = (query: string) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      query,
+    }));
   };
 
   return (

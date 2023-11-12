@@ -55,18 +55,4 @@ describe('SearchBar Component', () => {
     });
   });
 
-  test('triggers search on pressing Enter', async () => {
-    render(<SearchBar onDataReceived={jest.fn() as SearchBarProps['onDataReceived']} />);
-    const inputElement = screen.getByPlaceholderText('Search');
-
-    userEvent.type(inputElement, `${mockSearchQuery}{enter}`);
-
-    await waitFor(() => {
-      expect((global as any).fetch).toHaveBeenCalledTimes(mockSearchQuery.length + 1);
-    });
-
-    await waitFor(() => {
-      expect((global as any).fetch).toHaveBeenCalledWith('/api/search?query=' + mockSearchQuery);
-    });
-  });
 });

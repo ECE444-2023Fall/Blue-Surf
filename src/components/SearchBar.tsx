@@ -5,7 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import '../styles/SearchBar.css';
 
 export interface SearchBarProps {
-  onDataReceived: (data: any) => void; // Change 'any' to the expected data type
+  onDataReceived: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
@@ -42,16 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
   };
 
   const onSearch = async (query: string) => {
-    try {
-      const response = await fetch(`/api/search?query=${query}`);
-      if (!response || !response.ok) {
-        throw new Error('Network response was not ok.');
-      }
-      const data = await response.json();
-      onDataReceived(data);
-    } catch (error) {
-      console.error('Error performing search:', error);
-    }
+    onDataReceived(query);
   };
 
   const handleInputChange = (event: React.FormEvent<HTMLElement>, { newValue }: ChangeEvent) => {
