@@ -424,10 +424,12 @@ def setup_routes(app):
             # start by getting the search results
             query = request.args.get("query", default="").lower()
             tagname = request.args.get("tag", None)
+            location = request.args.get("location", None)
+            club = request.args.get("club", None)
+            start_time = request.args.get("start_time", None)
+            end_time = request.args.get("end_time", None)
             sortby = request.args.get("sortby", None)
-            events = event_data.search_filter_sort(
-                keyword=query, tag_name=tagname, sort_by=sortby
-            )
+            events = event_data.search_filter_sort(keyword=query, tag_name=tagname, location=location, club=club, start_time=start_time, end_time=end_time, sort_by=sortby)
 
             return jsonify_event_list(events)
         except Exception as e:

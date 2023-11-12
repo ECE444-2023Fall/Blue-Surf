@@ -822,7 +822,7 @@ def test_search_filter_sort(test_client):
         title="Event 1",
         description="Kickoff event 1 for club 1",
         extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
-        location="Toronto",
+        location="toronto",
         start_time="2023-09-03 3:30:00",
         end_time="2023-10-03 4:00:00",
         author_name="testuser1",
@@ -835,7 +835,7 @@ def test_search_filter_sort(test_client):
         title="alumni event",
         description="Kickoff event 3 for club 1",
         extended_description="Extended decription for event 3 for club 1 that is much longer than just the description",
-        location="Toronto",
+        location="Montreal",
         start_time="2023-11-03 3:30:00",
         end_time="2023-11-03 4:00:00",
         author_name="testuser1",
@@ -931,3 +931,70 @@ def test_search_filter_sort(test_client):
     assert events[0].title == "alumni event"
     assert events[1].title == "Event 2"
     assert events[2].title == "Event 1"
+
+    # keyword, location and alphabetical sorting
+    try:
+        events = event.search_filter_sort(keyword="Ev", location="Toronto", sort_by="alphabetical")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 2
+    assert events[0].title == "Event 1"
+    assert events[1].title == "Event 2"
+
+    # keyword, location and alphabetical sorting
+    try:
+        events = event.search_filter_sort(keyword="Ev", club="Club 1")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 2
+    assert events[0].title == "Event 2"
+    assert events[1].title == "Event 1"
+
+    # filtering by complete date string
+    try:
+        events = event.search_filter_sort(start_time="2023-10-03 3:30:00")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 1
+    assert events[0].title == "Event 2"
+
+    # filtering by partial date string
+    try:
+        events = event.search_filter_sort(start_time="2023-10-03")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 1
+    assert events[0].title == "Event 2"
+
+    # filtering by date string interval
+    try:
+        events = event.search_filter_sort(start_time="2023-11-03 3:30:00", end_time="2023-11-03 4:00:00")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 1
+    assert events[0].title == "alumni event"
+
+    # filtering by partial date string interval
+    try:
+        events = event.search_filter_sort(start_time="2023-09-03", end_time="2023-10-03", sort_by="alphabetical")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 2
+    assert events[0].title == "Event 1"
+    assert events[1].title == "Event 2"
+
+
+
+

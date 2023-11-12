@@ -235,7 +235,7 @@ class EventDataLayer(DataLayer):
                 return []
             return event.tags
 
-    def search_filter_sort(self, tag_name=None, keyword=None, sort_by=None):
+    def search_filter_sort(self, tag_name=None, location=None, club=None, start_time=None, end_time=None, keyword=None, sort_by=None):
         """
         Returns a list of Event objects based on the optional tag name, search keyword, and sort criteria.
         """
@@ -265,6 +265,30 @@ class EventDataLayer(DataLayer):
                     return []
                 query = query.join(event_tags).join(Tag).filter(Tag.id == tag.id)
 
+            if location is not None:
+                query = query.filter(func.lower(Event.location)==location.lower())
+
+            if club is not None:
+                query = query.filter(func.lower(Event.club)==club.lower())
+    
+            if start_time is not None and end_time is not None:
+                if " " in str(start_time) and " " in str(end_time):
+                    start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S") if isinstance(start_time, str) else start_time
+                    end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S") if isinstance(end_time, str) else end_time
+                    query = query.filter(Event.start_time >= start_datetime, Event.end_time <= end_datetime)
+                else:
+                    start_date = datetime.strptime(start_time, "%Y-%m-%d").date() if isinstance(start_time, str) else start_time.date()
+                    end_date = datetime.strptime(end_time, "%Y-%m-%d").date() if isinstance(end_time, str) else end_time.date()
+                    end_of_day = datetime.combine(end_date, datetime.max.time())
+                    query = query.filter(Event.start_time >= start_date, Event.end_time <= end_of_day)
+            elif start_time is not None:
+                if " " in start_time:
+                    start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+                    query = query.filter(Event.start_time == start_time)
+                else:
+                    start_date = datetime.strptime(start_time, "%Y-%m-%d")
+                    query = query.filter(func.date(Event.start_time) == func.date(start_date))
+
             # Add sorting logic if sortby is provided
             if sort_by == "alphabetical":
                 query = query.order_by(func.lower(Event.title))
@@ -274,6 +298,7 @@ class EventDataLayer(DataLayer):
                 query = query.order_by(Event.like_count.desc())
             else:
                 query = query.order_by(Event.id)
+
 
             # Execute the query and return the results
             results = query.all()
