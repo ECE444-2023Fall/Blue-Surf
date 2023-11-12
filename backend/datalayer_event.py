@@ -191,6 +191,16 @@ class EventDataLayer(DataLayer):
         with app.app_context():
             events = Event.query.all()
             return events
+    
+    def get_all_locations(self):
+        with app.app_context():
+            locations = db.session.query(Event.location).filter(Event.location != '').distinct().all()            
+            return [loc[0] for loc in locations]
+
+    def get_all_clubs(self):
+        with app.app_context():
+            clubs = db.session.query(Event.club).filter(Event.club != '').distinct().all()
+            return [club[0] for club in clubs]
 
     def get_event_by_id(self, id):
         """

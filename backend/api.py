@@ -80,6 +80,40 @@ def setup_routes(app):
                 ),
                 500,
             )
+    
+    @app.route("/api/get-all-locations", methods=["GET"])
+    def get_all_locations():
+        try:
+            from datalayer_event import EventDataLayer
+            
+            event_data = EventDataLayer()
+            locations = event_data.get_all_locations()
+            return jsonify(locations)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to get all locations", "error message": error_message}
+                ),
+                500,
+            )
+        
+    @app.route("/api/get-all-clubs", methods=["GET"])
+    def get_all_clubs():
+        try:
+            from datalayer_event import EventDataLayer
+            
+            event_data = EventDataLayer()
+            clubs = event_data.get_all_clubs()
+            return jsonify(clubs)   
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to get all clubs", "error message": error_message}
+                ),
+                500,
+            )
 
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
