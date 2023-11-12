@@ -5,7 +5,7 @@ from flask import jsonify
 from datalayer_abstract import DataLayer
 from datalayer_tag import TagDataLayer
 import logging
-from sqlalchemy import or_
+from sqlalchemy import or_, and_, func
 
 """
 class Event(db.Model):
@@ -184,42 +184,6 @@ class EventDataLayer(DataLayer):
 
             db.session.commit()
 
-        # if start_time is None:
-        #     logging.info("Start time should not be empty")
-        #     raise TypeError("Start time should not be empty")
-        # try:
-        #     temp_start_datetime = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("Start time is not given in correct format")
-        #     raise ValueError("Start time is not given in correct format")
-
-        # if end_time is None:
-        #     logging.info("End time should not be empty")
-        #     raise TypeError("End time should not be empty")
-        # try:
-        #     temp_end_datetime = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-        # except ValueError:
-        #     logging.info("End time is not given in correct format")
-        #     raise ValueError("End time is not given in correct format")
-
-        # if temp_end_datetime < temp_start_datetime:
-        #     logging.info("Start time should be after end time")
-        #     raise ValueError("Start time should be after end time")
-        # event.start_time = temp_start_datetime
-        # event.end_time = temp_end_datetime
-
-        # with app.app_context():
-        #     author = User.query.filter_by(username=author_name).first()
-        # if author is None:
-        #     logging.info(f"Username {author_name} unable to post")
-        #     raise TypeError(f"Username {author_name} unable to post")
-        # event.author_id = author.id
-
-        # if is_published is None:
-        #     logging.info("Event was not published")
-        #     raise TypeError("Event was not published")
-        # event.is_published = is_published
-
     def get_all_events(self):
         """
         Returns all events.
@@ -245,9 +209,11 @@ class EventDataLayer(DataLayer):
             if tag is None:
                 logging.info(f"Tag does not exist")
                 raise ValueError(f"Tag does not exist")
-            events = Event.query.join(event_tags).join(Tag).filter(Tag.id == tag.id).all()
+            events = (
+                Event.query.join(event_tags).join(Tag).filter(Tag.id == tag.id).all()
+            )
             return events
-        
+
     def get_authored_events(self, author_id):
         """
         Returns all events authored by the given author_id.
@@ -269,3 +235,46 @@ class EventDataLayer(DataLayer):
                 return []
             return event.tags
 
+    def search_filter_sort(self, tag_name=None, keyword=None, sort_by=None):
+        """
+        Returns a list of Event objects based on the optional tag name, search keyword, and sort criteria.
+        """
+
+        with app.app_context():
+            # Base query without any filters
+            query = Event.query
+
+            # Add search filters if keyword is provided
+            if keyword is not None:
+                keyword_word_pattern = "% {}%".format(keyword)
+                keyword_start_pattern = "{}%".format(keyword)
+                query = query.filter(
+                    or_(
+                        Event.title.ilike(keyword_word_pattern),
+                        Event.club.ilike(keyword_word_pattern),
+                        Event.title.ilike(keyword_start_pattern),
+                        Event.club.ilike(keyword_start_pattern),
+                    )
+                )
+
+            # Add tag filter if tag_name is provided
+            if tag_name is not None:
+                tag = Tag.query.filter_by(name=tag_name).first()
+                # if a field doesn't exist, then the result will be empty
+                if tag is None:
+                    return []
+                query = query.join(event_tags).join(Tag).filter(Tag.id == tag.id)
+
+            # Add sorting logic if sortby is provided
+            if sort_by == "alphabetical":
+                query = query.order_by(func.lower(Event.title))
+            elif sort_by == "start_time":
+                query = query.order_by(Event.start_time)
+            elif sort_by == "trending":
+                query = query.order_by(Event.like_count.desc())
+            else:
+                query = query.order_by(Event.id)
+
+            # Execute the query and return the results
+            results = query.all()
+            return results

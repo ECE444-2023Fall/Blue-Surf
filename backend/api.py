@@ -413,17 +413,34 @@ def setup_routes(app):
                 ),
                 500,
             )
-    
-    @app.route("/api/filter/<string:tagname>", methods=["GET"])
-    def filter_tags(tagname):
-        try: 
+
+    @app.route("/api/filter", methods=["GET"])
+    def filter_tags():
+        try:
             from datalayer_event import EventDataLayer
+
             event_data = EventDataLayer()
+
+            # start by getting the search results
+            query = request.args.get("query").lower()
+            print("query: ", query)
+            search_results = event_data.get_search_results_by_keyword(query)
+
+            tagname = request.json.get("tagname", None)
+
             events = event_data.get_events_by_tag(tag_name=tagname)
             return jsonify_event_list(events)
         except Exception as e:
             error_message = str(e)
-            return jsonify({"error": "Failed to retrieve events by tag", "error message": error_message}), 500
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to retrieve events by tag",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
 
     @app.route("/api/like/<int:event_id>", methods=["POST"])
     @jwt_required()

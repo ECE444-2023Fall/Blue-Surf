@@ -5,7 +5,7 @@ import logging
 from .test_datalayer import test_client
 
 sys.path.append("../")
-from app import app
+from app import app, db
 from datalayer_user import UserDataLayer
 from datalayer_event import EventDataLayer
 from datalayer_tag import TagDataLayer
@@ -668,6 +668,7 @@ def test_search_by_keyword(test_client):
         assert query_results[0].title == "Event 1"
         assert query_results[1].club == "Faculty Event Planning"
 
+
 def test_get_events_by_tag(test_client):
     user = UserDataLayer()
     user.create_user(
@@ -686,11 +687,11 @@ def test_get_events_by_tag(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name='testuser1',
+        author_name="testuser1",
         club="Club 1",
         is_published=True,
         image=None,
-        tags=["Tag 1"]
+        tags=["Tag 1"],
     )
     event.create_event(
         title="Event 2",
@@ -699,11 +700,11 @@ def test_get_events_by_tag(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name='testuser1',
+        author_name="testuser1",
         club="Club 1",
         is_published=True,
         image=None,
-        tags=["Tag 1"]
+        tags=["Tag 1"],
     )
     event.create_event(
         title="Event 3",
@@ -712,37 +713,35 @@ def test_get_events_by_tag(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name='testuser1',
+        author_name="testuser1",
         club="Club 1",
         is_published=True,
         image=None,
-        tags=["Tag 2"]
+        tags=["Tag 2"],
     )
 
     try:
         events = event.get_events_by_tag(tag_name="Tag 1")
-    except ValueError as value_error: 
-        logging.debug(f'Error: {value_error}')
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
         assert value_error == None
     except TypeError as type_error:
-        logging.debug(f'Error: {type_error}')
+        logging.debug(f"Error: {type_error}")
         assert type_error == None
-    
+
     with app.app_context():
         assert len(events) == 2
         assert events[0].title == "Event 1"
         assert events[1].title == "Event 2"
-    
+
     try:
         events = event.get_events_by_tag(tag_name="Tag 2")
-    except ValueError as value_error: 
+    except ValueError as value_error:
         logging.info(f"Tag does not exist")
         assert str(value_error) == "Tag does not exist"
     except TypeError as type_error:
-        logging.debug(f'Error: {type_error}')
+        logging.debug(f"Error: {type_error}")
         assert type_error == None
-    
-   
 
 
 def test_get_authored_events(test_client):
@@ -793,3 +792,142 @@ def test_get_authored_events(test_client):
     assert len(events_authored) == 2
     assert events_authored[0].title == "Event 1"
     assert events_authored[1].title == "Event 2"
+
+
+def test_search_filter_sort(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    tag = TagDataLayer()
+    tag.add_tag("Tag 1")
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 2 for club 1",
+        extended_description="Extended decription for event 2 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser1",
+        club="Club 1",
+        is_published=True,
+        image=None,
+        tags=["Tag 1"],
+    )
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-09-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser1",
+        club="Club 1",
+        is_published=True,
+        image=None,
+        tags=["Tag 1"],
+    )
+    event.create_event(
+        title="alumni event",
+        description="Kickoff event 3 for club 1",
+        extended_description="Extended decription for event 3 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-11-03 3:30:00",
+        end_time="2023-11-03 4:00:00",
+        author_name="testuser1",
+        club="Club 2",
+        is_published=True,
+        image=None,
+        tags=["Tag 2"],
+    )
+
+    try:
+        events = event.search_filter_sort(tag_name="Tag 1", keyword="Ev")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    with app.app_context():
+        assert len(events) == 2
+        assert events[0].title == "Event 2"
+        assert events[1].title == "Event 1"
+
+    try:
+        events = event.search_filter_sort(tag_name="Tag 2", keyword="Ev")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 0
+
+    try:
+        # everything optional
+        events = event.search_filter_sort()
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 3
+
+    # testinng for alphabetical sorting
+    try:
+        events = event.search_filter_sort(sort_by="alphabetical")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 3
+    assert events[0].title == "alumni event"
+    assert events[1].title == "Event 1"
+    assert events[2].title == "Event 2"
+
+    # keyword, tag name, and alphabetical sorting
+    try:
+        events = event.search_filter_sort(
+            keyword="Ev", tag_name="Tag 1", sort_by="alphabetical"
+        )
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 2
+    assert events[0].title == "Event 1"
+    assert events[1].title == "Event 2"
+
+    # keyword, and date sorting
+    try:
+        events = event.search_filter_sort(keyword="Ev", sort_by="start_time")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 3
+    assert events[0].title == "Event 1"
+    assert events[1].title == "Event 2"
+    assert events[2].title == "alumni event"
+
+    # set the like counts
+    with app.app_context():
+        event1 = Event.query.filter_by(title="Event 1").first()
+        event2 = Event.query.filter_by(title="Event 2").first()
+        event3 = Event.query.filter_by(title="alumni event").first()
+        event1.like_count = 1
+        event2.like_count = 2
+        event3.like_count = 3
+        db.session.commit()
+
+    # keyword, and like count sorting
+    try:
+        events = event.search_filter_sort(keyword="Ev", sort_by="trending")
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    assert len(events) == 3
+    assert events[0].title == "alumni event"
+    assert events[1].title == "Event 2"
+    assert events[2].title == "Event 1"
