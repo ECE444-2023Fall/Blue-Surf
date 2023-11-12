@@ -3,7 +3,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/FilterField.css";
 
-
 const CalanderDatePicker: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -13,20 +12,25 @@ const CalanderDatePicker: React.FC = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const onChange = (dates: any) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  const onChange = (dates: [Date | null, Date | null] | null) => {
+    if (dates) {
+      const [start, end] = dates;
+      setStartDate(start);
+      setEndDate(end);
+    }
   };
+
   return (
     <div>
-    <button onClick={toggleDropdown} className="custom-button">
-      <span className="select-date-text">
-        {startDate && endDate && startDate !== endDate ?
-          `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`
-          : (startDate ? startDate.toLocaleDateString() : "Select Date")
-        }
-      </span>
+      <button onClick={toggleDropdown} className="custom-button">
+        <span className="select-date-text">
+          {startDate && endDate && startDate !== endDate
+            ? `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`
+            : startDate
+            ? startDate.toLocaleDateString()
+            : "Select Date"}
+        </span>
+      </button>
       {dropdownOpen && (
         <div className="calendar-container">
           <DatePicker
@@ -39,11 +43,8 @@ const CalanderDatePicker: React.FC = () => {
           />
         </div>
       )}
-    </button>
-  </div>
-);
+    </div>
+  );
 };
 
 export default CalanderDatePicker;
-
-
