@@ -21,3 +21,15 @@
       transform: translate(-40%, -20%);
     }
   }
+
+  .error-date {
+    margin-top: 5px;
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-family: Outfit;
+    text-align: center;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  

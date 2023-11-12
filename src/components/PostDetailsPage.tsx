@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import moment from "moment-timezone";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -51,9 +52,20 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [tags, setTags] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [dateMessage, setDateMessage] = useState<string>("");
+
+  const [alertMessage, setAlertMessage] = useState({
+    titleAlert: "",
+    summaryAlert: "",
+  });
+  const [blankMessage, setBlankMessage] = useState({
+    blankErrorMessage: "",
+  });
 
   const checkIfLiked = (data: any, eventId: string) => {
-    setIsLiked(data && data.some((event: any) => event.id === parseInt(eventId)));
+    setIsLiked(
+      data && data.some((event: any) => event.id === parseInt(eventId))
+    );
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
@@ -164,7 +176,64 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleSave = async () => {
-    console.log(editedPost);
+    const formattedStartDate = moment(editedPost.start_time)
+      .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    const formattedEndDate = moment(editedPost.end_time)
+      .tz("America/New_York")
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    if (editedPost.end_time < editedPost.start_time) {
+      setDateMessage("Pick a valid end date");
+      return;
+    }else{
+      setDateMessage("");
+    }
+
+    if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+      setAlertMessage({
+        titleAlert: "Title cannot exceed 50 characters",
+        summaryAlert: "Summary cannot exceed 180 characters",
+      });
+      return;
+    }
+    if (editedPost.title.length > 50) {
+      setAlertMessage({
+        titleAlert: "Title cannot exceed 50 characters",
+        summaryAlert: "",
+      });
+      return;
+    }
+    if (editedPost.description.length > 180) {
+      setAlertMessage({
+        titleAlert: "",
+        summaryAlert: "Summary cannot exceed 180 characters",
+      });
+      return;
+    }
+
+    if (!editedPost.location && !editedPost.title) {
+      setBlankMessage({
+        blankErrorMessage: "Title and Location are required fields.",
+      });
+      return;
+    }
+
+    if (!editedPost.title) {
+      setBlankMessage({
+        blankErrorMessage: "Title is a required field.",
+      });
+      return;
+    }
+
+    if (!editedPost.location) {
+      setBlankMessage({
+        blankErrorMessage: "Location is a required field.",
+      });
+      return;
+    }
+
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
@@ -181,6 +250,8 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
+        setBlankMessage({ blankErrorMessage: "" });
       } else {
         console.error("Failed to update post.");
       }
@@ -209,6 +280,8 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
+        setBlankMessage({ blankErrorMessage: "" });
       } else {
         console.error("Failed to update post.");
       }
@@ -220,6 +293,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const handleCancel = () => {
     setEditedPost({ ...post });
     setIsEditing(false);
+    setAlertMessage({ titleAlert: "", summaryAlert: "" });
+    setBlankMessage({ blankErrorMessage: "" });
+    setDateMessage("");
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,8 +367,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   return (
     <div className="post-details-wrapper">
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
-        <div className="row m-2">
-          <a className="navbar-brand back-nav" href="javascript:history.back()">
+        <div className="row m-2 auto d-flex justify-content-center align-items-center">
+          <a
+            className="navbar-brand back-nav justify-content-left"
+            href="javascript:history.back()"
+          >
             <img
               src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
               width="15"
@@ -302,6 +381,12 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
             />
             <span className="back-text">Back</span>
           </a>
+          <div className="col-md-6">
+            {blankMessage.blankErrorMessage && (
+              <div className="alert">{blankMessage.blankErrorMessage}</div>
+            )}
+          </div>
+
           <div className="row m-2 justify-content-end">
             {isEditing ? (
               <>
@@ -347,6 +432,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
           <div className="col-md-6">
             <div className="container-styling">
+              {/* TITLE */}
               <div className="title">
                 {isEditing ? (
                   <AutoSizeTextArea
@@ -359,6 +445,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.title
                 )}
               </div>
+              {alertMessage.titleAlert && (
+                <div className="alert">{alertMessage.titleAlert}</div>
+              )}
+
+              {/* SUMMARY */}
               <div className="summary">
                 {isEditing ? (
                   <AutoSizeTextArea
@@ -371,6 +462,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.description
                 )}
               </div>
+              {alertMessage.summaryAlert && (
+                <div className="alert">{alertMessage.summaryAlert}</div>
+              )}
+
+              {/* TAGS */}
               <div className="row align-items-center">
                 <div
                   className="col d-flex"
@@ -424,10 +520,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* EXTENDED DESCRIPTION */}
               <div className="subtitle">About</div>
               <div className="details">
                 {isEditing ? (
-                  // TODO: replace with extendedDescription field
                   <AutoSizeTextArea
                     content={editedPost.extended_description}
                     onChange={(value) =>
@@ -441,22 +538,68 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.extended_description
                 )}
               </div>
-              <div className="subtitle">Date</div>
+              <div className="subtitle"> Start Date </div>
               <div className="details">
                 {isEditing ? (
-                  <AutoSizeTextArea
-                    content={editedPost.start_time.toLocaleString()}
-                    onChange={(value) =>
-                      setEditedPost({
-                        ...editedPost,
-                        start_time: new Date(value),
-                      })
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.start_time instanceof Date
+                        ? new Date(
+                            editedPost.start_time.getTime() -
+                              editedPost.start_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
                     }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newStartTime = new Date(e.target.value);
+                      if (!isNaN(newStartTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          start_time: newStartTime,
+                        });
+                      }
+                    }}
                   />
                 ) : (
                   editedPost.start_time.toLocaleString()
                 )}
               </div>
+              <div className="subtitle"> End Date </div>
+              <div className="details">
+                {isEditing ? (
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.end_time instanceof Date
+                        ? new Date(
+                            editedPost.end_time.getTime() -
+                              editedPost.end_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
+                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newEndTime = new Date(e.target.value);
+                      if (!isNaN(newEndTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          end_time: newEndTime,
+                        });
+                      }
+                    }}
+                  />
+                ) : (
+                  editedPost.end_time.toLocaleString()
+                )}
+              </div>
+              {dateMessage && (
+                <div className="error-date">{dateMessage}</div>
+              )}
+              {/* LOCATION */}
               <div className="subtitle">Location</div>
               <div className="details">
                 {isEditing ? (
@@ -470,6 +613,8 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.location
                 )}
               </div>
+
+              {/* CLUB */}
               {editedPost.club && (
                 <div>
                   <div className="subtitle">Club</div>
@@ -487,6 +632,8 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* FAVOURITE */}
               <div className="row g-5 m-2 d-flex justify-content-center">
                 {token && token !== "" && token !== undefined && (
                   <button

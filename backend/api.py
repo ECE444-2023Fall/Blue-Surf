@@ -166,6 +166,7 @@ def setup_routes(app):
                 extended_description=updated_post["extended_description"],
                 location=updated_post["location"],
                 tags=updated_post["tags"],
+                #Need to add start date and time once added to the db#
             )
 
             return jsonify({"message": "Post updated successfully"})
