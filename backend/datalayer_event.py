@@ -245,7 +245,7 @@ class EventDataLayer(DataLayer):
             query = Event.query
 
             # Add search filters if keyword is provided
-            if keyword is not None:
+            if keyword is not None and len(keyword) > 0:
                 keyword_word_pattern = "% {}%".format(keyword)
                 keyword_start_pattern = "{}%".format(keyword)
                 query = query.filter(
