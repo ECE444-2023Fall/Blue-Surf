@@ -314,6 +314,8 @@ class EventDataLayer(DataLayer):
                         Event.end_time <= end_datetime,
                     )
                 else:
+                    start_date = datetime.strptime(start_time, "%Y-%m-%d")
+                    end_date = datetime.strptime(end_time, "%Y-%m-%d")
                     start_date = (
                         datetime.strptime(start_time, "%Y-%m-%d").date()
                         if isinstance(start_time, str)
@@ -324,11 +326,13 @@ class EventDataLayer(DataLayer):
                         if isinstance(end_time, str)
                         else end_time.date()
                     )
-                    end_of_day = datetime.combine(end_date, datetime.max.time())
                     query = query.filter(
-                        Event.start_time >= start_date, Event.end_time <= end_of_day
+                        and_(
+                            func.date(Event.start_time) >= start_date,
+                            func.date(Event.end_time) <= end_date
+                        )
                     )
-            elif start_time is not None:
+            elif start_time is not None and end_time is None:
                 if " " in start_time:
                     start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
                     query = query.filter(Event.start_time == start_time)

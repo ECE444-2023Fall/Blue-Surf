@@ -475,7 +475,7 @@ def setup_routes(app):
                 end_time=end_time,
                 sort_by=sortby,
             )
-
+            print("returning event")
             return jsonify_event_list(events)
         except Exception as e:
             error_message = str(e)
