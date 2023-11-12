@@ -69,6 +69,10 @@ const PostCreatePage: React.FC = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [dateMessage, setDateMessage] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [alertMessage, setAlertMessage] = useState({
+    titleAlert: "",
+    summaryAlert: "",
+  });
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -111,6 +115,7 @@ const PostCreatePage: React.FC = () => {
 
   const handleSave = async () => {
     try {
+
       if (!editedPost.title && !editedPost.location) {
         setErrorMessage("Title and Location are required fields.");
         return;
@@ -122,6 +127,62 @@ const PostCreatePage: React.FC = () => {
         return;
       } else {
         setErrorMessage("");
+      }
+
+      if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else if (editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "",
+        });
+        return;
+      }
+      else if (editedPost.description.length > 180) {
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else{
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "",
+        });
+      }
+
+      if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else if (editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "",
+        });
+        return;
+      }
+      else if (editedPost.description.length > 180) {
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else{
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "",
+        });
       }
 
 
@@ -185,6 +246,7 @@ const PostCreatePage: React.FC = () => {
       );
 
       if (postImageResponse.ok) {
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
         navigate("/dashboard");
       } else {
         const data = await response.json();
@@ -296,6 +358,9 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter title here]"
                 />
               </div>
+              {alertMessage.titleAlert && (
+                <div className="alert">{alertMessage.titleAlert}</div>
+              )}
               <div className="summary">
                 <AutoSizeTextArea
                   content={editedPost.description}
@@ -305,6 +370,9 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter description here]"
                 />
               </div>
+              {alertMessage.summaryAlert && (
+                <div className="alert">{alertMessage.summaryAlert}</div>
+              )}
               <div className="subtitle">Tags</div>
               <div className="row align-items-center">
                 <div
