@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment-timezone";
 import { useNavigate } from "react-router-dom";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
@@ -46,6 +47,7 @@ const PostCreatePage: React.FC = () => {
   const [imageSrc, setImageSrc] = useState(imageTemplate);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const [dateMessage, setDateMessage] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const getTagNames = async (): Promise<any[] | null> => {
@@ -86,20 +88,34 @@ const PostCreatePage: React.FC = () => {
         setErrorMessage("");
       }
 
-      const formattedStartDate = editedPost.start_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
-      const formattedEndDate = editedPost.end_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
+
+      // const formattedStartDate = editedPost.start_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+      // const formattedEndDate = editedPost.end_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+
+      const formattedStartDate = moment(editedPost.start_time)
+        .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      const formattedEndDate = moment(editedPost.end_time)
+        .tz("America/New_York")
+        .format("YYYY-MM-DD HH:mm:ss");
 
       const postData = {
         ...editedPost,
         start_time: formattedStartDate,
         end_time: formattedEndDate,
       };
+
+      if(editedPost.end_time < editedPost.start_time){
+        setDateMessage("Pick a valid end date");
+        return;
+      }
 
       const response = await fetch(`/api/create-post`, {
         method: "POST",
@@ -319,39 +335,80 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter extended description here]"
                 />
               </div>
-              <div className="subtitle">Date</div>
+              <div className="subtitle"> Start Date </div>
               <div className="details">
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.start_time instanceof Date
+                      ? new Date(
+                          editedPost.start_time.getTime() -
+                            editedPost.start_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
                   }
-                />
-              </div>
-              <div className="subtitle">Location</div>
-              <div className="details">
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                  placeholderWord="[enter location here]"
-                />
-              </div>
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  <AutoSizeTextArea
-                    content={editedPost.club || ""}
-                    onChange={(value) =>
-                      setEditedPost({ ...editedPost, club: value })
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newStartTime = new Date(e.target.value);
+                    if (!isNaN(newStartTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: newStartTime,
+                      });
                     }
-                    placeholderWord="[enter club name here if applicable]"
-                  />
-                </div>
+                  }}
+                />
+              </div>
+              <div className="subtitle"> End Date </div>
+              <div className="details">
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.end_time instanceof Date
+                      ? new Date(
+                          editedPost.end_time.getTime() -
+                            editedPost.end_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
+                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newEndTime = new Date(e.target.value);
+                    if (!isNaN(newEndTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        end_time: newEndTime,
+                      });
+                    }
+                  }}
+                />
+                {dateMessage && (
+                <div className="error-date">{dateMessage}</div>
+              )}
+              </div>
+            </div>
+            <div className="subtitle">Location</div>
+            <div className="details">
+              <AutoSizeTextArea
+                content={editedPost.location}
+                onChange={(value) =>
+                  setEditedPost({ ...editedPost, location: value })
+                }
+                placeholderWord="[enter location here]"
+              />
+            </div>
+            <div>
+              <div className="subtitle">Club</div>
+              <div className="details">
+                <AutoSizeTextArea
+                  content={editedPost.club || ""}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, club: value })
+                  }
+                  placeholderWord="[enter club name here if applicable]"
+                />
               </div>
             </div>
           </div>
