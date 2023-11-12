@@ -1003,3 +1003,127 @@ def test_search_filter_sort(test_client):
     assert len(events) == 2
     assert events[0].title == "Event 1"
     assert events[1].title == "Event 2"
+
+
+def test_get_all_locations(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser10",
+        email="testuser10@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Tenzino fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Vancouver",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Dawson fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 3",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Calgary",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Bluesurf fan club",
+        is_published=True,
+        image=None,
+    )
+    try:
+        locations = event.get_all_locations()
+
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        assert len(locations) == 3
+        assert locations[0] == "Toronto"
+        assert locations[1] == "Vancouver"
+        assert locations[2] == "Calgary"
+
+
+def test_get_all_clubs(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser10",
+        email="testuser10@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Tenzino fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Vancouver",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Dawson fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 3",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Calgary",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_name="testuser10",
+        club="Bluesurf fan club",
+        is_published=True,
+        image=None,
+    )
+    try:
+        clubs = event.get_all_clubs()
+
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        assert len(clubs) == 3
+        assert clubs[0] == "Tenzino fan club"
+        assert clubs[1] == "Dawson fan club"
+        assert clubs[2] == "Bluesurf fan club"
