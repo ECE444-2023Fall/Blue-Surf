@@ -196,21 +196,21 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
     if (!editedPost.location && !editedPost.title) {
       setBlankMessage({
-        blankErrorMessage: "Title and Location fields are missing",
+        blankErrorMessage: "Title and Location are required fields.",
       });
       return;
     }
 
     if (!editedPost.title) {
       setBlankMessage({
-        blankErrorMessage: "Title field is missing",
+        blankErrorMessage: "Title is a required field.",
       });
       return;
     }
 
     if (!editedPost.location) {
       setBlankMessage({
-        blankErrorMessage: "Location field is missing",
+        blankErrorMessage: "Location is a required field.",
       });
       return;
     }
