@@ -12,6 +12,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const imageTemplate = require("../assets/post-template.jpg");
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
+// Function to fetch the image as Blob
+const fetchImageAsBlob = async (url: string): Promise<Blob | null> => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image from ${url}`);
+    }
+    const blob = await response.blob();
+    return blob;
+  } catch (error) {
+    console.error("Fetch Image Error:", error);
+    return null;
+  }
+};
+
+// Function to convert Blob to File
+const blobToFile = (blob: Blob, filename: string, type: string): File => {
+  return new File([blob], filename, { type });
+};
+
 interface Post {
   title: string;
   start_time: Date;
@@ -70,7 +90,23 @@ const PostCreatePage: React.FC = () => {
       }
     };
 
+    const initializeImage = async () => {
+      // Set default image to imageTemplate if imageFile is null
+      if (!imageFile) {
+        const defaultImageBlob = await fetchImageAsBlob(imageTemplate);
+        if (defaultImageBlob) {
+          const defaultImageFile = blobToFile(
+            defaultImageBlob,
+            "defaultImage.jpg", // Set the desired filename
+            "image/jpeg" // Set the desired file type
+          );
+          setImageFile(defaultImageFile);
+        }
+      }
+    };
+  
     fetchData();
+    initializeImage();
   }, []);
 
   const handleSave = async () => {
