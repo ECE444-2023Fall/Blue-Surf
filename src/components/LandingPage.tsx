@@ -42,28 +42,35 @@ const LandingPage: React.FC = () => {
     {}
   );
 
-  const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+  const getFilterNames = async (filterName: string): Promise<any[] | null> => {
+    let routeName = "tags"
+    if (filterName==="Location") {
+      routeName="locations"
+    } else if (filterName==="Club") {
+      routeName="clubs"
+    }
+
+    const response = await fetch(`/api/get-all-${routeName}`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
       return data;
     } else {
-      console.error("Failed to fetch all tag names");
+      console.error(`Failed to fetch all ${filterName} names`);
       return null;
     }
   };
 
-  const fetchDataAndInitializeTags = async () => {
-    const data = await getTagNames();
+  const fetchDataAndInitializeFilters = async (filterName: string) => {
+    const data = await getFilterNames(filterName);
     if (data) {
       const tagEntry = filterOptionValuesByAPI.find(
-        (entry) => entry.title === "Tag"
+        (entry) => entry.title === filterName
       );
       if (tagEntry) {
         tagEntry.values = ["All", ...data];
       } else {
-        filterOptionValuesByAPI.push({ title: "Tag", values: data });
+        filterOptionValuesByAPI.push({ title: filterName, values: data });
       }
     }
   };
@@ -97,7 +104,9 @@ const LandingPage: React.FC = () => {
 
   useEffect(() => {
     fetchEvents();
-    fetchDataAndInitializeTags();
+    fetchDataAndInitializeFilters("Tag");
+    fetchDataAndInitializeFilters("Location");
+    fetchDataAndInitializeFilters("Club");
   }, []);
 
   useEffect(() => {
