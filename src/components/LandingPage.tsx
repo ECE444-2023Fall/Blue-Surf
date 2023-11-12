@@ -43,11 +43,11 @@ const LandingPage: React.FC = () => {
   );
 
   const getFilterNames = async (filterName: string): Promise<any[] | null> => {
-    let routeName = "tags"
-    if (filterName==="Location") {
-      routeName="locations"
-    } else if (filterName==="Club") {
-      routeName="clubs"
+    let routeName = "tags";
+    if (filterName === "Location") {
+      routeName = "locations";
+    } else if (filterName === "Club") {
+      routeName = "clubs";
     }
 
     const response = await fetch(`/api/get-all-${routeName}`);
@@ -136,6 +136,13 @@ const LandingPage: React.FC = () => {
     }));
   };
 
+  const handleSortChange = (selectedValue: string) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      sortby: selectedValue.toLowerCase(),
+    }));
+  };
+
   return (
     <div className="landing-page-wrapper">
       <div className="row">
@@ -157,7 +164,15 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="row">
             <div className="col-12">
-              <SortBy options={["Sort Option 1", "Sort Option 2"]} />
+              <SortBy
+                options={[
+                  "Not Selected",
+                  "Alphabetical",
+                  "Trending",
+                  "Start Time",
+                ]}
+                onSortChange={handleSortChange}
+              />
             </div>
           </div>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">

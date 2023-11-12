@@ -191,15 +191,22 @@ class EventDataLayer(DataLayer):
         with app.app_context():
             events = Event.query.all()
             return events
-    
+
     def get_all_locations(self):
         with app.app_context():
-            locations = db.session.query(Event.location).filter(Event.location != '').distinct().all()            
+            locations = (
+                db.session.query(Event.location)
+                .filter(Event.location != "")
+                .distinct()
+                .all()
+            )
             return [loc[0] for loc in locations]
 
     def get_all_clubs(self):
         with app.app_context():
-            clubs = db.session.query(Event.club).filter(Event.club != '').distinct().all()
+            clubs = (
+                db.session.query(Event.club).filter(Event.club != "").distinct().all()
+            )
             return [club[0] for club in clubs]
 
     def get_event_by_id(self, id):
@@ -334,7 +341,7 @@ class EventDataLayer(DataLayer):
             # Add sorting logic if sortby is provided
             if sort_by == "alphabetical":
                 query = query.order_by(func.lower(Event.title))
-            elif sort_by == "start_time":
+            elif sort_by == "start time":
                 query = query.order_by(Event.start_time)
             elif sort_by == "trending":
                 query = query.order_by(Event.like_count.desc())
