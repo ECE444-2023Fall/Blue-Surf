@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import moment from "moment-timezone";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -49,6 +50,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [tags, setTags] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [dateMessage, setDateMessage] = useState<string>("");
 
   const [alertMessage, setAlertMessage] = useState({
     titleAlert: "",
@@ -172,6 +174,21 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleSave = async () => {
+    const formattedStartDate = moment(editedPost.start_time)
+      .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    const formattedEndDate = moment(editedPost.end_time)
+      .tz("America/New_York")
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    if (editedPost.end_time < editedPost.start_time) {
+      setDateMessage("Pick a valid end date");
+      return;
+    }else{
+      setDateMessage("");
+    }
+
     if (editedPost.description.length > 180 && editedPost.title.length > 50) {
       setAlertMessage({
         titleAlert: "Title cannot exceed 50 characters",
@@ -276,6 +293,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     setIsEditing(false);
     setAlertMessage({ titleAlert: "", summaryAlert: "" });
     setBlankMessage({ blankErrorMessage: "" });
+    setDateMessage("");
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -348,7 +366,10 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     <div className="post-details-wrapper">
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2 auto d-flex justify-content-center align-items-center">
-          <a className="navbar-brand back-nav justify-content-left" href="javascript:history.back()">
+          <a
+            className="navbar-brand back-nav justify-content-left"
+            href="javascript:history.back()"
+          >
             <img
               src="https://cdn-icons-png.flaticon.com/512/271/271220.png"
               width="15"
@@ -515,25 +536,67 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.extended_description
                 )}
               </div>
-
-              {/* DATE */}
-              <div className="subtitle">Date</div>
+              <div className="subtitle"> Start Date </div>
               <div className="details">
                 {isEditing ? (
-                  <AutoSizeTextArea
-                    content={editedPost.start_time.toLocaleString()}
-                    onChange={(value) =>
-                      setEditedPost({
-                        ...editedPost,
-                        start_time: new Date(value),
-                      })
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.start_time instanceof Date
+                        ? new Date(
+                            editedPost.start_time.getTime() -
+                              editedPost.start_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
                     }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newStartTime = new Date(e.target.value);
+                      if (!isNaN(newStartTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          start_time: newStartTime,
+                        });
+                      }
+                    }}
                   />
                 ) : (
                   editedPost.start_time.toLocaleString()
                 )}
               </div>
-
+              <div className="subtitle"> End Date </div>
+              <div className="details">
+                {isEditing ? (
+                  <input
+                    type="datetime-local"
+                    value={
+                      editedPost.end_time instanceof Date
+                        ? new Date(
+                            editedPost.end_time.getTime() -
+                              editedPost.end_time.getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .slice(0, -8)
+                        : ""
+                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const newEndTime = new Date(e.target.value);
+                      if (!isNaN(newEndTime.getTime())) {
+                        setEditedPost({
+                          ...editedPost,
+                          end_time: newEndTime,
+                        });
+                      }
+                    }}
+                  />
+                ) : (
+                  editedPost.end_time.toLocaleString()
+                )}
+              </div>
+              {dateMessage && (
+                <div className="error-date">{dateMessage}</div>
+              )}
               {/* LOCATION */}
               <div className="subtitle">Location</div>
               <div className="details">
