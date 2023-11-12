@@ -18,7 +18,7 @@
     position: absolute;
     width: 500px;
     height: 280px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .yes-button {
