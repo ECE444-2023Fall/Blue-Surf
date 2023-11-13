@@ -27,7 +27,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   setAuth,
 }) => {
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedButton, setSelectedButton] = useState("Favourites");
+  const [selectedButton, setSelectedButton] = useState("My Posts");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
@@ -61,7 +61,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   };
 
   useEffect(() => {
-    fetchEvents("Favourites");
+    fetchEvents("My Posts");
   }, []);
 
   const handleSearchData = (data: any) => {
@@ -131,6 +131,14 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                     <div className="background-select">
                       <button
                         className={`twobutton-${
+                          selectedButton !== "My Posts" ? "notselect" : "select"
+                        }`}
+                        onClick={() => handleButtonClick("My Posts")}
+                      >
+                        My Posts
+                      </button>
+                      <button
+                        className={`twobutton-${
                           selectedButton !== "Favourites"
                             ? "notselect"
                             : "select"
@@ -138,14 +146,6 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                         onClick={() => handleButtonClick("Favourites")}
                       >
                         Favourites
-                      </button>
-                      <button
-                        className={`twobutton-${
-                          selectedButton !== "My Posts" ? "notselect" : "select"
-                        }`}
-                        onClick={() => handleButtonClick("My Posts")}
-                      >
-                        My Posts
                       </button>
                     </div>
                     <div className="create-button-div">
