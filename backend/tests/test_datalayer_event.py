@@ -1404,20 +1404,19 @@ def test_get_all_locations(test_client):
 
     with app.app_context():
         assert len(locations) == 3
-        assert locations[0] == "Toronto"
-        assert locations[1] == "Vancouver"
-        assert locations[2] == "Calgary"
+        assert locations[0] == "Calgary"
+        assert locations[1] == "Toronto"
+        assert locations[2] == "Vancouver"
 
 
 def test_get_all_clubs(test_client):
     user = UserDataLayer()
-    user.create_user(
+    user10_id = user.create_user(
         username="testuser10",
         email="testuser10@example.com",
         password_hash="testpassword",
         password_salt="testpassword",
     )
-    retrievedUser = user.get_user(user_identifier="testuser10")
     event = EventDataLayer()
     event.create_event(
         title="Event 1",
@@ -1426,7 +1425,7 @@ def test_get_all_clubs(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_id=retrievedUser.id,
+        author_id=user10_id,
         club="Tenzino fan club",
         is_published=True,
         image=None,
@@ -1438,7 +1437,7 @@ def test_get_all_clubs(test_client):
         location="Vancouver",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_id=retrievedUser.id,
+        author_id=user10_id,
         club="Dawson fan club",
         is_published=True,
         image=None,
@@ -1450,7 +1449,7 @@ def test_get_all_clubs(test_client):
         location="Calgary",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_id=retrievedUser.id,
+        author_id=user10_id,
         club="Bluesurf fan club",
         is_published=True,
         image=None,
@@ -1467,6 +1466,6 @@ def test_get_all_clubs(test_client):
 
     with app.app_context():
         assert len(clubs) == 3
-        assert clubs[0] == "Tenzino fan club"
+        assert clubs[0] == "Bluesurf fan club"
         assert clubs[1] == "Dawson fan club"
-        assert clubs[2] == "Bluesurf fan club"
+        assert clubs[2] == "Tenzino fan club"
