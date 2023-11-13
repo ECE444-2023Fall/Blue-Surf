@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment-timezone";
 import { useNavigate } from "react-router-dom";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
@@ -10,6 +11,26 @@ import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const imageTemplate = require("../assets/post-template.jpg");
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
+
+// Function to fetch the image as Blob
+const fetchImageAsBlob = async (url: string): Promise<Blob | null> => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image from ${url}`);
+    }
+    const blob = await response.blob();
+    return blob;
+  } catch (error) {
+    console.error("Fetch Image Error:", error);
+    return null;
+  }
+};
+
+// Function to convert Blob to File
+const blobToFile = (blob: Blob, filename: string, type: string): File => {
+  return new File([blob], filename, { type });
+};
 
 interface Post {
   title: string;
@@ -46,6 +67,12 @@ const PostCreatePage: React.FC = () => {
   const [imageSrc, setImageSrc] = useState(imageTemplate);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const [dateMessage, setDateMessage] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [alertMessage, setAlertMessage] = useState({
+    titleAlert: "",
+    summaryAlert: "",
+  });
 
   const getTagNames = async (): Promise<any[] | null> => {
     const response = await fetch("/api/get-all-tags");
@@ -67,11 +94,28 @@ const PostCreatePage: React.FC = () => {
       }
     };
 
+    const initializeImage = async () => {
+      // Set default image to imageTemplate if imageFile is null
+      if (!imageFile) {
+        const defaultImageBlob = await fetchImageAsBlob(imageTemplate);
+        if (defaultImageBlob) {
+          const defaultImageFile = blobToFile(
+            defaultImageBlob,
+            "defaultImage.jpg", // Set the desired filename
+            "image/jpeg" // Set the desired file type
+          );
+          setImageFile(defaultImageFile);
+        }
+      }
+    };
+  
     fetchData();
+    initializeImage();
   }, []);
 
   const handleSave = async () => {
     try {
+
       if (!editedPost.title && !editedPost.location) {
         setErrorMessage("Title and Location are required fields.");
         return;
@@ -85,20 +129,90 @@ const PostCreatePage: React.FC = () => {
         setErrorMessage("");
       }
 
-      const formattedStartDate = editedPost.start_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
-      const formattedEndDate = editedPost.end_time
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
+      if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else if (editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "",
+        });
+        return;
+      }
+      else if (editedPost.description.length > 180) {
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else{
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "",
+        });
+      }
+
+      if (editedPost.description.length > 180 && editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else if (editedPost.title.length > 50) {
+        setAlertMessage({
+          titleAlert: "Title cannot exceed 50 characters",
+          summaryAlert: "",
+        });
+        return;
+      }
+      else if (editedPost.description.length > 180) {
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "Summary cannot exceed 180 characters",
+        });
+        return;
+      }
+      else{
+        setAlertMessage({
+          titleAlert: "",
+          summaryAlert: "",
+        });
+      }
+
+
+      // const formattedStartDate = editedPost.start_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+      // const formattedEndDate = editedPost.end_time
+      //   .toISOString()
+      //   .slice(0, 19)
+      //   .replace("T", " ");
+
+      const formattedStartDate = moment(editedPost.start_time)
+        .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      const formattedEndDate = moment(editedPost.end_time)
+        .tz("America/New_York")
+        .format("YYYY-MM-DD HH:mm:ss");
 
       const postData = {
         ...editedPost,
         start_time: formattedStartDate,
         end_time: formattedEndDate,
       };
+
+      if(editedPost.end_time < editedPost.start_time){
+        setDateMessage("Pick a valid end date");
+        return;
+      }
 
       const response = await fetch(`/api/create-post`, {
         method: "POST",
@@ -108,7 +222,31 @@ const PostCreatePage: React.FC = () => {
         body: JSON.stringify(postData),
       });
 
-      if (response.ok) {
+      // get the id of the post
+      const data = await response.json();
+      const postId = data.id;
+
+      // upload the image
+      const formData = new FormData();
+      formData.append("image", imageFile!);
+
+      console.log("FormData:");
+
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      // Send a POST request to the backend to update the post
+      const postImageResponse = await fetch(
+        `/api/update-post-image/${postId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (postImageResponse.ok) {
+        setAlertMessage({ titleAlert: "", summaryAlert: "" });
         navigate("/dashboard");
       } else {
         const data = await response.json();
@@ -119,13 +257,16 @@ const PostCreatePage: React.FC = () => {
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
 
+    if (selectedFile) {
+      setImageFile(selectedFile);
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const newImageSrc = e.target && e.target.result;
+        const newImageSrc = e.target?.result as string;
+        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -186,7 +327,7 @@ const PostCreatePage: React.FC = () => {
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageSrc}
+              src={imageFile ? URL.createObjectURL(imageFile): imageTemplate}
               className="card-img-top rounded-edge"
               alt="..."
             />
@@ -217,6 +358,9 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter title here]"
                 />
               </div>
+              {alertMessage.titleAlert && (
+                <div className="alert">{alertMessage.titleAlert}</div>
+              )}
               <div className="summary">
                 <AutoSizeTextArea
                   content={editedPost.description}
@@ -226,6 +370,9 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter description here]"
                 />
               </div>
+              {alertMessage.summaryAlert && (
+                <div className="alert">{alertMessage.summaryAlert}</div>
+              )}
               <div className="subtitle">Tags</div>
               <div className="row align-items-center">
                 <div
@@ -292,39 +439,80 @@ const PostCreatePage: React.FC = () => {
                   placeholderWord="[enter extended description here]"
                 />
               </div>
-              <div className="subtitle">Date</div>
+              <div className="subtitle"> Start Date </div>
               <div className="details">
-                <AutoSizeTextArea
-                  content={editedPost.start_time.toLocaleString()}
-                  onChange={(value) =>
-                    setEditedPost({
-                      ...editedPost,
-                      start_time: new Date(value),
-                    })
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.start_time instanceof Date
+                      ? new Date(
+                          editedPost.start_time.getTime() -
+                            editedPost.start_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
                   }
-                />
-              </div>
-              <div className="subtitle">Location</div>
-              <div className="details">
-                <AutoSizeTextArea
-                  content={editedPost.location}
-                  onChange={(value) =>
-                    setEditedPost({ ...editedPost, location: value })
-                  }
-                  placeholderWord="[enter location here]"
-                />
-              </div>
-              <div>
-                <div className="subtitle">Club</div>
-                <div className="details">
-                  <AutoSizeTextArea
-                    content={editedPost.club || ""}
-                    onChange={(value) =>
-                      setEditedPost({ ...editedPost, club: value })
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newStartTime = new Date(e.target.value);
+                    if (!isNaN(newStartTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        start_time: newStartTime,
+                      });
                     }
-                    placeholderWord="[enter club name here if applicable]"
-                  />
-                </div>
+                  }}
+                />
+              </div>
+              <div className="subtitle"> End Date </div>
+              <div className="details">
+                <input
+                  type="datetime-local"
+                  value={
+                    editedPost.end_time instanceof Date
+                      ? new Date(
+                          editedPost.end_time.getTime() -
+                            editedPost.end_time.getTimezoneOffset() * 60000
+                        )
+                          .toISOString()
+                          .slice(0, -8)
+                      : ""
+                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const newEndTime = new Date(e.target.value);
+                    if (!isNaN(newEndTime.getTime())) {
+                      setEditedPost({
+                        ...editedPost,
+                        end_time: newEndTime,
+                      });
+                    }
+                  }}
+                />
+                {dateMessage && (
+                <div className="error-date">{dateMessage}</div>
+              )}
+              </div>
+            </div>
+            <div className="subtitle">Location</div>
+            <div className="details">
+              <AutoSizeTextArea
+                content={editedPost.location}
+                onChange={(value) =>
+                  setEditedPost({ ...editedPost, location: value })
+                }
+                placeholderWord="[enter location here]"
+              />
+            </div>
+            <div>
+              <div className="subtitle">Club</div>
+              <div className="details">
+                <AutoSizeTextArea
+                  content={editedPost.club || ""}
+                  onChange={(value) =>
+                    setEditedPost({ ...editedPost, club: value })
+                  }
+                  placeholderWord="[enter club name here if applicable]"
+                />
               </div>
             </div>
           </div>

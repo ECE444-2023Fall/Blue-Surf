@@ -18,12 +18,15 @@ const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
     setDropdownOpen(!dropdownOpen);
   };
 
-  const onChange = (dates: any) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    onDateChange(start, end);
+  const onChange = (dates: [Date | null, Date | null] | null) => {
+    if (dates) {
+      const [start, end] = dates;
+      setStartDate(start);
+      setEndDate(end);
+      onDateChange(start, end);
+    }
   };
+
   return (
     <div>
       <button onClick={toggleDropdown} className="custom-button">
@@ -34,19 +37,19 @@ const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
             ? startDate.toLocaleDateString()
             : "Select Date"}
         </span>
-        {dropdownOpen && (
-          <div className="calendar-container">
-            <DatePicker
-              selected={startDate}
-              onChange={onChange}
-              startDate={startDate}
-              endDate={endDate}
-              selectsRange
-              inline
-            />
-          </div>
-        )}
       </button>
+      {dropdownOpen && (
+        <div className="calendar-container">
+          <DatePicker
+            selected={startDate}
+            onChange={onChange}
+            startDate={startDate}
+            endDate={endDate}
+            selectsRange
+            inline
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -51,7 +51,7 @@
     height: 60px;
     border-color: white;
     position: relative;
-    width: 200px;
+    width: 250px;
     border-left: 1px solid white;
     border-right: 1px solid white;
     border-top: 1px solid white; 
@@ -74,6 +74,6 @@
   }
   
   .select-date-text {
-    margin-right: 10px; 
+    margin-right: 60px; 
   }
   
