@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment-timezone";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
@@ -44,7 +45,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   setAuth,
 }) => {
   const { postId } = useParams();
-
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
@@ -53,6 +54,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [dateMessage, setDateMessage] = useState<string>("");
+  const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+
+  const isAuthor = user && post && parseInt(user.userId) === post.author_id;
 
   const [alertMessage, setAlertMessage] = useState({
     titleAlert: "",
@@ -298,6 +302,64 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     setDateMessage("");
   };
 
+  const handleDelete = async (confirmed: boolean) => {
+    if (confirmed) {
+      try {
+        const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          data.access_token && setAuth(data.access_token, user);
+          navigate(-1);
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Delete request failed");
+        }
+      } catch (error) {
+        console.error("Delete Post Error:", error);
+      }
+    }
+    setShowDeletePopUp(false);
+  };
+
+  const handleDeleteButtonClick = () => {
+    setShowDeletePopUp(true);
+  };
+
+  // const handleDelete = async (confirmed: boolean) => {
+  //   if (confirmed) {
+  //     try {
+  //       const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: "Bearer " + token,
+  //         },
+  //       });
+
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         data.access_token && setAuth(data.access_token, user);
+  //         navigate(-1);
+  //       } else {
+  //         const errorMessage = await response.text();
+  //         throw new Error(errorMessage || "Delete request failed");
+  //       }
+  //     } catch (error) {
+  //       console.error("Delete Post Error:", error);
+  //     }
+  //   }
+  //   setShowDeletePopUp(false);
+  // };
+
+  // const handleDeleteButtonClick = () => {
+  //   setShowDeletePopUp(true);
+  // };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
 
@@ -366,6 +428,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   return (
     <div className="post-details-wrapper">
+      {showDeletePopUp && <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2 auto d-flex justify-content-center align-items-center">
           <a
@@ -398,9 +461,21 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                 </button>
               </>
             ) : (
-              <button className="edit-button" onClick={toggleEdit}>
-                Edit
-              </button>
+              <>
+                {isAuthor && (
+                  <>
+                    <button className="edit-button" onClick={toggleEdit}>
+                      Edit
+                    </button>
+                    <button
+                      className="trash-button-details-page"
+                      onClick={handleDeleteButtonClick}
+                    >
+                      <i className="fa fa-trash-o trash-icon-custom-size-details-page" />
+                    </button>
+                  </>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -440,6 +515,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, title: value })
                     }
+                    placeholderWord="[enter title here]"
                   />
                 ) : (
                   editedPost.title
@@ -457,6 +533,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, description: value })
                     }
+                    placeholderWord="[enter description here]"
                   />
                 ) : (
                   editedPost.description
@@ -533,6 +610,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         extended_description: value,
                       })
                     }
+                    placeholderWord="[enter extended description here]"
                   />
                 ) : (
                   editedPost.extended_description
@@ -608,6 +686,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, location: value })
                     }
+                    placeholderWord="[enter location here]"
                   />
                 ) : (
                   editedPost.location
@@ -625,6 +704,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         onChange={(value) =>
                           setEditedPost({ ...editedPost, club: value })
                         }
+                        placeholderWord="[enter club name here if applicable]"
                       />
                     ) : (
                       editedPost.club

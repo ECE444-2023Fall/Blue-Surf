@@ -45,9 +45,12 @@ from .api import setup_routes
 
 setup_routes(app)
 
-# from .create_mock_db import populate_database
+# Run populate_database only in development environment
+if app.config.get("ENV") == "development" or app.config.get("ENV") == "testing":
+    print("Populating database...")
+    from .create_mock_db import populate_database
 
-# populate_database(app, db)
+    populate_database(app, db)
 
 if __name__ == "__main__":
     app.run()

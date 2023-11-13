@@ -49,7 +49,22 @@ interface Post {
   club?: string;
 }
 
-const PostCreatePage: React.FC = () => {
+interface User {
+  userId: string;
+  username: string;
+}
+
+interface PostDetailsProps {
+  token: string;
+  user: User;
+  setAuth: (token: string | null, user: User | null) => void;
+}
+
+const PostCreatePage: React.FC<PostDetailsProps> = ({
+  token,
+  user,
+  setAuth,
+}) => {
   const navigate = useNavigate();
 
   const [editedPost, setEditedPost] = useState<Post>({
@@ -60,7 +75,7 @@ const PostCreatePage: React.FC = () => {
     extended_description: "Dive deeper into your event/club here! 🌊",
     tags: [],
     id: 0,
-    author_id: 1,
+    author_id: parseInt(user.userId),
     is_published: true,
     end_time: new Date(),
     like_count: 0,

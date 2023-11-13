@@ -54,7 +54,7 @@ class EventDataLayer(DataLayer):
         location,
         start_time,
         end_time,
-        author_name,
+        author_id,
         is_published,
         club,
         image=None,
@@ -116,10 +116,10 @@ class EventDataLayer(DataLayer):
         event.club = club
 
         with app.app_context():
-            author = User.query.filter_by(username=author_name).first()
+            author = User.query.filter_by(id=author_id).first()
             if author is None:
-                logging.info(f"Username {author_name} {self.UNABLE_TO_POST}")
-                raise TypeError(f"Username {author_name} {self.UNABLE_TO_POST}")
+                logging.info(f"User {author_id} {self.UNABLE_TO_POST}")
+                raise TypeError(f"User {author_id} {self.UNABLE_TO_POST}")
             event.author_id = author.id
 
             if is_published is None:
@@ -298,6 +298,20 @@ class EventDataLayer(DataLayer):
                 raise ValueError(f"Event with id {id} {self.DOES_NOT_EXIST}")
             return event
 
+    def delete_event_by_id(self, id):
+        """
+        Deletes the event with the given event id.
+        """
+        with app.app_context():
+            event = Event.query.filter_by(id=id).first()
+            if event is None:
+                logging.info(f"Event with id {id} does not exist and cannot be deleted")
+                raise ValueError(
+                    f"Event with id {id} does not exist and cannot be deleted"
+                )
+            db.session.delete(event)
+            db.session.commit()
+
     def get_authored_events(self, author_id):
         """
         Returns all events authored by the given author_id.
@@ -318,17 +332,6 @@ class EventDataLayer(DataLayer):
             if event.tags == None:
                 return []
             return event.tags
-
-    def delete_event_by_id(self, event_id):
-        """
-        Deletes the event with the given event id.
-        """
-        with app.app_context():
-            event = Event.query.filter_by(id=event_id).first()
-            if event is None:
-                logging.info(f"Event with id {event_id} {self.DOES_NOT_EXIST}")
-                raise ValueError(f"Event with id {event_id} {self.DOES_NOT_EXIST}")
-            db.session.delete(event)
 
     def update_image(self, event_id, image):
         with app.app_context():

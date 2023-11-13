@@ -21,7 +21,7 @@ def test_event_creation(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
-
+    retrievedUser = user.get_user(user_identifier="testuser1")
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
 
@@ -42,7 +42,7 @@ def test_event_creation(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=image_data,
@@ -73,6 +73,7 @@ def test_null_location(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -83,7 +84,7 @@ def test_null_location(test_client):
             location=None,
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -108,6 +109,7 @@ def test_null_start_time(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -118,7 +120,7 @@ def test_null_start_time(test_client):
             location="Toronto",
             start_time=None,
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -143,6 +145,7 @@ def test_incorrect_start_time_format(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -153,7 +156,7 @@ def test_incorrect_start_time_format(test_client):
             location="Toronto",
             start_time="2023-10-03",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -178,6 +181,7 @@ def test_null_end_time(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -188,7 +192,7 @@ def test_null_end_time(test_client):
             location="Toronto",
             start_time="2023-10-03 4:00:00",
             end_time=None,
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -213,6 +217,7 @@ def test_incorrect_end_time_format(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -223,7 +228,7 @@ def test_incorrect_end_time_format(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -248,6 +253,7 @@ def test_event_time(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     event = EventDataLayer()
     try:
@@ -258,7 +264,7 @@ def test_event_time(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 3:00:00",
-            author_name="testuser2",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -284,6 +290,8 @@ def test_author_id(test_client):
         password_salt="testpassword",
     )
 
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
     event = EventDataLayer()
     try:
         event.create_event(
@@ -293,7 +301,7 @@ def test_author_id(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser2",
+            author_id=retrievedUser.id + 1,
             club="Club 1",
             is_published=True,
             image=None,
@@ -303,7 +311,7 @@ def test_author_id(test_client):
         assert value_error == None
     except TypeError as type_error:
         logging.debug(f"Error: {type_error}")
-        assert str(type_error) == "Username testuser2 unable to post"
+        assert str(type_error) == f"User {retrievedUser.id+1} unable to post"
 
     with app.app_context():
         assert User.query.filter_by(username="testuser1").first() != None
@@ -319,6 +327,8 @@ def test_null_published(test_client):
         password_salt="testpassword",
     )
 
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
     event = EventDataLayer()
     try:
         event.create_event(
@@ -328,7 +338,7 @@ def test_null_published(test_client):
             location="Toronto",
             start_time="2023-10-03 4:00:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=None,
             image=None,
@@ -353,6 +363,7 @@ def test_event_update(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser10")
 
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
@@ -365,7 +376,7 @@ def test_event_update(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser10",
+        author_id=retrievedUser.id,
         club="club 1",
         is_published=True,
         image=None,
@@ -414,7 +425,7 @@ def test_event_update(test_client):
         output_directory.mkdir(parents=True, exist_ok=True)
         output_image_path = output_directory / "retrieved_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_event_update_delete_tag(test_client):
@@ -425,6 +436,8 @@ def test_event_update_delete_tag(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+
+    retrievedUser = user.get_user(user_identifier="testuser10")
 
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
@@ -437,7 +450,7 @@ def test_event_update_delete_tag(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser10",
+        author_id=retrievedUser.id,
         club="club 1",
         is_published=True,
         image=None,
@@ -477,6 +490,7 @@ def test_get_all_events(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser10")
 
     event = EventDataLayer()
     event.create_event(
@@ -486,7 +500,7 @@ def test_get_all_events(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser10",
+        author_id=retrievedUser.id,
         club="club 1",
         is_published=True,
         image=None,
@@ -498,7 +512,7 @@ def test_get_all_events(test_client):
         location="Vancouver",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser10",
+        author_id=retrievedUser.id,
         club="club 2",
         is_published=True,
         image=None,
@@ -527,6 +541,7 @@ def test_event_by_id(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser10")
 
     event = EventDataLayer()
     event.create_event(
@@ -536,7 +551,7 @@ def test_event_by_id(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser10",
+        author_id=retrievedUser.id,
         club="club 1",
         is_published=True,
         image=None,
@@ -565,6 +580,7 @@ def test_null_club(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
@@ -578,7 +594,7 @@ def test_null_club(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club=None,
             is_published=True,
             image=None,
@@ -596,6 +612,68 @@ def test_null_club(test_client):
         assert event.club == None
 
 
+def test_delete_event_by_id(test_client):
+    user = UserDataLayer()
+    user.create_user(
+        username="testuser1",
+        email="testuser1@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    retrievedUser = user.get_user(user_identifier="testuser1")
+    user.create_user(
+        username="testuser2",
+        email="testuser2@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    retrievedUser2 = user.get_user(user_identifier="testuser2")
+
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=retrievedUser.id,
+        is_published=True,
+        image=None,
+        extended_description="An extended description",
+        club="Test Club",
+    )
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 2 for club 2",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=retrievedUser2.id,
+        is_published=True,
+        image=None,
+        extended_description="An extended description",
+        club="Test Club",
+    )
+    try:
+        with app.app_context():
+            created_event = Event.query.filter_by(title="Event 1").first()
+            assert created_event is not None
+            assert created_event.title == "Event 1"
+            assert created_event.author_id == retrievedUser.id
+        event.delete_event_by_id(created_event.id)
+        print("Deleted event")
+    except ValueError as value_error:
+        logging.debug(f"Error: {value_error}")
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f"Error: {type_error}")
+        assert type_error == None
+
+    with app.app_context():
+        deleted_event = Event.query.filter_by(title="Event 1").first()
+        assert deleted_event is None
+
+
 def test_get_tag_ids_for_event(test_client):
     user = UserDataLayer()
     user.create_user(
@@ -604,6 +682,8 @@ def test_get_tag_ids_for_event(test_client):
         password_hash="testpassword",
         password_salt="testpassword",
     )
+
+    retrievedUser = user.get_user(user_identifier="testuser1")
 
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
@@ -620,7 +700,7 @@ def test_get_tag_ids_for_event(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             tags=["Tag 1"],
         )
     except ValueError as value_error:
@@ -657,6 +737,8 @@ def test_search_by_keyword(test_client):
         password_salt="testpassword",
     )
 
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
     event = EventDataLayer()
     event.create_event(
         title="Event 1",
@@ -665,7 +747,7 @@ def test_search_by_keyword(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser1",
+        author_id=retrievedUser.id,
         club="club 1",
         is_published=True,
         image=None,
@@ -677,7 +759,7 @@ def test_search_by_keyword(test_client):
         location="UC college",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_name="testuser1",
+        author_id=retrievedUser.id,
         club="Faculty Event Planning",
         is_published=True,
         image=None,
@@ -707,6 +789,8 @@ def test_update_image(test_client):
         password_salt="testpassword",
     )
 
+    retrievedUser = user.get_user(user_identifier="testuser1")
+
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
 
@@ -727,7 +811,7 @@ def test_update_image(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="club 1",
             is_published=True,
             image=None,
@@ -763,12 +847,12 @@ def test_update_image(test_client):
 
         output_image_path = output_directory / "update_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_update_image(test_client):
     user = UserDataLayer()
-    user.create_user(
+    user1_id = user.create_user(
         username="testuser1",
         email="testuser1@example.com",
         password_hash="testpassword",
@@ -795,7 +879,7 @@ def test_update_image(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,
@@ -831,20 +915,19 @@ def test_update_image(test_client):
 
         output_image_path = output_directory / "update_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_get_authored_events(test_client):
     user = UserDataLayer()
     event = EventDataLayer()
     try:
-        user.create_user(
+        user1_id = user.create_user(
             username="testuser1",
             email="testuser1@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         )
-
         event.create_event(
             title="Event 1",
             description="Kickoff for club 1",
@@ -852,7 +935,7 @@ def test_get_authored_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,
@@ -865,7 +948,7 @@ def test_get_authored_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,

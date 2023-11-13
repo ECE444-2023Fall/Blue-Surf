@@ -28,7 +28,7 @@ function App() {
       <Route path="/post/:postId" element={<PostDetailsPage token={token} user={user} setAuth={setAuth} />} />
       <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
       <Route path="/dashboard" element={<PersonalDashboard token={token} user={user} setAuth={setAuth}/>} />
-      <Route path="/create" element={<PostCreatePage />} />
+      <Route path="/create" element={<PostCreatePage token={token} user={user} setAuth={setAuth} />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -1,5 +1,6 @@
 .card {
   border-radius: 34px;
+  overflow: hidden;
 }
 
 .card > img {

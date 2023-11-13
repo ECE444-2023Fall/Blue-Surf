@@ -13,7 +13,7 @@ def setup(test_client):
     tag = TagDataLayer()
 
     try:
-        user.create_user(
+        user1 = user.create_user(
             username="testuser1",
             email="testuser1@example.com",
             password_hash="testpassword",
@@ -29,7 +29,7 @@ def setup(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=user1,
             club="Club 1",
             is_published=True,
             image=None,

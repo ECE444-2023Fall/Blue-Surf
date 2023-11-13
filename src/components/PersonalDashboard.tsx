@@ -5,6 +5,7 @@ import "../styles/PersonalDashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
 import SearchBar from "./SearchBar";
+import DeletePopUp from "./DeletePopUp";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +31,9 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const [selectedButton, setSelectedButton] = useState("Favourites");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+  const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
+  const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
 
   const fetchEvents = async (buttonName: string) => {
     try {
@@ -74,8 +78,46 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
     navigate("/create");
   };
 
+  const handleDelete = async (confirmed: boolean) => {
+    if (confirmed) {
+      try {
+        const response = await fetch(`/api/delete-post/${postToBeDeleted}`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          data.access_token && setAuth(data.access_token, user);
+          fetchEvents(selectedButton);
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Delete request failed");
+        }
+      } catch (error) {
+        console.error("Delete Post Error:", error);
+      }
+    }
+    setShowDeletePopUp(false);
+  };
+
+  const setUpDelete = (postId: number, postTitle: string) => {
+    setPostToBeDeleted(postId);
+    setPosTitleToBeDeleted(postTitle);
+    setShowDeletePopUp(true);
+  };
+
   return (
     <div className="container dashboard-wrapper">
+      {showDeletePopUp && posTitleToBeDeleted && (
+        <DeletePopUp
+          postTitle={posTitleToBeDeleted}
+          handleDelete={handleDelete}
+          page="dashboard"
+        />
+      )}
       <div className="custom-container">
         <div className="content-container">
           <div className="row">
@@ -137,6 +179,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                 token={token}
                 user={user}
                 setAuth={setAuth}
+                showDeletePopUp={setUpDelete}
                 {...event}
               />
             ))
