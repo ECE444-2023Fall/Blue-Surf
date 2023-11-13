@@ -9,12 +9,13 @@ import SignupPage from "./components/SignupPage";
 import Profile from "./components/Profile";
 import PostDetailsPage from "./components/PostDetailsPage";
 import PostCreatePage from "./components/PostCreatePage";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   Navigate,
+// } from "react-router-dom";
+import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PersonalDashboard from "./components/PersonalDashboard"
 import 'react-datepicker/dist/react-datepicker.css';
 

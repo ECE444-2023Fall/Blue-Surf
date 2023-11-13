@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bluesurf
+    env: static
+    buildCommand: npm install && npm run build
+    startCommand: serve -s build
+    staticPublishPath: ./build
+
+  - type: web
+    name: bluesurf-server
+    env: python
+    buildCommand: pip install -r requirements.txt && npm install
+    startCommand: npm run start-backend

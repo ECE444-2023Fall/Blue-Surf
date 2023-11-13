@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
+import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
+
 
 interface User {
   userId: string;
@@ -35,7 +37,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const fetchImage = async () => {
     try {
-      const postImageResponse = await fetch(`/api/${postId}/image`);
+      const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
       if (!postImageResponse || !postImageResponse.ok) {
         throw new Error("Cannot fetch post image.");
       }
@@ -43,14 +45,14 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       // Get the image data as a Blob
       const imageBlob = await postImageResponse.blob();
 
-      console.log("blob", imageBlob);
+      // console.log("blob", imageBlob);
 
       // Create a File object with the image data
       const newImageFile = new File([imageBlob], `image_${postId}.png`, {
         type: "image/png", // Adjust the type based on your image format
       });
 
-      console.log("file", newImageFile);
+      // console.log("file", newImageFile);
 
       // Set the image file in state
       setImageFile(newImageFile);
@@ -73,9 +75,9 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const toggleLike = async () => {
     try {
-      let route = "/api/like";
+      let route = `${API_URL}/api/like`;
       if (isLiked) {
-        route = "/api/unlike";
+        route = `${API_URL}/api/unlike`;
       }
       const response = await fetch(`${route}/${PostCardProps.id}`, {
         method: "POST",
@@ -99,7 +101,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("/api/favourites", {
+      const response = await fetch(`${API_URL}/api/favourites`, {
         headers: {
           Authorization: "Bearer " + PostCardProps.token,
         },

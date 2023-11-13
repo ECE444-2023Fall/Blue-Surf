@@ -1,30 +1,53 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import json
-#from models import User
+import os
+from pathlib import Path
+
+
+# from models import User
 from datetime import datetime, timedelta, timezone
-from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
-                               unset_jwt_cookies, jwt_required, JWTManager
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    unset_jwt_cookies,
+    jwt_required,
+    JWTManager,
+)
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config["JWT_SECRET_KEY"] = "NEED TO CHANGE"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 # SQLite
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
-#configure flask application instance 
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bluesurf.db"
+# configure flask application instance
 jwt = JWTManager(app)
-# PostgreSQL database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://ncuhktvhlxcvlz:60726df95007500597f9e6f5a2b261a8a25bc456736f82d29778743e5c90c649@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4cqob0s0vcv6f'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+DATABASE = "bluesurf-postgresql"
+
+url = os.getenv("DATABASE_URL", f"sqlite:///{Path(basedir).joinpath(DATABASE)}")
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql://", 1)
+SQLALCHEMY_DATABASE_URI = url
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 
 bootstrap = Bootstrap(app)
 # Initialize DB
 db = SQLAlchemy(app)
 
-import api
-api.setup_routes(app)
+from .api import setup_routes
 
+setup_routes(app)
+
+from .create_mock_db import populate_database
+
+populate_database(app, db)
 
 if __name__ == "__main__":
     app.run()

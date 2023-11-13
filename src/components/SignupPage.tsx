@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../styles/SignupPage.css";
+import API_URL from '../config';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -75,7 +77,7 @@ const SignupPage: React.FC = () => {
 
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -244,7 +246,7 @@ const SignupPage: React.FC = () => {
               </div>
             </form>
             <p className="signup-subtext bottom-subtext">
-              Already have an account? <a href="/login">Login</a>
+              Already have an account? <Link to ="/login">Login</Link>
             </p>
           </div>
         </div>

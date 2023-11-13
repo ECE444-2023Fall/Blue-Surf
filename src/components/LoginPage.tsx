@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginPage.css";
+import API_URL from '../config';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -58,7 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
     }
 
     try {
-      const response = await fetch("/api/token", {
+      const response = await fetch(`${API_URL}/api/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +182,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
             </form>
             <p className="login-subtext bottom-subtext">
               {" "}
-              New to BlueSurf? <a href="/register">Join Now</a>
+              New to BlueSurf? <Link to="/register">Join Now</Link>
             </p>
           </div>
         </div>

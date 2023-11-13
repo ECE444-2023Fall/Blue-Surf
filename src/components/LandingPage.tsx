@@ -7,6 +7,7 @@ import FilterField from "./FilterField";
 import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
+import API_URL from '../config';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -57,7 +58,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const navigate = useNavigate();
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -84,7 +85,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/"); // Change this to the actual API endpoint
+      const response = await fetch(`${API_URL}/api/`); // Change this to the actual API endpoint
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);

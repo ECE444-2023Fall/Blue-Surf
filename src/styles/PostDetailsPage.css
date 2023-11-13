@@ -209,3 +209,26 @@
 .trash-icon-custom-size-details-page {
     font-size: 35px;
 }
+/*Testing push/puul */
+.error-date {
+    margin-top: 5px;
+    background-color: #ffcccc;
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-family: Outfit;
+    text-align: center;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+.trash-button-details-page {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: fit-content;
+  }
+  
+.trash-icon-custom-size-details-page {
+    font-size: 35px;
+}
