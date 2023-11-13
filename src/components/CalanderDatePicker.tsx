@@ -21,7 +21,7 @@ const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
   const onChange = (dates: [Date | null, Date | null] | null) => {
     if (dates) {
       const [start, end] = dates;
-      if(start && end) {
+      if(start) {
         setStartDate(start);
         setEndDate(end);
         onDateChange(start, end);
