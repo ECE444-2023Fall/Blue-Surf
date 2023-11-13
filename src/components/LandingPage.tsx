@@ -26,7 +26,7 @@ const filterOptionValuesByAPI = [
   },
   {
     title: "Location",
-    values: ["All", "Myhal 5th Floor", "Bahen Lobby", "Remote"],
+    values: ["All", "Myhal 5th Floor", "Bahen", "Remote"],
   },
   {
     title: "Club",
@@ -55,30 +55,40 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
   const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
   const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
+  const [filterParams, setFilterParams] = useState<{ [key: string]: string }>(
+    {}
+  );
   const navigate = useNavigate();
 
-  const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch(`${API_URL}/api/get-all-tags`);
+  const getFilterNames = async (filterName: string): Promise<any[] | null> => {
+    let routeName = "tags";
+    if (filterName === "Location") {
+      routeName = "locations";
+    } else if (filterName === "Club") {
+      routeName = "clubs";
+    }
+
+    const response = await fetch(`${API_URL}/api/get-all-${routeName}`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
       return data;
     } else {
-      console.error("Failed to fetch all tag names");
+      console.error(`Failed to fetch all ${filterName} names`);
       return null;
     }
   };
 
-  const fetchDataAndInitializeTags = async () => {
-    const data = await getTagNames();
+  const fetchDataAndInitializeFilters = async (filterName: string) => {
+    const data = await getFilterNames(filterName);
     if (data) {
       const tagEntry = filterOptionValuesByAPI.find(
-        (entry) => entry.title === "Tag"
+        (entry) => entry.title === filterName
       );
       if (tagEntry) {
         tagEntry.values = ["All", ...data];
       } else {
-        filterOptionValuesByAPI.push({ title: "Tag", values: data });
+        filterOptionValuesByAPI.push({ title: filterName, values: data });
       }
     }
   };
@@ -100,19 +110,79 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     }
   };
 
+  const handleFilterChange = async (
+    filterTitle: string,
+    selectedValue: string
+  ) => {
+    if (
+      filterTitle.toLowerCase() === "end_time" &&
+      selectedValue === "no_end_time"
+    ) {
+      setFilterParams((prevParams) => {
+        const { end_time, ...restParams } = prevParams;
+        return restParams;
+      });
+    } else if (
+      filterTitle.toLowerCase() === "start_time" &&
+      selectedValue === "no_start_time"
+    ) {
+      setFilterParams((prevParams) => {
+        const { start_time, ...restParams } = prevParams;
+        return restParams;
+      });
+    } else {
+      setFilterParams((prevParams) => ({
+        ...prevParams,
+        [filterTitle.toLowerCase()]: selectedValue,
+      }));
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
-    fetchDataAndInitializeTags();
+    fetchDataAndInitializeFilters("Tag");
+    fetchDataAndInitializeFilters("Location");
+    fetchDataAndInitializeFilters("Club");
   }, []);
 
-  const handleSearchData = (data: any) => {
-    setSearchResults(data);
+  useEffect(() => {
+    // Fetch data when filter parameters change
+    const fetchData = async () => {
+      try {
+        const queryParams = new URLSearchParams(filterParams);
+        const response = await fetch(`${API_URL}/api/filter?${queryParams}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, [filterParams]);
+
+  const handleSearchData = (query: string) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      query,
+    }));
+  };
+
+  const handleSortChange = (selectedValue: string) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      sortby: selectedValue.toLowerCase(),
+    }));
   };
 
   const handleDelete = async (confirmed: boolean) => {
     if (confirmed) {
       try {
-        const response = await fetch(`/api/delete-post/${postToBeDeleted}`, {
+        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
           method: "POST",
           headers: {
             Authorization: "Bearer " + token,
@@ -140,6 +210,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     setShowDeletePopUp(true);
   };
 
+  
   return (
     <div className="landing-page-wrapper">
       <div className="row">
@@ -149,6 +220,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
               key={index}
               title={option.title}
               values={option.values}
+              onFilterChange={handleFilterChange}
             />
           ))}
         </div>
@@ -160,7 +232,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
           </div>
           <div className="row">
             <div className="col-12">
-              <SortBy options={["Sort Option 1", "Sort Option 2"]} />
+              <SortBy
+                options={[
+                  "Not Selected",
+                  "Alphabetical",
+                  "Trending",
+                  "Start Time",
+                ]}
+                onSortChange={handleSortChange}
+              />
             </div>
           </div>
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 gx-3 gy-3">

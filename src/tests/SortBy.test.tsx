@@ -5,10 +5,11 @@ import SortBy from "../components/SortBy";
 
 test("SortBy component renders with provided options", () => {
   const options = ["Option 1", "Option 2"];
+  const onSortChange = jest.fn();
 
-  render(<SortBy options={options} />);
+  render(<SortBy options={options} onSortChange={onSortChange} />);
 
-  expect(screen.getByText('Sort by')).toBeInTheDocument();
+  expect(screen.getByText("Sort by")).toBeInTheDocument();
 
   const selectElement = screen.getByRole("combobox");
 

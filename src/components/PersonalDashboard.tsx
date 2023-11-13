@@ -81,7 +81,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const handleDelete = async (confirmed: boolean) => {
     if (confirmed) {
       try {
-        const response = await fetch(`/api/delete-post/${postToBeDeleted}`, {
+        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
           method: "POST",
           headers: {
             Authorization: "Bearer " + token,

@@ -1,6 +1,7 @@
 from ..app import app, db
 from ..models import Tag, Event
 from .abstract import DataLayer
+from sqlalchemy import func
 import logging
 
 """
@@ -20,7 +21,7 @@ class TagDataLayer(DataLayer):
         Returns a list of strings containing all the existing tags in the database.
         """
         with app.app_context():
-            tags = Tag.query.all()
+            tags = Tag.query.order_by(func.lower(Tag.name)).all()
         tag_names = [tag.name for tag in tags]
         return tag_names
 
