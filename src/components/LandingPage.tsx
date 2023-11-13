@@ -7,7 +7,7 @@ import FilterField from "./FilterField";
 import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
-import API_URL from '../config';
+import API_URL from "../config";
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -71,7 +71,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     const response = await fetch(`${API_URL}/api/get-all-${routeName}`);
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
       return data;
     } else {
       console.error(`Failed to fetch all ${filterName} names`);
@@ -99,7 +98,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);
-        console.log(data);
       } else {
         console.error("Failed to fetch data");
       }
@@ -182,12 +180,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const handleDelete = async (confirmed: boolean) => {
     if (confirmed) {
       try {
-        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/api/delete-post/${postToBeDeleted}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -210,7 +211,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     setShowDeletePopUp(true);
   };
 
-  
   return (
     <div className="landing-page-wrapper">
       <div className="row">

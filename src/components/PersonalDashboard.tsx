@@ -4,12 +4,11 @@ import "./../App.css";
 import "../styles/PersonalDashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
-import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import API_URL from '../config';
+import API_URL from "../config";
 
 interface User {
   userId: string;
@@ -81,12 +80,15 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const handleDelete = async (confirmed: boolean) => {
     if (confirmed) {
       try {
-        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/api/delete-post/${postToBeDeleted}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -122,12 +124,6 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
         <div className="content-container">
           <div className="row">
             <div className="col-md-12">
-              <div className="row">
-                <div className="col-12">
-                  <SearchBar onDataReceived={handleSearchData} />
-                </div>
-              </div>
-              <div></div>
               <div className="row">
                 <div className="col-12 my-3">
                   <div className="d-flex dashboard-buttons">
