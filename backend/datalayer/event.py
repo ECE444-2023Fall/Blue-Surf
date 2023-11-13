@@ -286,13 +286,14 @@ class EventDataLayer(DataLayer):
         with app.app_context():
             events = Event.query.all()
             return events
-        
+
     def get_all_locations(self):
         with app.app_context():
             locations = (
                 db.session.query(Event.location)
                 .filter(Event.location != "")
                 .distinct()
+                .order_by(func.lower(Event.location))
                 .all()
             )
             return [loc[0] for loc in locations]
@@ -300,10 +301,14 @@ class EventDataLayer(DataLayer):
     def get_all_clubs(self):
         with app.app_context():
             clubs = (
-                db.session.query(Event.club).filter(Event.club != "").distinct().all()
+                db.session.query(Event.club)
+                .filter(Event.club != "")
+                .order_by(func.lower(Event.club))
+                .distinct()
+                .all()
             )
             return [club[0] for club in clubs]
-        
+
     def get_events_by_tag(self, tag_name):
         with app.app_context():
             tag = Tag.query.filter_by(name=tag_name).first()
@@ -452,7 +457,7 @@ class EventDataLayer(DataLayer):
                     query = query.filter(
                         and_(
                             func.date(Event.start_time) >= start_date,
-                            func.date(Event.end_time) <= end_date
+                            func.date(Event.end_time) <= end_date,
                         )
                     )
             elif start_time is not None and end_time is None:

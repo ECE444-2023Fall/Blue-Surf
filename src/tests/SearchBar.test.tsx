@@ -2,6 +2,7 @@ import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
+import API_URL from '../config';
 import SearchBar, { SearchBarProps } from '../components/SearchBar'; // Update the path and import
 
 describe('SearchBar Component', () => {
@@ -51,7 +52,7 @@ describe('SearchBar Component', () => {
     });
 
     await waitFor(() => {
-      expect((global as any).fetch).toHaveBeenCalledWith('/api/autosuggest?query=' + mockSearchQuery);
+      expect((global as any).fetch).toHaveBeenCalledWith(`${API_URL}/api/autosuggest?query=` + mockSearchQuery);
     });
   });
 
