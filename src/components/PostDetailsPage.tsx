@@ -378,6 +378,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
       if (response.ok) {
         setIsLiked(!isLiked);
+        editedPost.like_count += !isLiked ? 1 : -1
       } else {
         const data = await response.json();
         throw new Error(data["error message"]);
@@ -680,11 +681,12 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   <button
                     className={`like-button-details ${
                       isLiked ? "liked-details" : ""
-                    }`}
+                    } d-flex`}
                     onClick={toggleLike}
                     data-testid="like-button"
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                    {isAuthor && (<div className="like-count">{editedPost.like_count}</div>)}
                   </button>
                 )}
               </div>
