@@ -425,7 +425,7 @@ def test_event_update(test_client):
         output_directory.mkdir(parents=True, exist_ok=True)
         output_image_path = output_directory / "retrieved_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_event_update_delete_tag(test_client):
@@ -847,12 +847,12 @@ def test_update_image(test_client):
 
         output_image_path = output_directory / "update_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_update_image(test_client):
     user = UserDataLayer()
-    user.create_user(
+    user1_id = user.create_user(
         username="testuser1",
         email="testuser1@example.com",
         password_hash="testpassword",
@@ -871,8 +871,6 @@ def test_update_image(test_client):
     with open(image_file_path, "rb") as image_file:
         image_data = image_file.read()
 
-    retrievedUser = user.get_user(user_identifier="testuser1")
-
     try:
         event.create_event(
             title="Event 1",
@@ -881,7 +879,7 @@ def test_update_image(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_id=retrievedUser.id,
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,
@@ -917,22 +915,19 @@ def test_update_image(test_client):
 
         output_image_path = output_directory / "update_image.png"
         # Save the image to a file
-        image.save(output_image_path)
+        # image.save(output_image_path)
 
 
 def test_get_authored_events(test_client):
     user = UserDataLayer()
     event = EventDataLayer()
     try:
-        user.create_user(
+        user1_id = user.create_user(
             username="testuser1",
             email="testuser1@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         )
-
-        retrievedUser = user.get_user(user_identifier="testuser1")
-
         event.create_event(
             title="Event 1",
             description="Kickoff for club 1",
@@ -940,7 +935,7 @@ def test_get_authored_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_id=retrievedUser.id,
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,
@@ -953,7 +948,7 @@ def test_get_authored_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_id=retrievedUser.id,
+            author_id=user1_id,
             club="club 1",
             is_published=True,
             image=None,
