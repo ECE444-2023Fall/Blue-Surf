@@ -9,7 +9,7 @@ import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import API_URL from '../config';
+import API_URL from "../config";
 const imageTemplate = require("../assets/post-template.jpg");
 
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
@@ -92,12 +92,15 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
   });
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch(`${API_URL}/api/get-all-tags`);
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error("Failed to fetch all tag names");
+    try {
+      const response = await fetch(`${API_URL}/api/get-all-tags`);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      throw new Error("Failed to fetch all tag names");
+    } catch (error) {
+      console.error("Tags Error:", error);
       return null;
     }
   };
@@ -124,14 +127,13 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         }
       }
     };
-  
+
     fetchData();
     initializeImage();
   }, []);
 
   const handleSave = async () => {
     try {
-
       if (!editedPost.title && !editedPost.location) {
         setErrorMessage("Title and Location are required fields.");
         return;
@@ -151,22 +153,19 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
           summaryAlert: "Summary cannot exceed 180 characters",
         });
         return;
-      }
-      else if (editedPost.title.length > 50) {
+      } else if (editedPost.title.length > 50) {
         setAlertMessage({
           titleAlert: "Title cannot exceed 50 characters",
           summaryAlert: "",
         });
         return;
-      }
-      else if (editedPost.description.length > 180) {
+      } else if (editedPost.description.length > 180) {
         setAlertMessage({
           titleAlert: "",
           summaryAlert: "Summary cannot exceed 180 characters",
         });
         return;
-      }
-      else{
+      } else {
         setAlertMessage({
           titleAlert: "",
           summaryAlert: "",
@@ -179,37 +178,24 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
           summaryAlert: "Summary cannot exceed 180 characters",
         });
         return;
-      }
-      else if (editedPost.title.length > 50) {
+      } else if (editedPost.title.length > 50) {
         setAlertMessage({
           titleAlert: "Title cannot exceed 50 characters",
           summaryAlert: "",
         });
         return;
-      }
-      else if (editedPost.description.length > 180) {
+      } else if (editedPost.description.length > 180) {
         setAlertMessage({
           titleAlert: "",
           summaryAlert: "Summary cannot exceed 180 characters",
         });
         return;
-      }
-      else{
+      } else {
         setAlertMessage({
           titleAlert: "",
           summaryAlert: "",
         });
       }
-
-
-      // const formattedStartDate = editedPost.start_time
-      //   .toISOString()
-      //   .slice(0, 19)
-      //   .replace("T", " ");
-      // const formattedEndDate = editedPost.end_time
-      //   .toISOString()
-      //   .slice(0, 19)
-      //   .replace("T", " ");
 
       const formattedStartDate = moment(editedPost.start_time)
         .tz("America/New_York") // Replace 'desiredTimeZone' with the target time zone
@@ -225,12 +211,12 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         end_time: formattedEndDate,
       };
 
-      if(editedPost.end_time < editedPost.start_time){
+      if (editedPost.end_time < editedPost.start_time) {
         setDateMessage("Pick a valid end date");
         return;
       }
 
-      if(editedPost.end_time < editedPost.start_time){
+      if (editedPost.end_time < editedPost.start_time) {
         setDateMessage("Pick a valid end date");
         return;
       }
@@ -250,12 +236,6 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
       // upload the image
       const formData = new FormData();
       formData.append("image", imageFile!);
-
-      // console.log("FormData:");
-
-      // for (const [key, value] of formData.entries()) {
-      //   console.log(key, value);
-      // }
 
       // Send a POST request to the backend to update the post
       const postImageResponse = await fetch(
@@ -347,7 +327,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         <div className="row g-5 m-2">
           <div className="col-md-6">
             <img
-              src={imageFile ? URL.createObjectURL(imageFile): imageTemplate}
+              src={imageFile ? URL.createObjectURL(imageFile) : imageTemplate}
               className="card-img-top rounded-edge"
               alt="..."
             />
@@ -508,9 +488,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
                     }
                   }}
                 />
-                {dateMessage && (
-                <div className="error-date">{dateMessage}</div>
-              )}
+                {dateMessage && <div className="error-date">{dateMessage}</div>}
               </div>
             </div>
             <div className="subtitle">Location</div>

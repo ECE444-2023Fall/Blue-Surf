@@ -9,7 +9,7 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import API_URL from '../config';
+import API_URL from "../config";
 const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface Post {
@@ -73,12 +73,16 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch(`${API_URL}/api/get-all-tags`);
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error("Failed to fetch all tag names");
+    try {
+      const response = await fetch(`${API_URL}/api/get-all-tags`);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        throw new Error("Failed to fetch all tag names");
+      }
+    } catch (error) {
+      console.error("Tag Error:", error);
       return null;
     }
   };
@@ -95,7 +99,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         data.access_token && setAuth(data.access_token, user);
         return data;
       } else {
-        console.error("Failed to fetch favourited events");
+        throw new Error("Failed to fetch favourited events");
       }
     } catch (error) {
       console.error(
@@ -135,14 +139,10 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         // Get the image data as a Blob
         const imageBlob = await postImageResponse.blob();
 
-        // console.log("blob", imageBlob);
-
         // Create a File object with the image data
         const imageFile = new File([imageBlob], `image_${postId}.png`, {
           type: "image/png", // Adjust the type based on your image format
         });
-
-        // console.log("file", imageFile);
 
         // Set the image file in state
         setImageFile(imageFile);
@@ -190,7 +190,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     if (editedPost.end_time < editedPost.start_time) {
       setDateMessage("Pick a valid end date");
       return;
-    }else{
+    } else {
       setDateMessage("");
     }
 
@@ -248,34 +248,31 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       });
 
       if (response.ok) {
-        console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
       } else {
-        console.error("Failed to update post.");
+        throw new Error("Failed to update post.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Update Post Error:", error);
     }
 
     // Append the image data to the FormData
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-    // console.log("FormData:");
-
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`${API_URL}/api/update-post-image/${postId}`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${API_URL}/api/update-post-image/${postId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         setIsEditing(false);
@@ -283,10 +280,10 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
       } else {
-        console.error("Failed to update post.");
+        throw new Error("Failed to update post.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Update Image Error:", error);
     }
   };
 
@@ -326,35 +323,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const handleDeleteButtonClick = () => {
     setShowDeletePopUp(true);
   };
-
-  // const handleDelete = async (confirmed: boolean) => {
-  //   if (confirmed) {
-  //     try {
-  //       const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         data.access_token && setAuth(data.access_token, user);
-  //         navigate(-1);
-  //       } else {
-  //         const errorMessage = await response.text();
-  //         throw new Error(errorMessage || "Delete request failed");
-  //       }
-  //     } catch (error) {
-  //       console.error("Delete Post Error:", error);
-  //     }
-  //   }
-  //   setShowDeletePopUp(false);
-  // };
-
-  // const handleDeleteButtonClick = () => {
-  //   setShowDeletePopUp(true);
-  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -421,7 +389,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   return (
     <div className="post-details-wrapper">
-      {showDeletePopUp && <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />}
+      {showDeletePopUp && (
+        <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />
+      )}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2 auto d-flex justify-content-center align-items-center">
           <a
@@ -667,9 +637,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.end_time.toLocaleString()
                 )}
               </div>
-              {dateMessage && (
-                <div className="error-date">{dateMessage}</div>
-              )}
+              {dateMessage && <div className="error-date">{dateMessage}</div>}
               {/* LOCATION */}
               <div className="subtitle">Location</div>
               <div className="details">

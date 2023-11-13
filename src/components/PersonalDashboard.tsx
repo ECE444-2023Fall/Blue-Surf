@@ -51,7 +51,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
         data.access_token && setAuth(data.access_token, user); //Refreshes token if needed
         setSearchResults(data);
       } else {
-        console.error("Failed to fetch data");
+        throw new Error("Failed to fetch data");
       }
     } catch (error) {
       console.error("An error occurred while fetching data", error);

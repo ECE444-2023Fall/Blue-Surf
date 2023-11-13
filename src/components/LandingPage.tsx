@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/LandingPage.css";
 import PostCard from "./PostCard";
@@ -9,16 +8,6 @@ import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
 import API_URL from "../config";
 
-// this is mock data, to be replaced later once database is setup
-const postCardData = {
-  title: "Fall Career Week",
-  date: new Date(),
-  location: "Myhal 5th Floor",
-  description:
-    "Come out to the Fall Career Week to meet recruiters from companies like RBC, Tesla and more!",
-  tags: ["Professional Development"],
-};
-
 const filterOptionValuesByAPI = [
   {
     title: "Tag",
@@ -26,15 +15,15 @@ const filterOptionValuesByAPI = [
   },
   {
     title: "Location",
-    values: ["All", "Myhal 5th Floor", "Bahen", "Remote"],
+    values: ["All"],
   },
   {
     title: "Club",
-    values: ["All", "YNCN", "Dance Club", "Design Club", "Sport Club"],
+    values: ["All"],
   },
   {
     title: "Date",
-    values: ["All", "Today", "Tomorrow", "Never"],
+    values: ["All"],
   },
 ];
 
@@ -58,8 +47,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [filterParams, setFilterParams] = useState<{ [key: string]: string }>(
     {}
   );
-  const navigate = useNavigate();
-
   const getFilterNames = async (filterName: string): Promise<any[] | null> => {
     let routeName = "tags";
     if (filterName === "Location") {
@@ -68,12 +55,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
       routeName = "clubs";
     }
 
-    const response = await fetch(`${API_URL}/api/get-all-${routeName}`);
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error(`Failed to fetch all ${filterName} names`);
+    try {
+      const response = await fetch(`${API_URL}/api/get-all-${routeName}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      throw new Error(`Failed to fetch all ${filterName} names`);
+    } catch (error) {
+      console.error("Fetch tag error: ", error);
       return null;
     }
   };
@@ -99,7 +89,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
         const data = await response.json();
         setSearchResults(data);
       } else {
-        console.error("Failed to fetch data");
+        throw new Error("Failed to fetch data");
       }
     } catch (error) {
       console.error("An error occurred while fetching data", error);
@@ -153,10 +143,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
           const data = await response.json();
           setSearchResults(data);
         } else {
-          console.error("Failed to fetch data");
+          throw new Error("Failed to fetch data");
         }
       } catch (error) {
-        console.error("An error occurred while fetching data", error);
+        console.error("An error occurred while filtering", error);
       }
     };
 

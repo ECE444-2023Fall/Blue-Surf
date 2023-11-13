@@ -54,11 +54,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
       return;
     }
 
-    if (!loginForm.userIdentifier || !loginForm.password) {
-      console.error("Missing fields");
-      return;
-    }
-
     try {
       const response = await fetch(`${API_URL}/api/token`, {
         method: "POST",
