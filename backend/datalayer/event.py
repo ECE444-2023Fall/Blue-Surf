@@ -1,10 +1,10 @@
 from ..app import app, db
-from ..models import User, Event, Tag
+from ..models import User, Event, Tag, event_tags
 from .abstract import DataLayer
 
 from datetime import datetime
 import logging
-from sqlalchemy import or_
+from sqlalchemy import or_, and_, func
 from PIL import Image
 import io
 
@@ -286,6 +286,34 @@ class EventDataLayer(DataLayer):
         with app.app_context():
             events = Event.query.all()
             return events
+        
+    def get_all_locations(self):
+        with app.app_context():
+            locations = (
+                db.session.query(Event.location)
+                .filter(Event.location != "")
+                .distinct()
+                .all()
+            )
+            return [loc[0] for loc in locations]
+
+    def get_all_clubs(self):
+        with app.app_context():
+            clubs = (
+                db.session.query(Event.club).filter(Event.club != "").distinct().all()
+            )
+            return [club[0] for club in clubs]
+        
+    def get_events_by_tag(self, tag_name):
+        with app.app_context():
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if tag is None:
+                logging.info(f"Tag does not exist")
+                raise ValueError(f"Tag does not exist")
+            events = (
+                Event.query.join(event_tags).join(Tag).filter(Tag.id == tag.id).all()
+            )
+            return events
 
     def get_event_by_id(self, id):
         """
@@ -346,3 +374,107 @@ class EventDataLayer(DataLayer):
 
             event.image = image
             db.session.commit()
+
+    def search_filter_sort(
+        self,
+        tag_name=None,
+        location=None,
+        club=None,
+        start_time=None,
+        end_time=None,
+        keyword=None,
+        sort_by=None,
+    ):
+        """
+        Returns a list of Event objects based on the optional tag name, search keyword, and sort criteria.
+        """
+
+        with app.app_context():
+            # Base query without any filters
+            query = Event.query
+
+            # Add search filters if keyword is provided
+            if keyword is not None and len(keyword) > 0:
+                keyword_word_pattern = "% {}%".format(keyword)
+                keyword_start_pattern = "{}%".format(keyword)
+                query = query.filter(
+                    or_(
+                        Event.title.ilike(keyword_word_pattern),
+                        Event.club.ilike(keyword_word_pattern),
+                        Event.title.ilike(keyword_start_pattern),
+                        Event.club.ilike(keyword_start_pattern),
+                    )
+                )
+
+            # Add tag filter if tag_name is provided
+            if tag_name is not None and tag_name != "All":
+                tag = Tag.query.filter_by(name=tag_name).first()
+                # if a field doesn't exist, then the result will be empty
+                if tag is None:
+                    return []
+                query = query.join(event_tags).join(Tag).filter(Tag.id == tag.id)
+
+            if location is not None and len(location) > 0 and location != "All":
+                query = query.filter(Event.location.ilike("%{}%".format(location)))
+
+            if club is not None and len(club) > 0 and club != "All":
+                query = query.filter(Event.club.ilike("%{}%".format(club)))
+
+            if start_time is not None and end_time is not None:
+                if " " in str(start_time) and " " in str(end_time):
+                    start_datetime = (
+                        datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+                        if isinstance(start_time, str)
+                        else start_time
+                    )
+                    end_datetime = (
+                        datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+                        if isinstance(end_time, str)
+                        else end_time
+                    )
+                    query = query.filter(
+                        Event.start_time >= start_datetime,
+                        Event.end_time <= end_datetime,
+                    )
+                else:
+                    start_date = datetime.strptime(start_time, "%Y-%m-%d")
+                    end_date = datetime.strptime(end_time, "%Y-%m-%d")
+                    start_date = (
+                        datetime.strptime(start_time, "%Y-%m-%d").date()
+                        if isinstance(start_time, str)
+                        else start_time.date()
+                    )
+                    end_date = (
+                        datetime.strptime(end_time, "%Y-%m-%d").date()
+                        if isinstance(end_time, str)
+                        else end_time.date()
+                    )
+                    query = query.filter(
+                        and_(
+                            func.date(Event.start_time) >= start_date,
+                            func.date(Event.end_time) <= end_date
+                        )
+                    )
+            elif start_time is not None and end_time is None:
+                if " " in start_time:
+                    start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+                    query = query.filter(Event.start_time == start_time)
+                else:
+                    start_date = datetime.strptime(start_time, "%Y-%m-%d")
+                    query = query.filter(
+                        func.date(Event.start_time) == func.date(start_date)
+                    )
+
+            # Add sorting logic if sortby is provided
+            if sort_by == "alphabetical":
+                query = query.order_by(func.lower(Event.title))
+            elif sort_by == "start time":
+                query = query.order_by(Event.start_time)
+            elif sort_by == "trending":
+                query = query.order_by(Event.like_count.desc())
+            else:
+                query = query.order_by(Event.id)
+
+            # Execute the query and return the results
+            results = query.all()
+            return results

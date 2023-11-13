@@ -127,7 +127,7 @@ def create_mock_events():
             is_published=True,
             like_count=10,
             image=image_data
-        ),
+        ),[])
     ]
     return events
 

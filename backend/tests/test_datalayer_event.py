@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .test_datalayer import test_client
 
-from ..app import app
+from ..app import app, db
 from ..datalayer.user import UserDataLayer
 from ..datalayer.event import EventDataLayer
 from ..datalayer.tag import TagDataLayer

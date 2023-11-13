@@ -88,7 +88,7 @@ def setup_routes(app):
     @app.route("/api/get-all-locations", methods=["GET"])
     def get_all_locations():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             locations = event_data.get_all_locations()
@@ -108,7 +108,7 @@ def setup_routes(app):
     @app.route("/api/get-all-clubs", methods=["GET"])
     def get_all_clubs():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             clubs = event_data.get_all_clubs()
@@ -573,7 +573,7 @@ def setup_routes(app):
     @app.route("/api/filter", methods=["GET"])
     def filter_tags():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
 
