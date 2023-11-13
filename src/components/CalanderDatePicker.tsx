@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/FilterField.css";
+import "../styles/CalanderDatePicker.css";
 
 interface CalendarDatePickerProps {
-  onDateChange: (startDate: Date, endDate: Date | null) => void;
+  onDateChange: (startDate: Date | null, endDate: Date | null) => void;
 }
 
 const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
@@ -21,12 +22,17 @@ const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
   const onChange = (dates: [Date | null, Date | null] | null) => {
     if (dates) {
       const [start, end] = dates;
-      if(start) {
-        setStartDate(start);
-        setEndDate(end);
-        onDateChange(start, end);
-      }
+      setStartDate(start);
+      setEndDate(end);
+      onDateChange(start, end);
     }
+  };
+
+  const clearDates = () => {
+    setStartDate(null);
+    setEndDate(null);
+    onDateChange(null, null);
+    setDropdownOpen(false);
   };
 
   return (
@@ -50,6 +56,9 @@ const CalanderDatePicker: React.FC<CalendarDatePickerProps> = ({
             selectsRange
             inline
           />
+          <button onClick={clearDates} className="clear-button">
+            Clear
+          </button>
         </div>
       )}
     </div>

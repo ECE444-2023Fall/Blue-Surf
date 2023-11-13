@@ -115,6 +115,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
         const { end_time, ...restParams } = prevParams;
         return restParams;
       });
+    } else if (
+      filterTitle.toLowerCase() === "start_time" &&
+      selectedValue === "no_start_time"
+    ) {
+      setFilterParams((prevParams) => {
+        const { start_time, ...restParams } = prevParams;
+        return restParams;
+      });
     } else {
       setFilterParams((prevParams) => ({
         ...prevParams,

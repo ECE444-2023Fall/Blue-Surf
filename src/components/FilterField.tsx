@@ -15,7 +15,7 @@ const FilterField: React.FC<FilterOptionProps> = (FilterOptionProps: any) => {
     FilterOptionProps.onFilterChange(FilterOptionProps.title, selectedValue);
   };
 
-  const handleDateChange = (startDate: Date, endDate: Date | null) => {
+  const handleDateChange = (startDate: Date | null, endDate: Date | null) => {
     const formattedStartDate = moment(startDate)
       .tz("America/New_York")
       .format("YYYY-MM-DD");
@@ -24,7 +24,12 @@ const FilterField: React.FC<FilterOptionProps> = (FilterOptionProps: any) => {
       .tz("America/New_York")
       .format("YYYY-MM-DD");
 
-    FilterOptionProps.onFilterChange("start_time", formattedStartDate);
+    if (startDate) {
+      FilterOptionProps.onFilterChange("start_time", formattedStartDate);
+    } else {
+      FilterOptionProps.onFilterChange("start_time", "no_start_time");
+    }
+
     if (endDate) {
       FilterOptionProps.onFilterChange("end_time", formattedEndDate);
     } else {
