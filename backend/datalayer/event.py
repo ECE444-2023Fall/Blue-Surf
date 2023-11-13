@@ -261,6 +261,20 @@ class EventDataLayer(DataLayer):
             events = Event.query.all()
             return events
 
+    def get_all_unexpired_events(self):
+        """
+        Returns all events that are not happening in the past.
+        Orders them by event_id.
+        """
+        with app.app_context():
+            current_time = datetime.now()
+            unexpired_events = (
+                Event.query.filter(Event.end_time > current_time)
+                .order_by(Event.id)
+                .all()
+            )
+            return unexpired_events
+
     def get_all_locations(self):
         with app.app_context():
             locations = (

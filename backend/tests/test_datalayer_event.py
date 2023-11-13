@@ -1469,3 +1469,84 @@ def test_get_all_clubs(test_client):
         assert clubs[0] == "Bluesurf fan club"
         assert clubs[1] == "Dawson fan club"
         assert clubs[2] == "Tenzino fan club"
+
+
+def test_get_unexpired_events(test_client):
+    user = UserDataLayer()
+    user_id = user.create_user(
+        username="testuser10",
+        email="testuser10@example.com",
+        password_hash="testpassword",
+        password_salt="testpassword",
+    )
+    event = EventDataLayer()
+    event.create_event(
+        title="Event 1",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2023-10-03 3:30:00",
+        end_time="2023-10-03 4:00:00",
+        author_id=user_id,
+        club="Tenzino fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Vancouver",
+        start_time="2023-10-03 3:30:00",
+        end_time="2024-12-03 4:00:00",
+        author_id=user_id,
+        club="Dawson fan club",
+        is_published=True,
+        image=None,
+    )
+    event.create_event(
+        title="Event 3",
+        description="Kickoff event 2 for club 2",
+        extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+        location="Calgary",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
+        author_id=user_id,
+        club="Bluesurf fan club",
+        is_published=True,
+        image=None,
+    )
+    try:
+        unexpired_events = event.get_all_unexpired_events()
+
+    except (ValueError, TypeError) as error:
+        logging.debug(f"Error: {error}")
+        assert error == None
+
+    with app.app_context():
+        assert len(unexpired_events) == 2
+        assert unexpired_events[0].title == "Event 2"
+        assert unexpired_events[1].title == "Event 3"
+
+    # test with null end_time
+    try:
+        event.create_event(
+            title="Event 4",
+            description="Kickoff event 2 for club 2",
+            extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
+            location="Calgary",
+            start_time="2024-10-03 3:30:00",
+            end_time="",
+            author_id=user_id,
+            club="Bluesurf fan club",
+            is_published=True,
+            image=None,
+        )
+    except (TypeError, ValueError) as error:
+        assert ValueError != None
+        assert str(error) == "End time is not given in correct format"
+
+    with app.app_context():
+        assert len(unexpired_events) == 2
+        assert unexpired_events[0].title == "Event 2"
+        assert unexpired_events[1].title == "Event 3"
