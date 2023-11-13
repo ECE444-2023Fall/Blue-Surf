@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface User {
   userId: string;
@@ -94,6 +95,9 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
           fetchEvents(selectedButton);
+          toast.success(`Deleted ${posTitleToBeDeleted}.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");

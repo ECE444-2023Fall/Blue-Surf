@@ -7,6 +7,7 @@ import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
 import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 
 const filterOptionValuesByAPI = [
   {
@@ -184,6 +185,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
           fetchEvents();
+          toast.success(`Deleted ${posTitleToBeDeleted}.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");

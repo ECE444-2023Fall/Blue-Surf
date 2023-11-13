@@ -10,6 +10,7 @@ import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 const imageTemplate = require("../assets/post-template.jpg");
 
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
@@ -249,6 +250,9 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
       if (postImageResponse.ok) {
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         navigate("/dashboard");
+        toast.success(`Posted ${editedPost.title}!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       } else {
         const data = await response.json();
         throw new Error(data["error message"]);

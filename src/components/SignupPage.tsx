@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../styles/SignupPage.css";
 import API_URL from '../config';
+import { ToastContainer, toast } from 'react-toastify';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -101,6 +102,9 @@ const SignupPage: React.FC = () => {
         }
       }
       navigate("/login");
+      toast.success(`Registered ${registerForm.username} successfully!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } catch (error) {
       console.error("Signup Error:", error);
     }
@@ -166,6 +170,7 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="signup-page-wrapper">
+      <ToastContainer />
       <div className="row">
         <div className="col-md-4">
           <div className="image-container">

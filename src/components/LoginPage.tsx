@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginPage.css";
 import API_URL from '../config';
+import { ToastContainer, toast } from 'react-toastify';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -91,6 +92,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
 
       setAuth(data.access_token, {userId: data.id, username: data.username});
       navigate("/");
+      toast.success(`Welcome ${data.username}!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } catch (error: any) {
       console.error("Login Error:", error);
     }
@@ -124,6 +128,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
 
   return (
     <div className="login-page-wrapper">
+      <ToastContainer />
       <div className="row">
         <div className="col-md-4">
           <div className="image-container">

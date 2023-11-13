@@ -10,6 +10,7 @@ import AutoSizeTextArea from "./AutoSizeTextArea";
 import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface Post {
@@ -252,6 +253,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
+        toast.success(`Edited ${editedPost.title}.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       } else {
         throw new Error("Failed to update post.");
       }
@@ -309,6 +313,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
           navigate(-1);
+          toast.success(`Deleted ${editedPost.title}.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");
