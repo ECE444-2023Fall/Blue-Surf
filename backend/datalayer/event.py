@@ -210,6 +210,7 @@ class EventDataLayer(DataLayer):
         club=None,
         tags=[],
     ):
+        print("in update event")
         # get the event by event_id
         with app.app_context():
             event = Event.query.filter_by(id=event_id).first()
@@ -224,6 +225,7 @@ class EventDataLayer(DataLayer):
                 self.helper_valid_image(image)
 
             except (ValueError, TypeError) as e:
+                print("reached exception", str(e))
                 raise e
 
             event.title = title
@@ -234,8 +236,11 @@ class EventDataLayer(DataLayer):
             event.end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
             event.is_published = is_published
             event.club = club
-            event.image = image
+            if image is not None:
+                event.image = image
             db.session.commit()
+
+            print("commited changes to event")
 
             event.tags = []
             if tags:
@@ -246,6 +251,7 @@ class EventDataLayer(DataLayer):
 
             # Commit the changes to the session after adding tags
             db.session.commit()
+            print("commited changes to tags")
 
     def get_all_events(self):
         """

@@ -242,9 +242,7 @@ def setup_routes(app):
                 location=new_post["location"],
                 start_time=new_post["start_time"],
                 end_time=new_post["end_time"],
-                author_id=new_post[
-                    "author_id"
-                ],  # TODO: Needs to be changed to actual author
+                author_id=new_post["author_id"],
                 is_published=True,
                 club=new_post["club"],
                 tags=new_post["tags"],
