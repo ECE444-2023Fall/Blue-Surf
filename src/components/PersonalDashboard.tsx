@@ -102,7 +102,10 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");
         }
-      } catch (error) {
+      } catch (error: any) {
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         console.error("Delete Post Error:", error);
       }
     }

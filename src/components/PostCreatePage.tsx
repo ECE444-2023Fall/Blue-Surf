@@ -20,6 +20,9 @@ const fetchImageAsBlob = async (url: string): Promise<Blob | null> => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
+      toast.error(`Oops, something went wrong. Please try again later!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       throw new Error(`Failed to fetch image from ${url}`);
     }
     const blob = await response.blob();
@@ -99,6 +102,9 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         const data = await response.json();
         return data;
       }
+      toast.error(`Oops, something went wrong. Please try again later!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       throw new Error("Failed to fetch all tag names");
     } catch (error) {
       console.error("Tags Error:", error);
@@ -255,6 +261,9 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         });
       } else {
         const data = await response.json();
+        toast.error(`Failed to create post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error(data["error message"]);
       }
     } catch (error) {

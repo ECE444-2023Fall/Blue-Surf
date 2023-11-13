@@ -96,8 +96,14 @@ const SignupPage: React.FC = () => {
           setErrorMessages({username:"", password:"", email:"", confirmpassword:"", loginError:"Email or Username already exists"})
           throw new Error(data["error message"]); 
         } else if (response.status === 500) {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(data["error message"]);
         } else {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Network response was not ok.");
         }
       }
@@ -105,9 +111,13 @@ const SignupPage: React.FC = () => {
       toast.success(`Registered ${registerForm.username} successfully!`, {
         position: toast.POSITION.TOP_CENTER,
       });
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(`Failed to create account.`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       console.error("Signup Error:", error);
     }
+
 
     setRegisterForm({
       username: "",
@@ -125,6 +135,7 @@ const SignupPage: React.FC = () => {
       confirmpassword:"",
       loginError: "",
     };
+    
 
     if (!registerForm.username) {
       error.username = "Username is required";

@@ -80,6 +80,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         const data = await response.json();
         return data;
       } else {
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error("Failed to fetch all tag names");
       }
     } catch (error) {
@@ -100,6 +103,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         data.access_token && setAuth(data.access_token, user);
         return data;
       } else {
+        toast.error(`Oops, something went wrong. Please try again later!.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error("Failed to fetch favourited events");
       }
     } catch (error) {
@@ -126,6 +132,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       try {
         const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
+          toast.error(`Oops, something went wrong. Please try again later!.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Cannot fetch post.");
         }
         const data = await response.json();
@@ -134,6 +143,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
         const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
+          toast.error(`Oops, something went wrong. Please try again later!.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Cannot fetch post image.");
         }
 
@@ -261,6 +273,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
+        toast.error(`Failed to update post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error("Failed to update post.");
       }
     } catch (error) {
@@ -288,10 +303,14 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
       } else {
+        toast.error(`Failed to update post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error("Failed to update post.");
       }
     } catch (error) {
       console.error("Update Image Error:", error);
+
     }
   };
 
@@ -322,6 +341,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
           });
         } else {
           const errorMessage = await response.text();
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(errorMessage || "Delete request failed");
         }
       } catch (error) {
@@ -392,6 +414,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         editedPost.like_count += !isLiked ? 1 : -1
       } else {
         const data = await response.json();
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error(data["error message"]);
       }
     } catch (error) {

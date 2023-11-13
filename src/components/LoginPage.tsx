@@ -84,8 +84,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
           });
           throw new Error(data["error message"]);
         } else if (response.status === 500) {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(data["error message"]);
         } else {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Network response was not ok.");
         }
       }
@@ -97,6 +103,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
       });
     } catch (error: any) {
       console.error("Login Error:", error);
+      toast.error(`Failed to login.`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     }
 
     setloginForm({

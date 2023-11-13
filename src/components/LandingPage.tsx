@@ -64,6 +64,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
       }
       throw new Error(`Failed to fetch all ${filterName} names`);
     } catch (error) {
+      toast.error(`Oops, something went wrong. Please try again later!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       console.error("Fetch tag error: ", error);
       return null;
     }
@@ -93,6 +96,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
         throw new Error("Failed to fetch data");
       }
     } catch (error) {
+      toast.error(`Oops, something went wrong. Please try again later!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       console.error("An error occurred while fetching data", error);
     } finally {
       setLoading(false);
@@ -147,6 +153,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
           throw new Error("Failed to fetch data");
         }
       } catch (error) {
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         console.error("An error occurred while filtering", error);
       }
     };
@@ -193,6 +202,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
           throw new Error(errorMessage || "Delete request failed");
         }
       } catch (error) {
+        toast.error(`Failed to delete post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         console.error("Delete Post Error:", error);
       }
     }
