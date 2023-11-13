@@ -132,14 +132,14 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         // Get the image data as a Blob
         const imageBlob = await postImageResponse.blob();
 
-        console.log("blob", imageBlob);
+        // console.log("blob", imageBlob);
 
         // Create a File object with the image data
         const imageFile = new File([imageBlob], `image_${postId}.png`, {
           type: "image/png", // Adjust the type based on your image format
         });
 
-        console.log("file", imageFile);
+        // console.log("file", imageFile);
 
         // Set the image file in state
         setImageFile(imageFile);
@@ -263,11 +263,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-    console.log("FormData:");
+    // console.log("FormData:");
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       // Send a POST request to the backend to update the post

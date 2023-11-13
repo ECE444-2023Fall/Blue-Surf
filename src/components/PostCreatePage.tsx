@@ -237,11 +237,11 @@ const PostCreatePage: React.FC = () => {
       const formData = new FormData();
       formData.append("image", imageFile!);
 
-      console.log("FormData:");
+      // console.log("FormData:");
 
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
+      // for (const [key, value] of formData.entries()) {
+      //   console.log(key, value);
+      // }
 
       // Send a POST request to the backend to update the post
       const postImageResponse = await fetch(

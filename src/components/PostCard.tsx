@@ -44,14 +44,14 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       // Get the image data as a Blob
       const imageBlob = await postImageResponse.blob();
 
-      console.log("blob", imageBlob);
+      // console.log("blob", imageBlob);
 
       // Create a File object with the image data
       const newImageFile = new File([imageBlob], `image_${postId}.png`, {
         type: "image/png", // Adjust the type based on your image format
       });
 
-      console.log("file", newImageFile);
+      // console.log("file", newImageFile);
 
       // Set the image file in state
       setImageFile(newImageFile);
