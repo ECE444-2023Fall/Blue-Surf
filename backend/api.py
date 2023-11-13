@@ -85,6 +85,43 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/api/get-all-locations", methods=["GET"])
+    def get_all_locations():
+        try:
+            from .datalayer.event import EventDataLayer
+
+            event_data = EventDataLayer()
+            locations = event_data.get_all_locations()
+            return jsonify(locations)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to get all locations",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
+    @app.route("/api/get-all-clubs", methods=["GET"])
+    def get_all_clubs():
+        try:
+            from .datalayer.event import EventDataLayer
+
+            event_data = EventDataLayer()
+            clubs = event_data.get_all_clubs()
+            return jsonify(clubs)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to get all clubs", "error message": error_message}
+                ),
+                500,
+            )
+
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
@@ -527,6 +564,44 @@ def setup_routes(app):
                 jsonify(
                     {
                         "error": "Failed to process the request",
+                        "error message": error_message,
+                    }
+                ),
+                500,
+            )
+
+    @app.route("/api/filter", methods=["GET"])
+    def filter_tags():
+        try:
+            from .datalayer.event import EventDataLayer
+
+            event_data = EventDataLayer()
+
+            # start by getting the search results
+            query = request.args.get("query", default="").lower()
+            tagname = request.args.get("tag", None)
+            location = request.args.get("location", None)
+            club = request.args.get("club", None)
+            start_time = request.args.get("start_time", None)
+            end_time = request.args.get("end_time", None)
+            sortby = request.args.get("sortby", None)
+            events = event_data.search_filter_sort(
+                keyword=query,
+                tag_name=tagname,
+                location=location,
+                club=club,
+                start_time=start_time,
+                end_time=end_time,
+                sort_by=sortby,
+            )
+            print("returning event")
+            return jsonify_event_list(events)
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {
+                        "error": "Failed to search sort and filter events",
                         "error message": error_message,
                     }
                 ),

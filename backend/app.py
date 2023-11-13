@@ -45,8 +45,10 @@ from .api import setup_routes
 
 setup_routes(app)
 
-# Run populate_database only in development environment
-if app.config.get("ENV") == "development" or app.config.get("ENV") == "testing":
+# only when we're using SQLite
+if url.startswith("sqlite:///") and not os.path.exists(
+    Path(basedir).joinpath(DATABASE)
+):
     print("Populating database...")
     from .create_mock_db import populate_database
 
