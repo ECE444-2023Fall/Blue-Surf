@@ -188,6 +188,13 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       .tz("America/New_York")
       .format("YYYY-MM-DD HH:mm:ss");
 
+      const postData = {
+        ...editedPost,
+        start_time: formattedStartDate,
+        end_time: formattedEndDate,
+      };
+
+
     if (editedPost.end_time < editedPost.start_time) {
       setDateMessage("Pick a valid end date");
       return;
@@ -245,7 +252,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedPost),
+        body: JSON.stringify(postData),
       });
 
       console.log("content", JSON.stringify(editedPost));
