@@ -9,7 +9,9 @@ import "../styles/PostDetailsPage.css";
 import "../styles/PostCreatePage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from '../config';
 const imageTemplate = require("../assets/post-template.jpg");
+
 //<a href="https://www.freepik.com/free-vector/hand-painted-watercolor-background-with-frame_4366269.htm#query=frame%20blue&position=21&from_view=search&track=ais">Image by denamorado</a> on Freepik
 
 // Function to fetch the image as Blob
@@ -75,7 +77,7 @@ const PostCreatePage: React.FC = () => {
   });
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -214,7 +216,12 @@ const PostCreatePage: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`/api/create-post`, {
+      if(editedPost.end_time < editedPost.start_time){
+        setDateMessage("Pick a valid end date");
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/api/create-post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -230,15 +237,15 @@ const PostCreatePage: React.FC = () => {
       const formData = new FormData();
       formData.append("image", imageFile!);
 
-      console.log("FormData:");
+      // console.log("FormData:");
 
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
+      // for (const [key, value] of formData.entries()) {
+      //   console.log(key, value);
+      // }
 
       // Send a POST request to the backend to update the post
       const postImageResponse = await fetch(
-        `/api/update-post-image/${postId}`,
+        `${API_URL}/api/update-post-image/${postId}`,
         {
           method: "POST",
           body: formData,

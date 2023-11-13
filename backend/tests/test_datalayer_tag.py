@@ -1,15 +1,12 @@
-import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app
-from datalayer_tag import TagDataLayer
-from datalayer_event import EventDataLayer
-from datalayer_user import UserDataLayer
-from models import Tag
+from ..app import app
+from ..datalayer.tag import TagDataLayer
+from ..datalayer.event import EventDataLayer
+from ..datalayer.user import UserDataLayer
+from ..models import Tag
 
 def test_add_tag(test_client):
     tag = TagDataLayer()
@@ -162,3 +159,41 @@ def test_get_events_by_tag_names(test_client):
     with app.app_context():
         logging.warning(f"All events: {event_ids}")
         assert len(event_ids) == 0
+
+def test_delete_tag(test_client):
+    tag = TagDataLayer()
+    try:
+        tag.add_tag(tag_name="Test 1")
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+    with app.app_context():
+        assert Tag.query.filter_by(name="Test 1").first() != None
+    
+    # Deleting the tag we just added
+    try:   
+        tag.delete_tag(tag_name="Test 1")
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+    with app.app_context():
+        assert Tag.query.filter_by(name="Test 1").first() == None
+    
+    # Deleting non-existent tag should not raise errors
+    try:   
+        tag.delete_tag(tag_name="Test 1")
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+    
+    with app.app_context():
+        assert Tag.query.filter_by(name="Test 1").first() == None

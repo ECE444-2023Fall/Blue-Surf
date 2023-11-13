@@ -8,7 +8,9 @@ import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
+
 interface Post {
   title: string;
   start_time: Date;
@@ -67,7 +69,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -80,7 +82,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("/api/favourites", {
+      const response = await fetch(`${API_URL}/api/favourites`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -114,7 +116,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${postId}`);
+        const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
           throw new Error("Cannot fetch post.");
         }
@@ -122,7 +124,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setPost(data);
         setEditedPost(data);
 
-        const postImageResponse = await fetch(`/api/${postId}/image`);
+        const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
           throw new Error("Cannot fetch post image.");
         }
@@ -130,14 +132,14 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         // Get the image data as a Blob
         const imageBlob = await postImageResponse.blob();
 
-        console.log("blob", imageBlob);
+        // console.log("blob", imageBlob);
 
         // Create a File object with the image data
         const imageFile = new File([imageBlob], `image_${postId}.png`, {
           type: "image/png", // Adjust the type based on your image format
         });
 
-        console.log("file", imageFile);
+        // console.log("file", imageFile);
 
         // Set the image file in state
         setImageFile(imageFile);
@@ -234,7 +236,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -261,15 +263,15 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-    console.log("FormData:");
+    // console.log("FormData:");
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post-image/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post-image/${postId}`, {
         method: "POST",
         body: formData,
       });
@@ -340,9 +342,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const toggleLike = async () => {
     try {
-      let route = "/api/like";
+      let route = `${API_URL}/api/like`;
       if (isLiked) {
-        route = "/api/unlike";
+        route = `${API_URL}/api/unlike`;
       }
       const response = await fetch(`${route}/${postId}`, {
         method: "POST",

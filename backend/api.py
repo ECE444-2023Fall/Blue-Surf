@@ -25,7 +25,7 @@ def jsonify_event(event):
     """
     Returns a json string of a single event
     """
-    from datalayer_event import EventDataLayer
+    from .datalayer.event import EventDataLayer
 
     event_data = EventDataLayer()
     tags = event_data.get_tags_for_event(event_id=event.id)
@@ -71,7 +71,7 @@ def setup_routes(app):
     @app.route("/api/get-all-tags", methods=["GET"])
     def get_all_tags():
         try:
-            from datalayer_tag import TagDataLayer
+            from .datalayer.tag import TagDataLayer
 
             tag_data = TagDataLayer()
             tags = tag_data.get_all_tags()
@@ -90,7 +90,7 @@ def setup_routes(app):
         query = request.args.get("query").lower()
         print("query: ", query)
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             results = event_data.get_search_results_by_keyword(query)
@@ -124,11 +124,22 @@ def setup_routes(app):
         query = request.args.get("query")
         print("Printing query: ", query)
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
-            events = event_data.get_search_results_by_keyword(query)
-            return jsonify_event_list(events)
+            results = event_data.get_search_results_by_keyword(query)
+            json_event = [
+                {
+                    "id": event.id,
+                    "title": event.title,
+                    "description": event.description,
+                    "location": event.location,
+                    "start_time": event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "end_time": event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                for event in results
+            ]
+            return jsonify(json_event)
         except Exception as e:
             error_message = str(e)
             return (
@@ -145,7 +156,7 @@ def setup_routes(app):
             updated_post = request.get_json()
             print(updated_post)
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_data.update_event(
@@ -181,7 +192,7 @@ def setup_routes(app):
             # Read the image file data
             image_data = uploaded_file.read()
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_data.update_image(event_id=post_id, image=image_data)
@@ -219,7 +230,7 @@ def setup_routes(app):
             # Retrieve the updated post data from the request
             new_post = request.get_json()
 
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             event_id = event_data.create_event(
@@ -267,7 +278,7 @@ def setup_routes(app):
     @app.route("/api/", methods=["GET"])
     def index():
         try:
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             events = event_data.get_all_events()
@@ -288,8 +299,7 @@ def setup_routes(app):
 
     @app.route("/api/<int:event_id>", methods=["GET"])
     def get_event(event_id):
-        from datalayer_event import EventDataLayer
-        from datalayer_tag import TagDataLayer
+        from .datalayer.event import EventDataLayer
 
         try:
             event_data = EventDataLayer()
@@ -306,7 +316,7 @@ def setup_routes(app):
 
     @app.route("/api/<int:event_id>/image", methods=["GET"])
     def get_event_image(event_id):
-        from datalayer_event import EventDataLayer
+        from .datalayer.event import EventDataLayer
 
         try:
             event_data = EventDataLayer()
@@ -353,7 +363,7 @@ def setup_routes(app):
             user_identifier = request.json.get("user_identifier", None)
             password = request.json.get("password", None)
 
-            from datalayer_user import UserDataLayer
+            from .datalayer.user import UserDataLayer
 
             user_data = UserDataLayer()
             stored_user = user_data.get_user(user_identifier=user_identifier)
@@ -425,7 +435,7 @@ def setup_routes(app):
                 "utf-8"
             )
 
-            from datalayer_user import UserDataLayer
+            from .datalayer.user import UserDataLayer
 
             user_data = UserDataLayer()
             user_data.create_user(
@@ -471,7 +481,7 @@ def setup_routes(app):
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
             print("userid: " + str(userid))
-            from datalayer_event import EventDataLayer
+            from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
             events = event_data.get_authored_events(userid)
@@ -496,7 +506,7 @@ def setup_routes(app):
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
             print("userid: " + str(userid))
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_data = LikeDataLayer()
             favourite_events = like_data.get_liked_events(user_id=userid)
@@ -521,7 +531,7 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_layer = LikeDataLayer()
             like_layer.like_by_id(user_id, event_id)
@@ -542,7 +552,7 @@ def setup_routes(app):
         try:
             user_id = get_jwt_identity()
 
-            from datalayer_like import LikeDataLayer
+            from .datalayer.like import LikeDataLayer
 
             like_layer = LikeDataLayer()
             like_layer.unlike_by_id(user_id, event_id)

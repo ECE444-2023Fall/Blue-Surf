@@ -1,7 +1,4 @@
-from app import db
-from flask_sqlalchemy import SQLAlchemy
-#from uuid import uuid
-
+from .app import db
 
 class User(db.Model):
     """

@@ -1,6 +1,6 @@
-from app import app, db
-from models import User
-from datalayer_abstract import DataLayer
+from ..app import app, db
+from ..models import User
+from .abstract import DataLayer
 import logging
 
 '''
@@ -83,7 +83,22 @@ class UserDataLayer(DataLayer):
         with app.app_context():
             db.session.add(user)
             db.session.commit() 
+    
+    def delete_user_by_username(self, username):
+        '''
+        Removes the given user from the User table in the database.
+        '''
+        # Check if a user with the same username already exists
+        with app.app_context():
+            existing_user = User.query.filter_by(username=username).first()
 
+            if existing_user is None:
+                logging.info(f"Username {username} {self.DOES_NOT_EXIST}")
+                raise ValueError(f"Username {username} {self.DOES_NOT_EXIST}")
+            else:
+                db.session.delete(existing_user)
+                db.session.commit()
+            
     def get_user(self, user_identifier):
         with app.app_context():
             user = User.query.filter_by(username=user_identifier).first()

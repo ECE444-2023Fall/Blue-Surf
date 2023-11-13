@@ -2,6 +2,9 @@ import React from "react";
 import "../styles/FNavbar.css";
 import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import API_URL from '../config';
+
+console.log(API_URL);
 
 interface User {
   userId: string;
@@ -17,7 +20,7 @@ interface FNavbarProps {
 const FNavbar: React.FC<FNavbarProps> = ({ token, user, removeAuth }) => {
   const logOut = async () => {
     try {
-      const response = await fetch("/api/logout", {
+      const response = await fetch(`${API_URL}/api/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

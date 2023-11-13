@@ -8,6 +8,7 @@ import SearchBar from "./SearchBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import API_URL from '../config';
 
 interface User {
   userId: string;
@@ -32,9 +33,9 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
 
   const fetchEvents = async (buttonName: string) => {
     try {
-      let route = "/api/dashboard";
+      let route = `${API_URL}/api/dashboard`;
       if (buttonName === "Favourites") {
-        route = "/api/favourites";
+        route = `${API_URL}/api/favourites`;
       }
       const response = await fetch(`${route}`, {
         headers: {

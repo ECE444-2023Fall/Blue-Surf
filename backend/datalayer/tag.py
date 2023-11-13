@@ -1,6 +1,6 @@
-from app import app, db
-from models import Tag, Event
-from datalayer_abstract import DataLayer
+from ..app import app, db
+from ..models import Tag, Event
+from .abstract import DataLayer
 import logging
 
 '''
@@ -38,7 +38,21 @@ class TagDataLayer(DataLayer):
                 db.session.commit()
         else:
             logging.warning(f"Tag {tag_name} {self.ALREADY_EXISTS}")
-            
+    
+    def delete_tag(self, tag_name: str):
+        '''
+        Removes the given tag name from the Tag table in the database.
+        '''
+        # Check if a tag with the same name already exists
+        with app.app_context():
+            existing_tag = Tag.query.filter_by(name=tag_name).first()
+
+            if existing_tag is None:  # No existing tag with the same name
+                logging.warning(f"Tag {tag_name} {self.DOES_NOT_EXIST}")
+            else:
+                db.session.delete(existing_tag)
+                db.session.commit()
+        
     def get_tag_names_by_ids(self, tag_ids):
         '''
         Fetch the tag names for the collected tag IDs

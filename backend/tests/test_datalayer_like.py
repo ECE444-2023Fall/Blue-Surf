@@ -1,16 +1,14 @@
 import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app, db
-from backend.datalayer_like import LikeDataLayer
-from datalayer_user import UserDataLayer
-from datalayer_event import EventDataLayer
-from datalayer_tag import TagDataLayer
-from models import User, Event, Like
+from ..app import app
+from ..datalayer.like import LikeDataLayer
+from ..datalayer.tag import TagDataLayer
+from ..datalayer.event import EventDataLayer
+from ..datalayer.user import UserDataLayer
+from ..models import User, Event, Like
 
 
 def test_user_liked_event(test_client):

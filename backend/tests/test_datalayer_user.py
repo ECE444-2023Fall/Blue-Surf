@@ -1,13 +1,10 @@
-import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app, db
-from datalayer_user import UserDataLayer
-from models import User
+from ..app import app, db
+from ..datalayer.user import UserDataLayer
+from ..models import User
 
 def test_user_creation(test_client):
     user = UserDataLayer()
@@ -230,6 +227,106 @@ def test_empty_password_salt(test_client):
 
     with app.app_context():
         assert User.query.filter_by(username="testuser1").first() == None
+
+def test_delete_user(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testpassword",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert User.query.filter_by(username="testuser1").first() != None
+    
+    try:
+        user.delete_user_by_username("testuser1")
+    except ValueError as value_error:
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    
+    with app.app_context():
+        assert User.query.filter_by(username="testuser1").first() == None
+
+def test_get_user(test_client):
+    user = UserDataLayer()
+    try: 
+        user.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password_hash="testpassword",
+            password_salt="testsalt",
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert User.query.filter_by(username="testuser1").first() != None
+
+    try: 
+        user_retrieved = user.get_user(
+            user_identifier="testuser1"
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert User.query.filter_by(username=user_retrieved.username).first() != None
+    
+    try: 
+        user_retrieved = user.get_user(
+            user_identifier="testuser1@example.com"
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert value_error == None
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+
+    with app.app_context():
+        assert User.query.filter_by(email=user_retrieved.email).first() != None
+
+def test_get_invalid_user(test_client):
+    user = UserDataLayer()
+    
+    try: 
+        user.get_user(
+            user_identifier="testuser1"
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert str(value_error) == "User with username/email testuser1 does not exist"
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
+    
+    try: 
+        user.get_user(
+            user_identifier="testuser1@example.com"
+        )
+    except ValueError as value_error: 
+        logging.debug(f'Error: {value_error}')
+        assert str(value_error) == "User with username/email testuser1@example.com does not exist"
+    except TypeError as type_error:
+        logging.debug(f'Error: {type_error}')
+        assert type_error == None
 
 def test_get_user(test_client):
     user = UserDataLayer()
