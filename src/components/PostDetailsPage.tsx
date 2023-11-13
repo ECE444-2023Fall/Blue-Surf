@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment-timezone";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown } from "react-bootstrap";
@@ -7,8 +7,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
+import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from '../config';
 const defaultImage = require("../assets/image_placeholder.jpeg");
+
 interface Post {
   title: string;
   start_time: Date;
@@ -42,7 +45,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   setAuth,
 }) => {
   const { postId } = useParams();
-
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post>();
   const [editedPost, setEditedPost] = useState<Post>();
   const [isEditing, setIsEditing] = useState(false);
@@ -51,6 +54,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [dateMessage, setDateMessage] = useState<string>("");
+  const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+
+  const isAuthor = user && post && parseInt(user.userId) === post.author_id;
 
   const [alertMessage, setAlertMessage] = useState({
     titleAlert: "",
@@ -67,7 +73,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch("/api/get-all-tags");
+    const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -80,7 +86,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const fetchFavouritedEvents = async () => {
     try {
-      const response = await fetch("/api/favourites", {
+      const response = await fetch(`${API_URL}/api/favourites`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -114,7 +120,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${postId}`);
+        const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
           throw new Error("Cannot fetch post.");
         }
@@ -122,7 +128,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setPost(data);
         setEditedPost(data);
 
-        const postImageResponse = await fetch(`/api/${postId}/image`);
+        const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
           throw new Error("Cannot fetch post image.");
         }
@@ -130,14 +136,14 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         // Get the image data as a Blob
         const imageBlob = await postImageResponse.blob();
 
-        console.log("blob", imageBlob);
+        // console.log("blob", imageBlob);
 
         // Create a File object with the image data
         const imageFile = new File([imageBlob], `image_${postId}.png`, {
           type: "image/png", // Adjust the type based on your image format
         });
 
-        console.log("file", imageFile);
+        // console.log("file", imageFile);
 
         // Set the image file in state
         setImageFile(imageFile);
@@ -234,7 +240,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -261,15 +267,15 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-    console.log("FormData:");
+    // console.log("FormData:");
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`/api/update-post-image/${postId}`, {
+      const response = await fetch(`${API_URL}/api/update-post-image/${postId}`, {
         method: "POST",
         body: formData,
       });
@@ -295,6 +301,64 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     setBlankMessage({ blankErrorMessage: "" });
     setDateMessage("");
   };
+
+  const handleDelete = async (confirmed: boolean) => {
+    if (confirmed) {
+      try {
+        const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          data.access_token && setAuth(data.access_token, user);
+          navigate(-1);
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Delete request failed");
+        }
+      } catch (error) {
+        console.error("Delete Post Error:", error);
+      }
+    }
+    setShowDeletePopUp(false);
+  };
+
+  const handleDeleteButtonClick = () => {
+    setShowDeletePopUp(true);
+  };
+
+  // const handleDelete = async (confirmed: boolean) => {
+  //   if (confirmed) {
+  //     try {
+  //       const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: "Bearer " + token,
+  //         },
+  //       });
+
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         data.access_token && setAuth(data.access_token, user);
+  //         navigate(-1);
+  //       } else {
+  //         const errorMessage = await response.text();
+  //         throw new Error(errorMessage || "Delete request failed");
+  //       }
+  //     } catch (error) {
+  //       console.error("Delete Post Error:", error);
+  //     }
+  //   }
+  //   setShowDeletePopUp(false);
+  // };
+
+  // const handleDeleteButtonClick = () => {
+  //   setShowDeletePopUp(true);
+  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -340,9 +404,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   const toggleLike = async () => {
     try {
-      let route = "/api/like";
+      let route = `${API_URL}/api/like`;
       if (isLiked) {
-        route = "/api/unlike";
+        route = `${API_URL}/api/unlike`;
       }
       const response = await fetch(`${route}/${postId}`, {
         method: "POST",
@@ -364,6 +428,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   return (
     <div className="post-details-wrapper">
+      {showDeletePopUp && <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2 auto d-flex justify-content-center align-items-center">
           <a
@@ -396,9 +461,21 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                 </button>
               </>
             ) : (
-              <button className="edit-button" onClick={toggleEdit}>
-                Edit
-              </button>
+              <>
+                {isAuthor && (
+                  <>
+                    <button className="edit-button" onClick={toggleEdit}>
+                      Edit
+                    </button>
+                    <button
+                      className="trash-button-details-page"
+                      onClick={handleDeleteButtonClick}
+                    >
+                      <i className="fa fa-trash-o trash-icon-custom-size-details-page" />
+                    </button>
+                  </>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -438,6 +515,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, title: value })
                     }
+                    placeholderWord="[enter title here]"
                   />
                 ) : (
                   editedPost.title
@@ -455,6 +533,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, description: value })
                     }
+                    placeholderWord="[enter description here]"
                   />
                 ) : (
                   editedPost.description
@@ -531,6 +610,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         extended_description: value,
                       })
                     }
+                    placeholderWord="[enter extended description here]"
                   />
                 ) : (
                   editedPost.extended_description
@@ -606,6 +686,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     onChange={(value) =>
                       setEditedPost({ ...editedPost, location: value })
                     }
+                    placeholderWord="[enter location here]"
                   />
                 ) : (
                   editedPost.location
@@ -623,6 +704,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                         onChange={(value) =>
                           setEditedPost({ ...editedPost, club: value })
                         }
+                        placeholderWord="[enter club name here if applicable]"
                       />
                     ) : (
                       editedPost.club

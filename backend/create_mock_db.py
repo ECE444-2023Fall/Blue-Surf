@@ -1,8 +1,9 @@
 # create_db.py
 import os
-from app import app, db
-from models import User, Event, Tag, Like
 from datetime import datetime
+from .app import app, db
+from .models import User, Event, Tag, Like
+
 
 def create_mock_users():
     users = [
@@ -27,32 +28,27 @@ def create_mock_users():
     ]
     return users
 
+
 def create_mock_user_events():
     user_events = [
-        Like(
-            user_id=1,
-            event_id=1
-        ),
-        Like(
-            user_id=1,
-            event_id=2
-        ),
-        Like(
-            user_id=3,
-            event_id=3
-        ),
+        Like(user_id=1, event_id=1),
+        Like(user_id=1, event_id=2),
+        Like(user_id=3, event_id=3),
     ]
     return user_events
+
 
 def create_mock_events():
     start_time = datetime.strptime("2023-10-28 09:00:00", "%Y-%m-%d %H:%M:%S")
     end_time = datetime.strptime("2023-10-28 11:00:00", "%Y-%m-%d %H:%M:%S")
-    
+
     # Read the image file
-    image_file_path = os.path.join("../images", "logo.png")
+    current_directory = os.path.dirname(__file__)
+    image_directory = current_directory + "/../images"
+    image_file_path = os.path.join(image_directory, "logo.png")
     with open(image_file_path, "rb") as image_file:
         image_data = image_file.read()
-        
+
     events = [
         (Event(
             title="Fall Career Week",
@@ -132,10 +128,10 @@ def create_mock_events():
             like_count=10,
             image=image_data
         ),
-        ["Clubs & Organizations", "Arts & Culture"]),
     ]
     return events
-    
+
+
 def create_mock_tags():
     tags = [
         Tag(name="Academic"),
@@ -157,34 +153,36 @@ def create_mock_tags():
         Tag(name="Music & Concerts"),
         Tag(name="Fashion & Style"),
         Tag(name="Tech Hackathons"),
-        Tag(name="LGBTQ+ & Inclusivity")
+        Tag(name="LGBTQ+ & Inclusivity"),
     ]
     return tags
 
-with app.app_context():
-    # create the database and the db table
-    db.drop_all()
-    db.create_all()
-    
-    users = create_mock_users()
-    for user in users: 
-        db.session.add(user)
 
-    tags = create_mock_tags()
-    for tag in tags:
-        db.session.add(tag)
-        
-    events = create_mock_events()
-    for (event, tag_names) in events:
-        db.session.add(event)
-        for tag_name in tag_names:
-            tag = Tag.query.filter_by(name=tag_name).first()
-            if tag:
-                event.tags.append(tag)
-        
-    user_events = create_mock_user_events()
-    for user_event in user_events: 
-        db.session.add(user_event)
-    
-    # commit the changes
-    db.session.commit()
+def populate_database(app, db):
+    with app.app_context():
+        # create the database and the db table
+        db.drop_all()
+        db.create_all()
+
+        users = create_mock_users()
+        for user in users:
+            db.session.add(user)
+
+        tags = create_mock_tags()
+        for tag in tags:
+            db.session.add(tag)
+
+        events = create_mock_events()
+        for event, tag_names in events:
+            db.session.add(event)
+            for tag_name in tag_names:
+                tag = Tag.query.filter_by(name=tag_name).first()
+                if tag:
+                    event.tags.append(tag)
+
+        user_events = create_mock_user_events()
+        for user_event in user_events:
+            db.session.add(user_event)
+
+        # commit the changes
+        db.session.commit()

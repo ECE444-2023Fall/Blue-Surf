@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/LandingPage.css";
 import PostCard from "./PostCard";
 import FilterField from "./FilterField";
 import SortBy from "./SortBy";
 import SearchBar from "./SearchBar";
+import DeletePopUp from "./DeletePopUp";
+import API_URL from '../config';
 
 // this is mock data, to be replaced later once database is setup
 const postCardData = {
@@ -49,9 +52,13 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+  const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
+  const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
   const [filterParams, setFilterParams] = useState<{ [key: string]: string }>(
     {}
   );
+  const navigate = useNavigate();
 
   const getFilterNames = async (filterName: string): Promise<any[] | null> => {
     let routeName = "tags";
@@ -61,7 +68,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
       routeName = "clubs";
     }
 
-    const response = await fetch(`/api/get-all-${routeName}`);
+    const response = await fetch(`${API_URL}/api/get-all-${routeName}`);
     if (response.ok) {
       const data = await response.json();
       console.log(data);
@@ -88,7 +95,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/"); // Change this to the actual API endpoint
+      const response = await fetch(`${API_URL}/api/`); // Change this to the actual API endpoint
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);
@@ -143,7 +150,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     const fetchData = async () => {
       try {
         const queryParams = new URLSearchParams(filterParams);
-        const response = await fetch(`/api/filter?${queryParams}`);
+        const response = await fetch(`${API_URL}/api/filter?${queryParams}`);
         if (response.ok) {
           const data = await response.json();
           setSearchResults(data);
@@ -172,6 +179,38 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
     }));
   };
 
+  const handleDelete = async (confirmed: boolean) => {
+    if (confirmed) {
+      try {
+        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          data.access_token && setAuth(data.access_token, user);
+          fetchEvents();
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Delete request failed");
+        }
+      } catch (error) {
+        console.error("Delete Post Error:", error);
+      }
+    }
+    setShowDeletePopUp(false);
+  };
+
+  const setUpDelete = (postId: number, postTitle: string) => {
+    setPostToBeDeleted(postId);
+    setPosTitleToBeDeleted(postTitle);
+    setShowDeletePopUp(true);
+  };
+
+  
   return (
     <div className="landing-page-wrapper">
       <div className="row">
@@ -214,12 +253,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
                   token={token}
                   user={user}
                   setAuth={setAuth}
+                  showDeletePopUp={setUpDelete}
                   {...event}
                 />
               ))
             )}
           </div>
         </div>
+        {showDeletePopUp && posTitleToBeDeleted && (
+          <DeletePopUp
+            postTitle={posTitleToBeDeleted}
+            handleDelete={handleDelete}
+          />
+        )}
       </div>
     </div>
   );

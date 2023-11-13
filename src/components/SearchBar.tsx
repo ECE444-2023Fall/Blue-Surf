@@ -3,6 +3,7 @@ import Autosuggest, { ChangeEvent, InputProps } from 'react-autosuggest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import '../styles/SearchBar.css';
+import API_URL from '../config';
 
 export interface SearchBarProps {
   onDataReceived: (query: string) => void;
@@ -15,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onDataReceived }) => {
 
   const getSuggestions = async (value: string) => {
     try {
-      const response = await fetch(`/api/autosuggest?query=${value}`);
+      const response = await fetch(`${API_URL}/api/autosuggest?query=${value}`);
       if (!response || !response.ok) {
         throw new Error('Network response was not ok.');
       }

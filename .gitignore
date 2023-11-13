@@ -5,8 +5,10 @@ backend/venv/
 # Ignore Python bytecode cache
 backend/__pycache__/
 backend/tests/__pycache__/
-backend/models/__pycache__
+backend/models/__pycache__/
+backend/datalayer/__pycache__/
 backend/tests/db/
+
 
 # dependencies
 /node_modules
@@ -21,6 +23,7 @@ backend/tests/db/
 
 # database instance
 backend/instance/bluesurf.db
+backend/bluesurf-postgresql
 
 # misc
 .DS_Store

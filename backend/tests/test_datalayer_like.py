@@ -1,16 +1,14 @@
 import sys
-import pytest
 import logging
 
 from .test_datalayer import test_client
 
-sys.path.append("../")
-from app import app, db
-from backend.datalayer_like import LikeDataLayer
-from datalayer_user import UserDataLayer
-from datalayer_event import EventDataLayer
-from datalayer_tag import TagDataLayer
-from models import User, Event, Like
+from ..app import app
+from ..datalayer.like import LikeDataLayer
+from ..datalayer.tag import TagDataLayer
+from ..datalayer.event import EventDataLayer
+from ..datalayer.user import UserDataLayer
+from ..models import User, Event, Like
 
 
 def test_user_liked_event(test_client):
@@ -25,6 +23,9 @@ def test_user_liked_event(test_client):
             password_hash="testpassword",
             password_salt="testpassword",
         )
+
+        retrievedUser = user.get_user(user_identifier="testuser1")
+
         tag.add_tag("Tag 1")
         event.create_event(
             title="Event 1",
@@ -33,7 +34,7 @@ def test_user_liked_event(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -123,6 +124,9 @@ def test_user_not_exist(test_client):
             password_hash="testpassword",
             password_salt="testpassword",
         )
+
+        retrievedUser = user.get_user(user_identifier="testuser1")
+
         tag.add_tag("Tag 1")
         event.create_event(
             title="Event 1",
@@ -131,7 +135,7 @@ def test_user_not_exist(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -147,7 +151,7 @@ def test_user_not_exist(test_client):
     with app.app_context():
         event_exists = Event.query.filter_by(title="Event 1").first()
         assert event_exists is not None
-        user_exists = User.query.filter_by(id=2).first()
+        user_exists = User.query.filter_by(id=retrievedUser.id + 1).first()
         assert user_exists is None
 
     user_liked_event = LikeDataLayer()
@@ -176,6 +180,7 @@ def test_user_liked_event_delete(test_client):
             password_hash="testpassword",
             password_salt="testpassword",
         )
+        retrievedUser = user.get_user(user_identifier="testuser1")
         tag.add_tag("Tag 1")
         event.create_event(
             title="Event 1",
@@ -184,7 +189,7 @@ def test_user_liked_event_delete(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -275,12 +280,17 @@ def test_user_liked_events(test_client):
             password_hash="testpassword",
             password_salt="testpassword",
         )
+
+        retrievedUser = user.get_user(user_identifier="testuser1")
+
         user.create_user(
             username="testuser2",
             email="testuser2@example.com",
             password_hash="testpassword",
             password_salt="testpassword",
         )
+
+        retrievedUser2 = user.get_user(user_identifier="testuser2")
         tag.add_tag("Tag 1")
         event.create_event(
             title="Event 1",
@@ -289,7 +299,7 @@ def test_user_liked_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser2",
+            author_id=retrievedUser2.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -302,7 +312,7 @@ def test_user_liked_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -315,7 +325,7 @@ def test_user_liked_events(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_name="testuser1",
+            author_id=retrievedUser.id,
             club="Club 1",
             is_published=True,
             image=None,

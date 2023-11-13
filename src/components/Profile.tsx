@@ -18,7 +18,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
   const getData = () => {
     axios({
       method: 'GET',
-      url: '/api/profile',
+      url:`${API_URL}/api/profile`,
       headers: {
         Authorization: 'Bearer ' + props.token,
       },
