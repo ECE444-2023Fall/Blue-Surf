@@ -63,7 +63,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   useEffect(() => {
     fetchImage();
-  }, []);
+  }, [postId]);
 
   const checkIfLiked = (data: any, eventId: number) => {
     setIsLiked(data && data.some((event: any) => event.id === eventId));

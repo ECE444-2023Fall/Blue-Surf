@@ -95,7 +95,6 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
     const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
       return data;
     } else {
       console.error("Failed to fetch all tag names");
@@ -288,7 +287,6 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         const newImageSrc = e.target?.result as string;
-        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 

@@ -76,7 +76,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     const response = await fetch(`${API_URL}/api/get-all-tags`);
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
       return data;
     } else {
       console.error("Failed to fetch all tag names");
@@ -248,8 +247,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         body: JSON.stringify(editedPost),
       });
 
-      console.log("content", JSON.stringify(editedPost));
-
       if (response.ok) {
         console.log("Post updated successfully!");
         setIsEditing(false);
@@ -281,7 +278,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       });
 
       if (response.ok) {
-        console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
@@ -369,7 +365,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         const newImageSrc = e.target?.result as string;
-        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -387,7 +382,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleTagAddition = (selectedTag: string) => {
-    console.log("in addition");
     setEditedPost({
       ...editedPost,
       tags: [...editedPost.tags, selectedTag],
@@ -395,7 +389,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleTagRemoval = (selectedTag: string) => {
-    console.log("in removal");
     setEditedPost({
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
