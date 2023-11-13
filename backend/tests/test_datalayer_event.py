@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from PIL import Image
 import io
@@ -397,6 +398,8 @@ def test_event_update(test_client):
             description="Kickoff event CHANGED for club 1",
             extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
             location="Toronto",
+            start_time="2023-10-05 6:00:00",
+            end_time="2023-10-06 4:00:00",
             tags=["Tag 1"],
             image=image_data,
         )
@@ -412,6 +415,18 @@ def test_event_update(test_client):
         new_event = Event.query.filter_by(id=event_id).first()
         assert new_event is not None
         assert new_event.title == "Event 1 - CHANGED"
+        assert new_event.description == "Kickoff event CHANGED for club 1"
+        assert (
+            new_event.extended_description
+            == "Extended decription for event 1 CHANGED for club 1 that is much longer than just the description"
+        )
+        assert new_event.location == "Toronto"
+        assert new_event.start_time == datetime.strptime(
+            "2023-10-05 6:00:00", "%Y-%m-%d %H:%M:%S"
+        )
+        assert new_event.end_time == datetime.strptime(
+            "2023-10-06 4:00:00", "%Y-%m-%d %H:%M:%S"
+        )
         assert len(new_event.tags) == 1
         assert new_event.tags[0].name == "Tag 1"
 
@@ -430,14 +445,12 @@ def test_event_update(test_client):
 
 def test_event_update_delete_tag(test_client):
     user = UserDataLayer()
-    user.create_user(
+    user1_id = user.create_user(
         username="testuser10",
         email="testuser10@example.com",
         password_hash="testpassword",
         password_salt="testpassword",
     )
-
-    retrievedUser = user.get_user(user_identifier="testuser10")
 
     tag = TagDataLayer()
     tag.add_tag("Tag 1")
@@ -450,7 +463,7 @@ def test_event_update_delete_tag(test_client):
         location="Toronto",
         start_time="2023-10-03 3:30:00",
         end_time="2023-10-03 4:00:00",
-        author_id=retrievedUser.id,
+        author_id=user1_id,
         club="club 1",
         is_published=True,
         image=None,
@@ -464,6 +477,8 @@ def test_event_update_delete_tag(test_client):
             title="Event 1 - CHANGED",
             description="Kickoff event CHANGED for club 1",
             extended_description="Extended decription for event 1 CHANGED for club 1 that is much longer than just the description",
+            start_time="2023-10-05 6:00:00",
+            end_time="2023-10-06 4:00:00",
             location="Toronto",
             tags=[],
         )
