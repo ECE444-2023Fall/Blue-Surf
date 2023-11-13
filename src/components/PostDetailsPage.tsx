@@ -149,6 +149,10 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setImageFile(imageFile);
       } catch (error) {
         console.error("Error fetching post:", error);
+        navigate(-1);
+        toast.error(`Post does not exist.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       }
     };
 
