@@ -273,27 +273,37 @@ class EventDataLayer(DataLayer):
     def get_all_locations(self):
         with app.app_context():
             current_time = datetime.now()
-            locations = (
-                db.session.query(Event.location)
-                .filter(Event.location != "")
+            subquery = (
+                Event.query.filter(Event.location != "")
                 .filter(Event.end_time > current_time)
                 .distinct()
-                .order_by(func.lower(Event.location))
+                .subquery()
+            )
+
+            locations = (
+                db.session.query(subquery.c.location)
+                .order_by(func.lower(subquery.c.location))
                 .all()
             )
-            return [loc[0] for loc in locations]
+
+            return [location[0] for location in locations]
 
     def get_all_clubs(self):
         with app.app_context():
             current_time = datetime.now()
-            clubs = (
-                db.session.query(Event.club)
-                .filter(Event.club != "")
+            subquery = (
+                Event.query.filter(Event.club != "")
                 .filter(Event.end_time > current_time)
                 .distinct()
-                .order_by(func.lower(Event.club))
+                .subquery()
+            )
+
+            clubs = (
+                db.session.query(subquery.c.club)
+                .order_by(func.lower(subquery.c.club))
                 .all()
             )
+
             return [club[0] for club in clubs]
 
     def get_events_by_tag(self, tag_name):
