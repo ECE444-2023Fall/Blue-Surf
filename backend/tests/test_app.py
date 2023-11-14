@@ -61,6 +61,34 @@ def test_api_landing_page(test_client):
     except (ValueError, TypeError) as e:
         assert e is None
     assert response.status_code == 200
+    # returns no posts because the only one that was added has expired
+    assert response.json == []
+
+    event = EventDataLayer()
+    # add a post that has not expired
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
+        author_id=1,
+        club="Club 1",
+        is_published=True,
+        image=None,
+        tags=["Tag 1"],
+    )
+
+    try:
+        response = test_client.get("/api/")
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 200
+    # returns no posts because the only one that was added has expired
+    assert len(response.json) == 1
+    assert response.json[0].get("title") == "Event 2"
+
     tear_down(test_client)
 
 

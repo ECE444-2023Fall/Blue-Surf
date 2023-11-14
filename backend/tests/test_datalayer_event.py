@@ -1151,8 +1151,8 @@ def test_search_filter_sort(test_client):
         description="Kickoff event 2 for club 1",
         extended_description="Extended decription for event 2 for club 1 that is much longer than just the description",
         location="Toronto",
-        start_time="2023-10-03 3:30:00",
-        end_time="2023-10-03 4:00:00",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
         author_id=retrievedUser.id,
         club="Club 1",
         is_published=True,
@@ -1164,8 +1164,8 @@ def test_search_filter_sort(test_client):
         description="Kickoff event 1 for club 1",
         extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
         location="toronto",
-        start_time="2023-09-03 3:30:00",
-        end_time="2023-10-03 4:00:00",
+        start_time="2024-09-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
         author_id=retrievedUser.id,
         club="Club 1",
         is_published=True,
@@ -1177,8 +1177,8 @@ def test_search_filter_sort(test_client):
         description="Kickoff event 3 for club 1",
         extended_description="Extended decription for event 3 for club 1 that is much longer than just the description",
         location="Montreal",
-        start_time="2023-11-03 3:30:00",
-        end_time="2023-11-03 4:00:00",
+        start_time="2024-11-03 3:30:00",
+        end_time="2024-11-03 4:00:00",
         author_id=retrievedUser.id,
         club="Club 2",
         is_published=True,
@@ -1302,7 +1302,7 @@ def test_search_filter_sort(test_client):
 
     # filtering by complete date string
     try:
-        events = event.search_filter_sort(start_time="2023-10-03 3:30:00")
+        events = event.search_filter_sort(start_time="2024-10-03 3:30:00")
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
@@ -1312,7 +1312,7 @@ def test_search_filter_sort(test_client):
 
     # filtering by partial date string
     try:
-        events = event.search_filter_sort(start_time="2023-10-03")
+        events = event.search_filter_sort(start_time="2024-10-03")
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
@@ -1323,7 +1323,7 @@ def test_search_filter_sort(test_client):
     # filtering by date string interval
     try:
         events = event.search_filter_sort(
-            start_time="2023-11-03 3:30:00", end_time="2023-11-03 4:00:00"
+            start_time="2024-11-03 3:30:00", end_time="2024-11-03 4:00:00"
         )
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
@@ -1335,7 +1335,7 @@ def test_search_filter_sort(test_client):
     # filtering by partial date string interval
     try:
         events = event.search_filter_sort(
-            start_time="2023-09-03", end_time="2023-10-03", sort_by="alphabetical"
+            start_time="2024-09-03", end_time="2024-10-03", sort_by="alphabetical"
         )
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
@@ -1435,8 +1435,8 @@ def test_get_all_clubs(test_client):
         description="Kickoff event 2 for club 2",
         extended_description="Extended decription for event 2 for club 2 that is much longer than just the description",
         location="Vancouver",
-        start_time="2023-10-03 3:30:00",
-        end_time="2023-10-03 4:00:00",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
         author_id=user10_id,
         club="Dawson fan club",
         is_published=True,
