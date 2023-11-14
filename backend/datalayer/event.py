@@ -474,7 +474,7 @@ class EventDataLayer(DataLayer):
             # Add sorting logic if sortby is provided
             if sort_by == "alphabetical":
                 query = query.order_by(func.lower(Event.title))
-            elif sort_by == "start time":
+            elif sort_by == "date":
                 query = query.order_by(Event.start_time)
             elif sort_by == "trending":
                 query = query.order_by(Event.like_count.desc())
