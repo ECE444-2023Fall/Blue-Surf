@@ -8,8 +8,10 @@ import DeletePopUp from "./DeletePopUp";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import API_URL from "../config";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
+import * as ics from "ics";
 
 interface User {
   userId: string;
@@ -20,6 +22,21 @@ interface DashboardProps {
   token: string;
   user: User;
   setAuth: (token: string | null, user: User | null) => void;
+}
+
+interface Post {
+  title: string;
+  start_time: string;
+  location: string;
+  description: string;
+  extended_description: string;
+  tags: string[];
+  id: number;
+  author_id: number;
+  is_published: boolean;
+  end_time: string;
+  like_count: number;
+  club?: string;
 }
 
 const PersonalDashboard: React.FC<DashboardProps> = ({
@@ -34,6 +51,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
   const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
   const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
+  const [disableCalendarButton, setDisableCalendarButton] = useState(true);
 
   const fetchEvents = async (buttonName: string) => {
     try {
@@ -62,12 +80,16 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   };
 
   useEffect(() => {
+    if (searchResults.length > 0) {
+      setDisableCalendarButton(false);
+    } else {
+      setDisableCalendarButton(true);
+    }
+  }, [searchResults]);
+
+  useEffect(() => {
     fetchEvents("My Posts");
   }, []);
-
-  const handleSearchData = (data: any) => {
-    setSearchResults(data);
-  };
 
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
@@ -118,6 +140,83 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
     setShowDeletePopUp(true);
   };
 
+  function parseDateString(dateString: string): Date {
+    const [datePart, timePart] = dateString.split(" ");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute, second] = timePart.split(":").map(Number);
+    return new Date(year, month - 1, day, hour, minute, second);
+  }
+
+  // Function to convert an array of events to the ics.EventAttributes format
+  function convertToEventAttributes(events: Post[]): ics.EventAttributes[] {
+    return events.map((event) => {
+      const { title, start_time, location, description, end_time } = event;
+
+      // Convert start_time and end_time to Date objects
+      const startDate = parseDateString(start_time);
+      const endDate = parseDateString(end_time);
+
+      // Convert start_time to an array representing [year, month, day]
+      const startArray: [number, number, number] = [
+        startDate.getFullYear(),
+        startDate.getMonth() + 1,
+        startDate.getDate(),
+      ];
+
+      // Calculate duration based on the end_time - start_time
+      const durationInMinutes =
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60);
+
+      const duration = {
+        hours: Math.floor(durationInMinutes / 60),
+        minutes: durationInMinutes % 60,
+      };
+
+      // Create the ics.EventAttributes object
+      const icsEvent: ics.EventAttributes = {
+        start: startArray,
+        duration,
+        title,
+        description,
+        location,
+      };
+
+      return icsEvent;
+    });
+  }
+
+  const handleExportCalendar = () => {
+    //Export events to ics
+    const events = convertToEventAttributes(searchResults);
+
+    const { error, value } = ics.createEvents(events);
+
+    if (error || value === undefined) {
+      toast.error("Error exporting calendar events.", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      console.error("Error exporting calendar events:", error);
+      return;
+    }
+
+    // Create a Blob with the iCalendar data
+    const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
+
+    // Create a download link
+    const downloadLink = document.createElement("a");
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = "calendar.ics";
+
+    // Append the link to the body
+    document.body.appendChild(downloadLink);
+
+    // Trigger a click on the link to start the download
+    downloadLink.click();
+
+    // Remove the link from the body
+    document.body.removeChild(downloadLink);
+  };
+
   return (
     <div className="container dashboard-wrapper">
       {showDeletePopUp && posTitleToBeDeleted && (
@@ -156,15 +255,30 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                       </button>
                     </div>
                     <div className="create-button-div">
-                      <button
-                        className="create-button"
-                        onClick={handleCreateButtonClick}
-                      >
-                        <div className="plus-icon">
-                          <FontAwesomeIcon icon={faPlus} />
-                        </div>
-                        <span>Create Post</span>
-                      </button>
+                      {selectedButton === "Favourites" &&
+                        !disableCalendarButton && (
+                          <button
+                            className="calendar-button"
+                            onClick={handleExportCalendar}
+                          >
+                            <div className="plus-icon">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </div>
+                            <span>Export iCal</span>
+                          </button>
+                        )}
+                      {(selectedButton === "My Posts" ||
+                        disableCalendarButton) && (
+                        <button
+                          className="create-button"
+                          onClick={handleCreateButtonClick}
+                        >
+                          <div className="plus-icon">
+                            <FontAwesomeIcon icon={faPlus} />
+                          </div>
+                          <span>Create Post</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

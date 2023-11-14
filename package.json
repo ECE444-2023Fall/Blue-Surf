@@ -22,6 +22,7 @@
     "date-fns": "^2.30.0",
     "font-awesome": "^4.7.0",
     "http-proxy-middleware": "^2.0.6",
+    "ics": "^3.5.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "react": "^18.2.0",
