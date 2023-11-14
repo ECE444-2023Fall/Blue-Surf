@@ -256,3 +256,21 @@ def test_api_update_event_fail(test_client):
     assert response.status_code == 200
 
     tear_down(test_client)
+
+
+def test_api_get_user(test_client):
+    setup(test_client)
+    try:
+        response = test_client.get("/api/user/1")
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 200
+    assert response.json["username"] == "testuser1"
+
+    try:
+        response = test_client.get("/api/user/2")
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 404
+    assert response.json["error"] == "Failed to retrieve user"
+    tear_down(test_client)

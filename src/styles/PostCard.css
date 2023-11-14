@@ -35,6 +35,23 @@ h1 {
   margin-right: 5px;
 }
 
+.expired-pill {
+  font-size: 11px;
+  border: 2px solid #6D1111;
+  background-color: #FBDCDC;
+  border-radius: 16px; 
+  padding: 4px 8px;
+  text-decoration: none;
+  padding-bottom: 5px;
+  width: auto;
+  margin-top: 5px;
+}
+
+.expired-pill-tag {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
 .btn-custom-primary {
     padding: 5px 15px;
 }
@@ -96,6 +113,6 @@ h1 {
   flex-wrap: wrap;
 }
 
-.tags-container .pill-tag {
+.tags-container .pill-tag .expired-pill-tag {
   margin: 2px;
 }

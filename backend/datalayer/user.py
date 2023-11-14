@@ -116,3 +116,11 @@ class UserDataLayer(DataLayer):
             raise ValueError(
                 f"User with username/email {user_identifier} {self.DOES_NOT_EXIST}"
             )
+
+    def get_user_by_id(self, id):
+        with app.app_context():
+            user = User.query.filter_by(id=id).first()
+            if user is not None:
+                return user
+            logging.info(f"User with id {id} {self.DOES_NOT_EXIST}")
+            raise ValueError(f"User with id {id} {self.DOES_NOT_EXIST}")
