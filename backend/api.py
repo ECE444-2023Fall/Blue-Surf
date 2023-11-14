@@ -125,7 +125,6 @@ def setup_routes(app):
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
-        print("query: ", query)
         try:
             from .datalayer.event import EventDataLayer
 
@@ -159,7 +158,6 @@ def setup_routes(app):
     @app.route("/api/search", methods=["GET"])
     def search():
         query = request.args.get("query")
-        print("Printing query: ", query)
         try:
             from .datalayer.event import EventDataLayer
 
@@ -191,7 +189,6 @@ def setup_routes(app):
         try:
             # Retrieve the updated post data from the request
             updated_post = request.get_json()
-            print(updated_post)
 
             from .datalayer.event import EventDataLayer
 
@@ -203,7 +200,9 @@ def setup_routes(app):
                 extended_description=updated_post["extended_description"],
                 location=updated_post["location"],
                 tags=updated_post["tags"],
-                # Need to add start date and time once added to the db#
+                start_time=updated_post["start_time"],
+                end_time=updated_post["end_time"],
+                club=updated_post["club"],
             )
 
             return jsonify({"message": "Post updated successfully"})
@@ -277,9 +276,7 @@ def setup_routes(app):
                 location=new_post["location"],
                 start_time=new_post["start_time"],
                 end_time=new_post["end_time"],
-                author_id=new_post[
-                    "author_id"
-                ],  # TODO: Needs to be changed to actual author
+                author_id=new_post["author_id"],
                 is_published=True,
                 club=new_post["club"],
                 tags=new_post["tags"],
@@ -346,13 +343,14 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/", methods=["GET"])
     @app.route("/api/", methods=["GET"])
     def index():
         try:
             from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
-            events = event_data.get_all_events()
+            events = event_data.get_all_unexpired_events()
 
             return jsonify_event_list(events)
 
@@ -551,7 +549,6 @@ def setup_routes(app):
         try:
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
-            print("userid: " + str(userid))
             from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
@@ -594,7 +591,6 @@ def setup_routes(app):
                 end_time=end_time,
                 sort_by=sortby,
             )
-            print("returning event")
             return jsonify_event_list(events)
         except Exception as e:
             error_message = str(e)
@@ -614,7 +610,6 @@ def setup_routes(app):
         try:
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
-            print("userid: " + str(userid))
             from .datalayer.like import LikeDataLayer
 
             like_data = LikeDataLayer()

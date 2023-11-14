@@ -13,7 +13,7 @@ def setup(test_client):
     tag = TagDataLayer()
 
     try:
-        user1 = user.create_user(
+        user1_id = user.create_user(
             username="testuser1",
             email="testuser1@example.com",
             password_hash="testpassword",
@@ -29,7 +29,7 @@ def setup(test_client):
             location="Toronto",
             start_time="2023-10-03 3:30:00",
             end_time="2023-10-03 4:00:00",
-            author_id=user1,
+            author_id=user1_id,
             club="Club 1",
             is_published=True,
             image=None,
@@ -61,6 +61,34 @@ def test_api_landing_page(test_client):
     except (ValueError, TypeError) as e:
         assert e is None
     assert response.status_code == 200
+    # returns no posts because the only one that was added has expired
+    assert response.json == []
+
+    event = EventDataLayer()
+    # add a post that has not expired
+    event.create_event(
+        title="Event 2",
+        description="Kickoff event 1 for club 1",
+        extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
+        location="Toronto",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
+        author_id=1,
+        club="Club 1",
+        is_published=True,
+        image=None,
+        tags=["Tag 1"],
+    )
+
+    try:
+        response = test_client.get("/api/")
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 200
+    # returns no posts because the only one that was added has expired
+    assert len(response.json) == 1
+    assert response.json[0].get("title") == "Event 2"
+
     tear_down(test_client)
 
 
@@ -89,9 +117,10 @@ def test_api_update_event(test_client):
                 "end_time": "2023-10-03 04:00:00",
                 "is_published": True,
                 "tags": ["Tag 1"],
+                "club": "Club 1",
             },
         )
-    except (ValueError, TypeError) as e:
+    except Exception as e:
         assert e is None
     assert response.status_code == 200
     assert response.json["message"] == "Post updated successfully"
@@ -111,9 +140,10 @@ def test_api_update_event(test_client):
     tear_down(test_client)
 
 
-def test_update_event(test_client):
+def test_api_update_event_fail(test_client):
     setup(test_client)
     try:
+        # not enough arguments
         response = test_client.post(
             "/api/update-post/1",
             json={
@@ -126,7 +156,103 @@ def test_update_event(test_client):
         assert e is None
     assert response.status_code == 500
     assert response.json["error"] == "Failed to update post"
+
+    # check that the event was not changed
     event = EventDataLayer()
     updated_event = event.get_event_by_id(1)
     assert updated_event.title == "Event 1"
+
+    try:
+        # invalid title
+        response = test_client.post(
+            "/api/update-post/1",
+            json={
+                "title": "",
+                "description": "Updated description",
+                "extended_description": "Updated extended description",
+            },
+        )
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 500
+
+    try:
+        # invalid date format
+        response = test_client.post(
+            "/api/update-post/1",
+            json={
+                "title": "Updated Event 1",
+                "description": "Updated description",
+                "extended_description": "Updated extended description",
+                "location": "Updated location",
+                "start_time": "2023-10-03",
+                "end_time": "2023-10-04",
+                "is_published": True,
+                "tags": ["Tag 1"],
+                "club": "Club 1",
+            },
+        )
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 500
+
+    try:
+        # invalid date -- end is before start
+        response = test_client.post(
+            "/api/update-post/1",
+            json={
+                "title": "Updated Event 1",
+                "description": "Updated description",
+                "extended_description": "Updated extended description",
+                "location": "Updated location",
+                "start_time": "2023-10-03 03:30:00",
+                "end_time": "2022-10-0 04:00:00",
+                "is_published": True,
+                "tags": ["Tag 1"],
+                "club": "Club 1",
+            },
+        )
+    except (ValueError, TypeError) as e:
+        assert e is None
+    assert response.status_code == 500
+
+    try:
+        # invalid location
+        response = test_client.post(
+            "/api/update-post/1",
+            json={
+                "title": "Updated Event 1",
+                "description": "Updated description",
+                "extended_description": "Updated extended description",
+                "start_time": "2023-10-03 03:30:00",
+                "end_time": "2023-10-03 04:00:00",
+                "is_published": True,
+                "tags": ["Tag 1"],
+                "club": "Club 1",
+            },
+        )
+    except Exception as e:
+        assert e is None
+    assert response.status_code == 500
+
+    try:
+        # tag does not exist, ignores the tag
+        response = test_client.post(
+            "/api/update-post/1",
+            json={
+                "title": "Updated Event 1",
+                "description": "Updated description",
+                "extended_description": "Updated extended description",
+                "location": "Updated location",
+                "start_time": "2023-10-03 03:30:00",
+                "end_time": "2023-10-03 04:00:00",
+                "is_published": True,
+                "tags": ["Tag 2"],
+                "club": "Club 1",
+            },
+        )
+    except Exception as e:
+        assert e is None
+    assert response.status_code == 200
+
     tear_down(test_client)
