@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "../styles/SignupPage.css";
 import API_URL from '../config';
+import { ToastContainer, toast } from 'react-toastify';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -95,15 +96,25 @@ const SignupPage: React.FC = () => {
           setErrorMessages({username:"", password:"", email:"", confirmpassword:"", loginError:"Email or Username already exists"})
           throw new Error(data["error message"]); 
         } else if (response.status === 500) {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(data["error message"]);
         } else {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Network response was not ok.");
         }
       }
       navigate("/login");
-    } catch (error) {
+      toast.success(`Registered ${registerForm.username} successfully!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } catch (error: any) {
       console.error("Signup Error:", error);
     }
+
 
     setRegisterForm({
       username: "",
@@ -121,6 +132,7 @@ const SignupPage: React.FC = () => {
       confirmpassword:"",
       loginError: "",
     };
+    
 
     if (!registerForm.username) {
       error.username = "Username is required";
@@ -166,6 +178,7 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="signup-page-wrapper">
+      <ToastContainer />
       <div className="row">
         <div className="col-md-4">
           <div className="image-container">

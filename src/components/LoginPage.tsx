@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginPage.css";
 import API_URL from '../config';
+import { ToastContainer, toast } from 'react-toastify';
 const surfEmojiImage = require("../assets/surf-emoji.png");
 const waveImage = require("../assets/wave.png");
 
@@ -54,11 +55,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
       return;
     }
 
-    if (!loginForm.userIdentifier || !loginForm.password) {
-      console.error("Missing fields");
-      return;
-    }
-
     try {
       const response = await fetch(`${API_URL}/api/token`, {
         method: "POST",
@@ -88,14 +84,23 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
           });
           throw new Error(data["error message"]);
         } else if (response.status === 500) {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(data["error message"]);
         } else {
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Network response was not ok.");
         }
       }
 
       setAuth(data.access_token, {userId: data.id, username: data.username});
       navigate("/");
+      toast.success(`Welcome ${data.username}!`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } catch (error: any) {
       console.error("Login Error:", error);
     }
@@ -129,6 +134,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
 
   return (
     <div className="login-page-wrapper">
+      <ToastContainer />
       <div className="row">
         <div className="col-md-4">
           <div className="image-container">

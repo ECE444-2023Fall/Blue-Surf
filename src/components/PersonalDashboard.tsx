@@ -4,12 +4,12 @@ import "./../App.css";
 import "../styles/PersonalDashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PostCard from "./PostCard";
-import SearchBar from "./SearchBar";
 import DeletePopUp from "./DeletePopUp";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import API_URL from '../config';
+import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface User {
   userId: string;
@@ -28,7 +28,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   setAuth,
 }) => {
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedButton, setSelectedButton] = useState("Favourites");
+  const [selectedButton, setSelectedButton] = useState("My Posts");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
@@ -52,7 +52,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
         data.access_token && setAuth(data.access_token, user); //Refreshes token if needed
         setSearchResults(data);
       } else {
-        console.error("Failed to fetch data");
+        throw new Error("Failed to fetch data");
       }
     } catch (error) {
       console.error("An error occurred while fetching data", error);
@@ -62,7 +62,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   };
 
   useEffect(() => {
-    fetchEvents("Favourites");
+    fetchEvents("My Posts");
   }, []);
 
   const handleSearchData = (data: any) => {
@@ -81,22 +81,31 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const handleDelete = async (confirmed: boolean) => {
     if (confirmed) {
       try {
-        const response = await fetch(`${API_URL}/api/delete-post/${postToBeDeleted}`, {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/api/delete-post/${postToBeDeleted}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
           fetchEvents(selectedButton);
+          toast.success(`Deleted ${posTitleToBeDeleted}.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Delete request failed");
         }
-      } catch (error) {
+      } catch (error: any) {
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         console.error("Delete Post Error:", error);
       }
     }
@@ -123,16 +132,18 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
           <div className="row">
             <div className="col-md-12">
               <div className="row">
-                <div className="col-12">
-                  <SearchBar onDataReceived={handleSearchData} />
-                </div>
-              </div>
-              <div></div>
-              <div className="row">
                 <div className="col-12 my-3">
                   <div className="d-flex dashboard-buttons">
                     <div className="fill-space"></div>
                     <div className="background-select">
+                      <button
+                        className={`twobutton-${
+                          selectedButton !== "My Posts" ? "notselect" : "select"
+                        }`}
+                        onClick={() => handleButtonClick("My Posts")}
+                      >
+                        My Posts
+                      </button>
                       <button
                         className={`twobutton-${
                           selectedButton !== "Favourites"
@@ -142,14 +153,6 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                         onClick={() => handleButtonClick("Favourites")}
                       >
                         Favourites
-                      </button>
-                      <button
-                        className={`twobutton-${
-                          selectedButton !== "My Posts" ? "notselect" : "select"
-                        }`}
-                        onClick={() => handleButtonClick("My Posts")}
-                      >
-                        My Posts
                       </button>
                     </div>
                     <div className="create-button-div">

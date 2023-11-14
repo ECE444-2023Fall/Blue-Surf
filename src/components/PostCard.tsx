@@ -45,14 +45,10 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
       // Get the image data as a Blob
       const imageBlob = await postImageResponse.blob();
 
-      // console.log("blob", imageBlob);
-
       // Create a File object with the image data
       const newImageFile = new File([imageBlob], `image_${postId}.png`, {
         type: "image/png", // Adjust the type based on your image format
       });
-
-      // console.log("file", newImageFile);
 
       // Set the image file in state
       setImageFile(newImageFile);
@@ -63,7 +59,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
 
   useEffect(() => {
     fetchImage();
-  }, []);
+  }, [postId]);
 
   const checkIfLiked = (data: any, eventId: number) => {
     setIsLiked(data && data.some((event: any) => event.id === eventId));
@@ -112,7 +108,7 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
           PostCardProps.setAuth(data.access_token, PostCardProps.user);
         return data;
       } else {
-        console.error("Failed to fetch favourited events");
+        throw new Error("Failed to fetch favourited events");
       }
     } catch (error) {
       console.error(

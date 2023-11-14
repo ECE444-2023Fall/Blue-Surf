@@ -9,15 +9,11 @@ import SignupPage from "./components/SignupPage";
 import Profile from "./components/Profile";
 import PostDetailsPage from "./components/PostDetailsPage";
 import PostCreatePage from "./components/PostCreatePage";
-// import {
-//   BrowserRouter as Router,
-//   Routes,
-//   Route,
-//   Navigate,
-// } from "react-router-dom";
 import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PersonalDashboard from "./components/PersonalDashboard"
 import 'react-datepicker/dist/react-datepicker.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { token, user, removeAuth, setAuth } = useAuth();
@@ -46,6 +42,7 @@ function App() {
   return (
     <Router>
       <FNavbar token={token} user={user} removeAuth={removeAuth} />
+      <ToastContainer autoClose={2500}/>
       {token && token !== "" && token !== undefined ? authenticatedRoutes : nonAuthenticatedRoutes}
     </Router>
   );

@@ -9,7 +9,8 @@ import "../styles/PostDetailsPage.css";
 import AutoSizeTextArea from "./AutoSizeTextArea";
 import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import API_URL from '../config';
+import API_URL from "../config";
+import { ToastContainer, toast } from 'react-toastify';
 const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface Post {
@@ -73,13 +74,19 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const getTagNames = async (): Promise<any[] | null> => {
-    const response = await fetch(`${API_URL}/api/get-all-tags`);
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      return data;
-    } else {
-      console.error("Failed to fetch all tag names");
+    try {
+      const response = await fetch(`${API_URL}/api/get-all-tags`);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        throw new Error("Failed to fetch all tag names");
+      }
+    } catch (error) {
+      console.error("Tag Error:", error);
       return null;
     }
   };
@@ -96,7 +103,10 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         data.access_token && setAuth(data.access_token, user);
         return data;
       } else {
-        console.error("Failed to fetch favourited events");
+        toast.error(`Oops, something went wrong. Please try again later!.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        throw new Error("Failed to fetch favourited events");
       }
     } catch (error) {
       console.error(
@@ -122,6 +132,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       try {
         const response = await fetch(`${API_URL}/api/${postId}`);
         if (!response || !response.ok) {
+          toast.error(`Oops, something went wrong. Please try again later!.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Cannot fetch post.");
         }
         const data = await response.json();
@@ -130,25 +143,28 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
         const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
+          toast.error(`Oops, something went wrong. Please try again later!.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error("Cannot fetch post image.");
         }
 
         // Get the image data as a Blob
         const imageBlob = await postImageResponse.blob();
 
-        // console.log("blob", imageBlob);
-
         // Create a File object with the image data
         const imageFile = new File([imageBlob], `image_${postId}.png`, {
           type: "image/png", // Adjust the type based on your image format
         });
 
-        // console.log("file", imageFile);
-
         // Set the image file in state
         setImageFile(imageFile);
       } catch (error) {
         console.error("Error fetching post:", error);
+        navigate(-1);
+        toast.error(`Post does not exist.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       }
     };
 
@@ -198,7 +214,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     if (editedPost.end_time < editedPost.start_time) {
       setDateMessage("Pick a valid end date");
       return;
-    }else{
+    } else {
       setDateMessage("");
     }
 
@@ -255,49 +271,53 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         body: JSON.stringify(postData),
       });
 
-      console.log("content", JSON.stringify(editedPost));
-
       if (response.ok) {
-        console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
+        toast.success(`Edited ${editedPost.title}.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       } else {
-        console.error("Failed to update post.");
+        toast.error(`Failed to update post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        throw new Error("Failed to update post.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Update Post Error:", error);
     }
 
     // Append the image data to the FormData
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-    // console.log("FormData:");
-
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
 
     try {
       // Send a POST request to the backend to update the post
-      const response = await fetch(`${API_URL}/api/update-post-image/${postId}`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${API_URL}/api/update-post-image/${postId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
-        console.log("Post updated successfully!");
         setIsEditing(false);
         setPost({ ...editedPost });
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         setBlankMessage({ blankErrorMessage: "" });
       } else {
-        console.error("Failed to update post.");
+        toast.error(`Failed to update post.`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        throw new Error("Failed to update post.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Update Image Error:", error);
+
     }
   };
 
@@ -323,8 +343,14 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
           const data = await response.json();
           data.access_token && setAuth(data.access_token, user);
           navigate(-1);
+          toast.success(`Deleted ${editedPost.title}.`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
           const errorMessage = await response.text();
+          toast.error(`Oops, something went wrong. Please try again later!`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
           throw new Error(errorMessage || "Delete request failed");
         }
       } catch (error) {
@@ -338,35 +364,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     setShowDeletePopUp(true);
   };
 
-  // const handleDelete = async (confirmed: boolean) => {
-  //   if (confirmed) {
-  //     try {
-  //       const response = await fetch(`${API_URL}/api/delete-post/${postId}`, {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         data.access_token && setAuth(data.access_token, user);
-  //         navigate(-1);
-  //       } else {
-  //         const errorMessage = await response.text();
-  //         throw new Error(errorMessage || "Delete request failed");
-  //       }
-  //     } catch (error) {
-  //       console.error("Delete Post Error:", error);
-  //     }
-  //   }
-  //   setShowDeletePopUp(false);
-  // };
-
-  // const handleDeleteButtonClick = () => {
-  //   setShowDeletePopUp(true);
-  // };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
 
@@ -376,7 +373,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         const newImageSrc = e.target?.result as string;
-        console.log("newImageSrc", newImageSrc);
         setImageSrc(newImageSrc);
       };
 
@@ -394,7 +390,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleTagAddition = (selectedTag: string) => {
-    console.log("in addition");
     setEditedPost({
       ...editedPost,
       tags: [...editedPost.tags, selectedTag],
@@ -402,7 +397,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   };
 
   const handleTagRemoval = (selectedTag: string) => {
-    console.log("in removal");
     setEditedPost({
       ...editedPost,
       tags: editedPost.tags.filter((tag) => tag !== selectedTag),
@@ -424,8 +418,12 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
       if (response.ok) {
         setIsLiked(!isLiked);
+        editedPost.like_count += !isLiked ? 1 : -1
       } else {
         const data = await response.json();
+        toast.error(`Oops, something went wrong. Please try again later!`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
         throw new Error(data["error message"]);
       }
     } catch (error) {
@@ -435,7 +433,9 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
   return (
     <div className="post-details-wrapper">
-      {showDeletePopUp && <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />}
+      {showDeletePopUp && (
+        <DeletePopUp postTitle={post.title} handleDelete={handleDelete} />
+      )}
       <div className="container background-colour rounded-5 p-5 mt-2 mb-2">
         <div className="row m-2 auto d-flex justify-content-center align-items-center">
           <a
@@ -681,9 +681,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   editedPost.end_time.toLocaleString()
                 )}
               </div>
-              {dateMessage && (
-                <div className="error-date">{dateMessage}</div>
-              )}
+              {dateMessage && <div className="error-date">{dateMessage}</div>}
               {/* LOCATION */}
               <div className="subtitle">Location</div>
               <div className="details">
@@ -726,11 +724,12 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                   <button
                     className={`like-button-details ${
                       isLiked ? "liked-details" : ""
-                    }`}
+                    } d-flex`}
                     onClick={toggleLike}
                     data-testid="like-button"
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
+                    {isAuthor && (<div className="like-count">{editedPost.like_count}</div>)}
                   </button>
                 )}
               </div>

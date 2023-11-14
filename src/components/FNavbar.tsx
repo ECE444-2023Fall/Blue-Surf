@@ -4,8 +4,6 @@ import { Navbar, Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import API_URL from '../config';
 
-console.log(API_URL);
-
 interface User {
   userId: string;
   username: string;

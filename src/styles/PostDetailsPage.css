@@ -106,6 +106,10 @@
     color: #FF0000;
 }
 
+.like-count {
+    margin-left: 30px;
+}
+
 .rounded-edge {
     border-radius: 25px;
 }
