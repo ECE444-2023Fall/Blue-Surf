@@ -52,6 +52,7 @@
 
 .create-button-div {
     margin-left: auto;
+    display: flex;
 }
 .fill-space {
     margin-right: auto;
@@ -64,6 +65,18 @@
     border-radius: 8px;
     border: 2px solid #116D31;
     background: #D1E8D9;
+    width: 130px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-family: Outfit;
+}
+
+.calendar-button {
+    border-radius: 8px;
+    border: 2px solid #1b58b4;
+    background: #b3ccdb;
     width: 130px;
     height: 42px;
     display: flex;
