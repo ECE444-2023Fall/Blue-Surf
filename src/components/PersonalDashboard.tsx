@@ -51,6 +51,7 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
   const [postToBeDeleted, setPostToBeDeleted] = useState<number>();
   const [posTitleToBeDeleted, setPosTitleToBeDeleted] = useState<string>();
+  const [disableCalendarButton, setDisableCalendarButton] = useState(true);
 
   const fetchEvents = async (buttonName: string) => {
     try {
@@ -77,6 +78,14 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      setDisableCalendarButton(false);
+    } else {
+      setDisableCalendarButton(true);
+    }
+  }, [searchResults]);
 
   useEffect(() => {
     fetchEvents("My Posts");
@@ -246,18 +255,20 @@ const PersonalDashboard: React.FC<DashboardProps> = ({
                       </button>
                     </div>
                     <div className="create-button-div">
-                      {selectedButton === "Favourites" && (
-                        <button
-                          className="calendar-button"
-                          onClick={handleExportCalendar}
-                        >
-                          <div className="plus-icon">
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                          </div>
-                          <span>Export iCal</span>
-                        </button>
-                      )}
-                      {selectedButton === "My Posts" && (
+                      {selectedButton === "Favourites" &&
+                        !disableCalendarButton && (
+                          <button
+                            className="calendar-button"
+                            onClick={handleExportCalendar}
+                          >
+                            <div className="plus-icon">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </div>
+                            <span>Export iCal</span>
+                          </button>
+                        )}
+                      {(selectedButton === "My Posts" ||
+                        disableCalendarButton) && (
                         <button
                           className="create-button"
                           onClick={handleCreateButtonClick}
