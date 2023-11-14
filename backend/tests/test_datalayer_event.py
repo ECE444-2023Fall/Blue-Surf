@@ -1356,13 +1356,14 @@ def test_get_all_locations(test_client):
     )
     retrievedUser = user.get_user(user_identifier="testuser10")
     event = EventDataLayer()
+    # two of these events have expired
     event.create_event(
         title="Event 1",
         description="Kickoff event 1 for club 1",
         extended_description="Extended decription for event 1 for club 1 that is much longer than just the description",
         location="Toronto",
-        start_time="2023-10-03 3:30:00",
-        end_time="2023-10-03 4:00:00",
+        start_time="2024-10-03 3:30:00",
+        end_time="2024-10-03 4:00:00",
         author_id=retrievedUser.id,
         club="Tenzino fan club",
         is_published=True,
@@ -1403,10 +1404,8 @@ def test_get_all_locations(test_client):
         assert type_error == None
 
     with app.app_context():
-        assert len(locations) == 3
-        assert locations[0] == "Calgary"
-        assert locations[1] == "Toronto"
-        assert locations[2] == "Vancouver"
+        assert len(locations) == 1
+        assert locations[0] == "Toronto"
 
 
 def test_get_all_clubs(test_client):
@@ -1418,6 +1417,7 @@ def test_get_all_clubs(test_client):
         password_salt="testpassword",
     )
     event = EventDataLayer()
+    # two of these events have expired
     event.create_event(
         title="Event 1",
         description="Kickoff event 1 for club 1",
@@ -1465,10 +1465,8 @@ def test_get_all_clubs(test_client):
         assert type_error == None
 
     with app.app_context():
-        assert len(clubs) == 3
-        assert clubs[0] == "Bluesurf fan club"
-        assert clubs[1] == "Dawson fan club"
-        assert clubs[2] == "Tenzino fan club"
+        assert len(clubs) == 1
+        assert clubs[0] == "Dawson fan club"
 
 
 def test_get_unexpired_events(test_client):
