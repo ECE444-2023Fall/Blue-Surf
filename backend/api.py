@@ -685,5 +685,5 @@ def setup_routes(app):
                 jsonify(
                     {"error": "Failed to retrieve user", "error message": error_message}
                 ),
-                500,
+                404,
             )
