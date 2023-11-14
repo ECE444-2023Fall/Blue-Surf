@@ -1243,7 +1243,7 @@ def test_search_filter_sort(test_client):
 
     # keyword, and date sorting
     try:
-        events = event.search_filter_sort(keyword="Ev", sort_by="start time")
+        events = event.search_filter_sort(keyword="Ev", sort_by="date")
     except (ValueError, TypeError) as error:
         logging.debug(f"Error: {error}")
         assert error == None
