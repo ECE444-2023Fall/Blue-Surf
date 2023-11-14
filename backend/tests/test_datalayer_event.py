@@ -676,7 +676,6 @@ def test_delete_event_by_id(test_client):
             assert created_event.title == "Event 1"
             assert created_event.author_id == retrievedUser.id
         event.delete_event_by_id(created_event.id)
-        print("Deleted event")
     except ValueError as value_error:
         logging.debug(f"Error: {value_error}")
         assert value_error == None

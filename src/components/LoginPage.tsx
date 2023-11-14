@@ -28,9 +28,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
     loginError: "",
   });
 
-  const [loginUserErr, setLoginUserErr] = useState({
-    loginError: "",
-  });
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const navigate = useNavigate();
 
@@ -56,6 +54,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
     }
 
     try {
+      setIsButtonDisabled(true);
       const response = await fetch(`${API_URL}/api/token`, {
         method: "POST",
         headers: {
@@ -67,7 +66,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
         }),
       });
 
+      
       const data = await response.json();
+      setIsButtonDisabled(false);
       if (!response.ok) {
         if (response.status === 401) {
           setErrorMessages({
@@ -103,6 +104,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
       });
     } catch (error: any) {
       console.error("Login Error:", error);
+      setIsButtonDisabled(false);
     }
 
     setloginForm({
@@ -181,7 +183,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
                 )}
               </div>
               <div className="form-group">
-                <button type="submit" className="login-btn" onClick={logMeIn}>
+                <button type="submit" className="login-btn" onClick={logMeIn} disabled={isButtonDisabled}>
                   Login
                 </button>
               </div>

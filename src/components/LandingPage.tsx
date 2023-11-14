@@ -243,7 +243,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ token, user, setAuth }) => {
                   "Not Selected",
                   "Alphabetical",
                   "Trending",
-                  "Start Time",
+                  "Date",
                 ]}
                 onSortChange={handleSortChange}
               />

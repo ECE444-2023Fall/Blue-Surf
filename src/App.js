@@ -6,7 +6,6 @@ import LandingPage from "./components/LandingPage";
 import useAuth from "./components/useAuth";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
-import Profile from "./components/Profile";
 import PostDetailsPage from "./components/PostDetailsPage";
 import PostCreatePage from "./components/PostCreatePage";
 import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
@@ -22,7 +21,6 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage token={token} user={user} setAuth={setAuth} />} />
       <Route path="/post/:postId" element={<PostDetailsPage token={token} user={user} setAuth={setAuth} />} />
-      <Route path="/profile" element={<Profile token={token} user={user} setAuth={setAuth} />} />
       <Route path="/dashboard" element={<PersonalDashboard token={token} user={user} setAuth={setAuth}/>} />
       <Route path="/create" element={<PostCreatePage token={token} user={user} setAuth={setAuth} />} />
       <Route path="*" element={<Navigate to="/" />} />

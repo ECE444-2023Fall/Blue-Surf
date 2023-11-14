@@ -94,6 +94,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
     titleAlert: "",
     summaryAlert: "",
   });
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const getTagNames = async (): Promise<any[] | null> => {
     try {
@@ -228,6 +229,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         return;
       }
 
+      setIsButtonDisabled(true);
       const response = await fetch(`${API_URL}/api/create-post`, {
         method: "POST",
         headers: {
@@ -253,6 +255,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
         }
       );
 
+      setIsButtonDisabled(false);
       if (postImageResponse.ok) {
         setAlertMessage({ titleAlert: "", summaryAlert: "" });
         navigate("/dashboard");
@@ -268,6 +271,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
       }
     } catch (error) {
       console.error("Create Post Error:", error);
+      setIsButtonDisabled(false);
     }
   };
 
@@ -330,7 +334,7 @@ const PostCreatePage: React.FC<PostDetailsProps> = ({
               {errorMessage && (
                 <div className="error-message">{errorMessage}</div>
               )}
-              <button className="edit-button" onClick={handleSave}>
+              <button className="edit-button" onClick={handleSave} disabled={isButtonDisabled}>
                 Post
               </button>
             </>

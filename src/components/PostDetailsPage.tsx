@@ -57,7 +57,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [dateMessage, setDateMessage] = useState<string>("");
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
   const [author, setAuthor] = useState<string>("");
-
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const isAuthor = user && post && parseInt(user.userId) === post.author_id;
 
   const [alertMessage, setAlertMessage] = useState({
@@ -278,6 +278,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     }
 
     try {
+      setIsButtonDisabled(true);
       // Send a POST request to the backend to update the post
       const response = await fetch(`${API_URL}/api/update-post/${postId}`, {
         method: "POST",
@@ -295,6 +296,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         toast.success(`Edited ${editedPost.title}.`, {
           position: toast.POSITION.TOP_CENTER,
         });
+        setIsButtonDisabled(false);
       } else {
         toast.error(`Failed to update post.`, {
           position: toast.POSITION.TOP_CENTER,
@@ -303,6 +305,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       }
     } catch (error) {
       console.error("Update Post Error:", error);
+      setIsButtonDisabled(false);
     }
 
     // Append the image data to the FormData
@@ -476,7 +479,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                 <button className="cancel-button" onClick={handleCancel}>
                   Cancel
                 </button>
-                <button className="edit-button" onClick={handleSave}>
+                <button className="edit-button" onClick={handleSave} disabled={isButtonDisabled}>
                   Save
                 </button>
               </>
