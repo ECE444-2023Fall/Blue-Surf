@@ -112,9 +112,6 @@ const SignupPage: React.FC = () => {
         position: toast.POSITION.TOP_CENTER,
       });
     } catch (error: any) {
-      toast.error(`Failed to create account.`, {
-        position: toast.POSITION.TOP_CENTER,
-      });
       console.error("Signup Error:", error);
     }
 

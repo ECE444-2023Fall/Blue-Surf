@@ -103,9 +103,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuth }) => {
       });
     } catch (error: any) {
       console.error("Login Error:", error);
-      toast.error(`Failed to login.`, {
-        position: toast.POSITION.TOP_CENTER,
-      });
     }
 
     setloginForm({
