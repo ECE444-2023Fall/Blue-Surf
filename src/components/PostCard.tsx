@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../styles/PostCard.css";
-import API_URL from '../config';
+import API_URL from "../config";
 const defaultImage = require("../assets/image_placeholder.jpeg");
-
 
 interface User {
   userId: string;
@@ -137,6 +136,13 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
     }
   }, [PostCardProps.id]);
 
+  function parseDateString(dateString: string): Date {
+    const [datePart, timePart] = dateString.split(" ");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute, second] = timePart.split(":").map(Number);
+    return new Date(year, month - 1, day, hour, minute, second);
+  }
+
   return (
     <div className="col" data-testid="post-card">
       <Link to={`/post/${PostCardProps.id}`} className="text-decoration-none">
@@ -177,6 +183,11 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                       ))}
                     </>
                   )}
+                  {parseDateString(PostCardProps.end_time) < new Date() && (
+                    <span className="expired-pill">
+                      <span className="expired-pill-tag">Expired</span>
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="col-auto">
@@ -193,7 +204,10 @@ const PostCard: React.FC<PostCardProps> = (PostCardProps: any) => {
                       </button>
                     )}
                   {isAuthor && (
-                    <button className="trash-button" onClick={handleDeleteButtonClick}>
+                    <button
+                      className="trash-button"
+                      onClick={handleDeleteButtonClick}
+                    >
                       <i className="fa fa-trash-o trash-icon-custom-size" />
                     </button>
                   )}
