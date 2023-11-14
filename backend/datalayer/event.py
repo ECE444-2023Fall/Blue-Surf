@@ -271,14 +271,12 @@ class EventDataLayer(DataLayer):
             return unexpired_events
 
     def get_all_locations(self):
-        """
-        Returns all locations of active events.
-        """
         with app.app_context():
             current_time = datetime.now()
             locations = (
                 db.session.query(Event.location)
-                .filter(Event.location != "", Event.end_time > current_time)
+                .filter(Event.location != "")
+                .filter(Event.end_time > current_time)
                 .distinct()
                 .order_by(func.lower(Event.location))
                 .all()
@@ -286,16 +284,14 @@ class EventDataLayer(DataLayer):
             return [loc[0] for loc in locations]
 
     def get_all_clubs(self):
-        """
-        Returns all clubs of active events.
-        """
         with app.app_context():
             current_time = datetime.now()
             clubs = (
                 db.session.query(Event.club)
-                .filter(Event.club != "", Event.end_time > current_time)
-                .order_by(func.lower(Event.club))
+                .filter(Event.club != "")
+                .filter(Event.end_time > current_time)
                 .distinct()
+                .order_by(func.lower(Event.club))
                 .all()
             )
             return [club[0] for club in clubs]
