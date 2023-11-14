@@ -46,13 +46,13 @@ from .api import setup_routes
 setup_routes(app)
 
 # only when we're using SQLite
-if url.startswith("sqlite:///") and not os.path.exists(
-    Path(basedir).joinpath(DATABASE)
-):
-    print("Populating database...")
-    from .create_mock_db import populate_database
+# if url.startswith("sqlite:///") and not os.path.exists(
+#     Path(basedir).joinpath(DATABASE)
+# ):
+#     print("Populating database...")
+#     from .create_mock_db import populate_database
 
-    populate_database(app, db)
+#     populate_database(app, db)
 
 if __name__ == "__main__":
     app.run()
