@@ -670,3 +670,20 @@ def setup_routes(app):
                 ),
                 500,
             )
+
+    @app.route("/api/user/<int:user_id>", methods=["GET"])
+    def retrieve_user(user_id):
+        try:
+            from .datalayer.user import UserDataLayer
+
+            user_layer = UserDataLayer()
+            user = user_layer.get_user_by_id(user_id)
+            return jsonify({"username": user.username})
+        except Exception as e:
+            error_message = str(e)
+            return (
+                jsonify(
+                    {"error": "Failed to retrieve user", "error message": error_message}
+                ),
+                500,
+            )

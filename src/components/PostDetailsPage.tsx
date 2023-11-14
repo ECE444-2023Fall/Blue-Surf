@@ -10,7 +10,7 @@ import AutoSizeTextArea from "./AutoSizeTextArea";
 import DeletePopUp from "./DeletePopUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import API_URL from "../config";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 const defaultImage = require("../assets/image_placeholder.jpeg");
 
 interface Post {
@@ -56,6 +56,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [dateMessage, setDateMessage] = useState<string>("");
   const [showDeletePopUp, setShowDeletePopUp] = useState(false);
+  const [author, setAuthor] = useState<string>("");
 
   const isAuthor = user && post && parseInt(user.userId) === post.author_id;
 
@@ -141,6 +142,22 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
         setPost(data);
         setEditedPost(data);
 
+        if (data.author_id) {
+          const retrieveUserResponse = await fetch(
+            `${API_URL}/api/user/${data.author_id}`
+          );
+          if (!retrieveUserResponse || !retrieveUserResponse.ok) {
+            toast.error(
+              `Oops, something went wrong. Please try again later!.`,
+              {
+                position: toast.POSITION.TOP_CENTER,
+              }
+            );
+            throw new Error("Cannot retrieve user.");
+          }
+          const userData = await retrieveUserResponse.json();
+          setAuthor(userData.username);
+        }
         const postImageResponse = await fetch(`${API_URL}/api/${postId}/image`);
         if (!postImageResponse || !postImageResponse.ok) {
           toast.error(`Oops, something went wrong. Please try again later!.`, {
@@ -204,12 +221,11 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       .tz("America/New_York")
       .format("YYYY-MM-DD HH:mm:ss");
 
-      const postData = {
-        ...editedPost,
-        start_time: formattedStartDate,
-        end_time: formattedEndDate,
-      };
-
+    const postData = {
+      ...editedPost,
+      start_time: formattedStartDate,
+      end_time: formattedEndDate,
+    };
 
     if (editedPost.end_time < editedPost.start_time) {
       setDateMessage("Pick a valid end date");
@@ -293,7 +309,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
     const formData = new FormData();
     formData.append("image", imageFile!);
 
-
     try {
       // Send a POST request to the backend to update the post
       const response = await fetch(
@@ -317,7 +332,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
       }
     } catch (error) {
       console.error("Update Image Error:", error);
-
     }
   };
 
@@ -418,7 +432,7 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
 
       if (response.ok) {
         setIsLiked(!isLiked);
-        editedPost.like_count += !isLiked ? 1 : -1
+        editedPost.like_count += !isLiked ? 1 : -1;
       } else {
         const data = await response.json();
         toast.error(`Oops, something went wrong. Please try again later!`, {
@@ -456,7 +470,6 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
               <div className="alert">{blankMessage.blankErrorMessage}</div>
             )}
           </div>
-
           <div className="row m-2 justify-content-end">
             {isEditing ? (
               <>
@@ -729,11 +742,18 @@ const PostDetailsPage: React.FC<PostDetailsProps> = ({
                     data-testid="like-button"
                   >
                     <i className={`fa fa-heart${isLiked ? "" : "-o"}`} />
-                    {isAuthor && (<div className="like-count">{editedPost.like_count}</div>)}
+                    {isAuthor && (
+                      <div className="like-count">{editedPost.like_count}</div>
+                    )}
                   </button>
                 )}
               </div>
             </div>
+          </div>
+        </div>
+        <div className="row m-2 auto d-flex justify-content-center align-items-center">
+          <div className="row m-2 justify-content-end">
+            {author && <div> By {author} </div>}
           </div>
         </div>
       </div>
