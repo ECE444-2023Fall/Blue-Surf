@@ -45,7 +45,7 @@ from .api import setup_routes
 
 setup_routes(app)
 
-# only when we're using SQLite
+# # only when we're using SQLite
 # if url.startswith("sqlite:///") and not os.path.exists(
 #     Path(basedir).joinpath(DATABASE)
 # ):
