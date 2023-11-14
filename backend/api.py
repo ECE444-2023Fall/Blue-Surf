@@ -125,7 +125,6 @@ def setup_routes(app):
     @app.route("/api/autosuggest", methods=["GET"])
     def autosuggest():
         query = request.args.get("query").lower()
-        print("query: ", query)
         try:
             from .datalayer.event import EventDataLayer
 
@@ -159,7 +158,6 @@ def setup_routes(app):
     @app.route("/api/search", methods=["GET"])
     def search():
         query = request.args.get("query")
-        print("Printing query: ", query)
         try:
             from .datalayer.event import EventDataLayer
 
@@ -191,7 +189,6 @@ def setup_routes(app):
         try:
             # Retrieve the updated post data from the request
             updated_post = request.get_json()
-            print(updated_post)
 
             from .datalayer.event import EventDataLayer
 
@@ -346,13 +343,14 @@ def setup_routes(app):
                 500,
             )
 
+    @app.route("/", methods=["GET"])
     @app.route("/api/", methods=["GET"])
     def index():
         try:
             from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
-            events = event_data.get_all_events()
+            events = event_data.get_all_unexpired_events()
 
             return jsonify_event_list(events)
 
@@ -551,7 +549,6 @@ def setup_routes(app):
         try:
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
-            print("userid: " + str(userid))
             from .datalayer.event import EventDataLayer
 
             event_data = EventDataLayer()
@@ -594,7 +591,6 @@ def setup_routes(app):
                 end_time=end_time,
                 sort_by=sortby,
             )
-            print("returning event")
             return jsonify_event_list(events)
         except Exception as e:
             error_message = str(e)
@@ -614,7 +610,6 @@ def setup_routes(app):
         try:
             # Call get_jwt_identity() to fetch userid for the logged-in user
             userid = get_jwt_identity()
-            print("userid: " + str(userid))
             from .datalayer.like import LikeDataLayer
 
             like_data = LikeDataLayer()
