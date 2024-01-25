@@ -20,7 +20,7 @@
   <p align="center">
     Your one-stop destination for seamless event discovery, connecting UofT students, clubs, and design teams to create vibrant campus experiences.
     <br />
-    <a href="https://github.com/ECE444-2023Fall/Blue-Surf">View Demo</a>
+    <a href="https://www.youtube.com/watch?v=-vE1qY7d6BE">View Demo</a>
     ·
     <a href="https://github.com/ECE444-2023Fall/Blue-Surf/issues">Report Bug</a>
     ·
@@ -59,7 +59,9 @@
 
 ## About The Project
 
-![](images/demo.jpeg)
+Check out the demo video below!
+[![Watch the video](https://img.youtube.com/vi/-vE1qY7d6BE/maxresdefault.jpg)](https://www.youtube.com/watch?v=-vE1qY7d6BE)
+
 
 ### Ride the Wave with Blue Surf!
 
@@ -84,6 +86,65 @@ So, grab your virtual surfboard and get ready for an exciting ride with Blue Sur
 - [![Postgres][Postgres.com]][Postgres-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ROADMAP -->
+## Epics and User Stories
+
+![BlueSurf Presentation GIF](images/bluesurf_presentation.gif)
+
+### Roadmap
+List of features currently under development by categories 🛠 
+
+- [x] Searching for Posts
+    - [x] Search by keywords
+    - [x] Search by club name 
+- [x] Filtering and Sorting
+    - [x] Filter posts with the use of tags
+    - [x] Filter posts by date and time
+    - [x] Filter posts by location
+    - [x] Filter posts by club 
+    - [x] Sort posts alphabetically
+    - [x] Sort posts by date
+    - [x] Sort posts by trending 
+- [x] Creating Posts
+    - [x] Input information to create a post
+    - [x] Preview post before publishing
+- [x] Managing Posts
+    - [x] Automatically take down a post after a given expiry date
+    - [x] Individual to be able to edit their post after it has been posted
+    - [x] Delete a post
+- [x] Interacting with Posts
+    - [x] View how many users are interested in an event (I.e., to provide an estimate if how many people will join the event). 
+- [x] Personal Dashboards: 
+    - [x] View events without having to sign in/create login in page. 
+    - [x] View posts you liked
+    - [x] View posts you created
+- [x] Integrations and Notifications:
+    - [x] Export favourite events to Apple Calendar
+    - [ ] Export favourite events to Google Calendar
+    - [ ] Allow users to subscribe to clubs and events
+    - [ ] Get email notifications for upcoming events
+
+See the [open issues](https://github.com/ECE444-2023Fall/Blue-Surf/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- CONTRIBUTING -->
+
+<!-- ## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 <!-- GETTING STARTED -->
 
@@ -151,48 +212,6 @@ Run the following command to run the Flask server:
    ``` -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-
-## Roadmap
-List of features currently under development by categories 🛠 
-
-- [ ] Searching for Posts
-    - [ ] Search by keywords
-- [ ] Filtering and Sorting
-    - [ ] Filter posts with the use of tags
-    - [ ] Filter posts by date and time
-- [ ] Creating Posts
-    - [ ] Input information to curate a post
-- [ ] Managing Posts
-    - [ ] Automatically take down a post after a given expiry date
-    - [ ] Individual to be able to edit their post after it has been posted
-    - [ ] Delete a post
-- [ ] Interacting with Posts
-    - [ ] View how many users are interested in an event (I.e., to provide an estimate if how many people will join the event). 
-- [ ] Personal Dashboards: 
-    - [ ] View events without having to sign in/create login in page. 
-
-See the [open issues](https://github.com/ECE444-2023Fall/Blue-Surf/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTRIBUTING -->
-
-<!-- ## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 <!-- LICENSE -->
 
